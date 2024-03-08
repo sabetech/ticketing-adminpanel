@@ -3,49 +3,65 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Layout, Menu, theme } from 'antd';
+import { Layout, Menu, Typography, theme } from 'antd';
 import './Sidebar.css';
+import Dashboard from '../Home/Dashboard';
+import TicketsSummary from '../TicketsSummary/TicketsSummary';
+import logo from '../../assets/koajay_logo_new.jpeg'
+import { Route, Routes, useNavigate } from 'react-router-dom';
 
 const { Header, Content, Footer, Sider } = Layout;
 
-const sidebarMenuItems = [
-  {
-    title: "Dashboard", 
-    icon: UserOutlined
-   },
-  {
-    title: "Ticket Summary",
-    icon: UserOutlined
-  },
-  {
-    title: "Agent Summary",
-    icon: UserOutlined
-  },
-  {
-    title: "Station Summary",
-    icon: UserOutlined
-  },
-  {
-    title: "Rates and Categories",
-    icon: UserOutlined
-  },
-  {
-    title: "User Management",
-    icon: UserOutlined
-  },
-
-]
-
-const items: MenuProps['items'] = sidebarMenuItems.map((sidebarItem, index) => ({
-  key: String(index + 1),
-  icon: React.createElement(sidebarItem.icon),
-  label: sidebarItem.title,
-}));
-
 const Sidebar: React.FC = () => {
+
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
+  const sidebarMenuItems = [
+    {
+      title: "Dashboard",
+      key: "dashboard",
+      icon: UserOutlined
+     },
+    {
+      title: "Ticket Summary",
+      key: "tickets-summary",
+      icon: UserOutlined
+    },
+    {
+      title: "Agent Summary",
+      key: "agent-summary",
+      icon: UserOutlined
+    },
+    {
+      title: "Station Summary",
+      key: "station-summary",
+      icon: UserOutlined
+    },
+    {
+      title: "Rates and Categories",
+      key: "rates-and-categories",
+      icon: UserOutlined
+    },
+    {
+      title: "User Management",
+      key: "user-management",
+      icon: UserOutlined
+    },
+  ];
+  
+  const navigate = useNavigate();
+  
+  const onClick: MenuProps['onClick'] = (e) => {
+    navigate('/' + e.key)
+  };
+  
+  const items: MenuProps['items'] = sidebarMenuItems.map((sidebarItem) => ({
+    key: sidebarItem.key,
+    icon: React.createElement(sidebarItem.icon),
+    label: sidebarItem.title,
+  } ));
 
   return (
     <Layout hasSider>
@@ -54,15 +70,18 @@ const Sidebar: React.FC = () => {
       >
         <div className="demo-logo-vertical" >
           <img
-            src="https://placehold.co/200/png"
+            src={logo}
+            style={{height: '10vh'}}
           />
         </div>
-        <Menu theme="dark" mode="vertical" defaultSelectedKeys={['1']} items={items} />
+          <Menu theme="dark" mode="vertical" onClick={onClick}  defaultSelectedKeys={['1']} items={items} style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }} />
       </Sider>
-      <Layout style={{ marginLeft: 300 }}>
-        <Header style={{ padding: 0, background: colorBgContainer }} title='KOJAY' />
+      <Layout style={{ marginLeft: 220, width: '90vw', top: 0, height: '100vh' }}>
+        <Header style={{ padding: 0, background: colorBgContainer }}>
+          <Typography.Title level={3} style={{padding:10}}> Dashb oard </Typography.Title>
+        </Header>
         <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-          {/* <div
+          <div
             style={{
               padding: 24,
               textAlign: 'center',
@@ -70,8 +89,13 @@ const Sidebar: React.FC = () => {
               borderRadius: borderRadiusLG,
             }}
           >
-            Some content here ...
-          </div> */}
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/tickets-summary" element={<TicketsSummary />} />
+            </Routes>
+
+          </div>
         </Content>
         <Footer >
           AL ©{new Date().getFullYear()} Created by Albert
