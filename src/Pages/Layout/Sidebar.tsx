@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   UserOutlined,
 } from '@ant-design/icons';
@@ -8,7 +8,7 @@ import './Sidebar.css';
 import Dashboard from '../Home/Dashboard';
 import TicketsSummary from '../TicketsSummary/TicketsSummary';
 import logo from '../../assets/koajay_logo_new.jpeg'
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -52,6 +52,23 @@ const Sidebar: React.FC = () => {
   ];
   
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const [current, setCurrent] = useState(
+    location.pathname === "/" || location.pathname === ""
+        ? "/dashboard"
+        : location.pathname,
+  );
+
+  useEffect(() => {
+    console.log(location.pathname)
+      if (location) {
+          if( current !== location.pathname ) {
+              setCurrent(location.pathname);
+          }
+      }
+  }, [location, current]);
+
   
   const onClick: MenuProps['onClick'] = (e) => {
     navigate('/' + e.key)
@@ -78,7 +95,11 @@ const Sidebar: React.FC = () => {
       </Sider>
       <Layout style={{ marginLeft: 220, width: '90vw', top: 0, height: '100vh' }}>
         <Header style={{ padding: 0, background: colorBgContainer }}>
-          <Typography.Title level={3} style={{padding:10}}> Dashb oard </Typography.Title>
+          <Typography.Title level={3} style={{padding:10}}> 
+          {
+            sidebarMenuItems.find(menuItem => '/'+menuItem.key === current)?.title
+          } 
+          </Typography.Title>
         </Header>
         <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
           <div
