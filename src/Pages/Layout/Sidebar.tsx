@@ -9,6 +9,7 @@ import Dashboard from '../Home/Dashboard';
 import TicketsSummary from '../TicketsSummary/TicketsSummary';
 import logo from '../../assets/koajay_logo_new.jpeg'
 import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
+import Agents from '../Agent_Summary/Agents';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -93,11 +94,11 @@ const Sidebar: React.FC = () => {
         </div>
           <Menu theme="dark" mode="vertical" onClick={onClick}  defaultSelectedKeys={['1']} items={items} style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }} />
       </Sider>
-      <Layout style={{ marginLeft: 220, width: '90vw', top: 0, height: '100vh' }}>
+      <Layout style={{ marginLeft: 220, width: '87vw', top: 0, height: '100vh' }}>
         <Header style={{ padding: 0, background: colorBgContainer }}>
           <Typography.Title level={3} style={{padding:10}}> 
           {
-            sidebarMenuItems.find(menuItem => '/'+menuItem.key === current)?.title
+            sidebarMenuItems.find(menuItem => '/'+menuItem.key === current)?.title || 'Dashboard'
           } 
           </Typography.Title>
         </Header>
@@ -114,6 +115,7 @@ const Sidebar: React.FC = () => {
               <Route path="/" element={<Dashboard />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/tickets-summary" element={<TicketsSummary />} />
+              <Route path="/agent-summary" element={<Agents />} />
             </Routes>
 
           </div>

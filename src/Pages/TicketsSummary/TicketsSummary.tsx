@@ -9,6 +9,8 @@ const onSearch: SearchProps['onSearch'] = (value, _e, info) => console.log(info?
 
 const TicketsSummary = () => {
 
+    
+
     return (
         <>
             <Row>

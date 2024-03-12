@@ -2,7 +2,7 @@ import {Row, Col, Card} from 'antd';
 import TableAgentsOnline from '../../Components/Dashboard/TableAgentsOnline';
 import TableAgentsTickets from '../../Components/Dashboard/TableAgentsTickets';
 import type { DatePickerProps } from 'antd';
-import { DatePicker, Space } from 'antd';
+import { DatePicker } from 'antd';
 import CardInfo from '../../Components/Dashboard/CardInfo';
 
 const onChange: DatePickerProps['onChange'] = (date, dateString) => {
@@ -10,6 +10,8 @@ const onChange: DatePickerProps['onChange'] = (date, dateString) => {
 };
 
 const Dashboard = () => {
+
+    
 
     return (
         <>
@@ -26,21 +28,20 @@ const Dashboard = () => {
               <Col span={6}>
                 <CardInfo title="Number of Agents" content={'7'} />
               </Col>
-            </Row>
-            <Row gutter={12} style={{marginTop: 50}}>
-              <Col span={11}>
-                <Card title="Top 5 Tickets On { Date }">
-                  <TableAgentsTickets />
-                </Card>
-              </Col>
-              <Col span={11}>
-                <Card title="Agent Online Status">
-                  <TableAgentsOnline />
-                </Card>
-              </Col>
-            
-            </Row>
-        </>
+        </Row>
+        <Row gutter={12} style={{marginTop: 50}}>
+          <Col span={11}>
+            <Card title="Top 5 Tickets On { Date }">
+              <TableAgentsTickets />
+            </Card>
+          </Col>
+          <Col span={11}>
+            <Card title="Agent Online Status">
+              <TableAgentsOnline />
+            </Card>
+          </Col>
+        </Row>
+      </>
     );
 }
 
