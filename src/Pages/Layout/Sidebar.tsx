@@ -10,6 +10,8 @@ import TicketsSummary from '../TicketsSummary/TicketsSummary';
 import logo from '../../assets/koajay_logo_new.jpeg'
 import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import Agents from '../Agent_Summary/Agents';
+import Profile from '../Agent_Summary/Profile';
+import StationHome from '../Station/StationHome';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -116,6 +118,8 @@ const Sidebar: React.FC = () => {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/tickets-summary" element={<TicketsSummary />} />
               <Route path="/agent-summary" element={<Agents />} />
+              <Route path="/agent-summary/agents/:id" element={<Profile />} />
+              <Route path="/station-summary" element={<StationHome />} />
             </Routes>
 
           </div>
