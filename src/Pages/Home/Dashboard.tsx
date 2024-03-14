@@ -13,6 +13,8 @@ const Dashboard = () => {
 
     
 
+    
+
     return (
         <>
         <Row style={{marginBottom: 20}} >
@@ -24,6 +26,9 @@ const Dashboard = () => {
               </Col>
               <Col span={6}>
                 <CardInfo title="Revenue" content={'GHS 109,302'} />
+              </Col>
+              <Col span={6}>
+                <CardInfo title="Unpaid" content={'GHS 8091'} />
               </Col>
               <Col span={6}>
                 <CardInfo title="Number of Agents" content={'7'} />
