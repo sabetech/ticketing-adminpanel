@@ -12,6 +12,7 @@ import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import Agents from '../Agent_Summary/Agents';
 import Profile from '../Agent_Summary/Profile';
 import StationHome from '../Station/StationHome';
+import Rates from '../RatesAndCategories/Rates';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -98,7 +99,7 @@ const Sidebar: React.FC = () => {
       </Sider>
       <Layout style={{ marginLeft: 220, width: '87vw', top: 0, height: '100vh' }}>
         <Header style={{ padding: 0, background: colorBgContainer }}>
-          <Typography.Title level={3} style={{padding:10}}> 
+          <Typography.Title level={3} style={{padding:5}}> 
           {
             sidebarMenuItems.find(menuItem => '/'+menuItem.key === current)?.title || 'Dashboard'
           } 
@@ -120,6 +121,7 @@ const Sidebar: React.FC = () => {
               <Route path="/agent-summary" element={<Agents />} />
               <Route path="/agent-summary/agents/:id" element={<Profile />} />
               <Route path="/station-summary" element={<StationHome />} />
+              <Route path="/rates-and-categories" element={<Rates />} />
             </Routes>
 
           </div>
