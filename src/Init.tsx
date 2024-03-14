@@ -7,7 +7,7 @@ function Init() {
 
     return (
         <>
-            { isAuthenticated() ? <Login /> : <Sidebar /> }
+            { isAuthenticated() ? <Sidebar /> : <Login /> }
         </>
     )
 }
