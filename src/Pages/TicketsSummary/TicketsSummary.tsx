@@ -1,4 +1,4 @@
-import { Card, Row, Col, Typography, Space, Button } from "antd";
+import { Card, Row, Col, Typography, Space, Button, Statistic } from "antd";
 import { DatePicker, Input } from 'antd';
 import type { SearchProps } from 'antd/es/input/Search';
 import TableTickets from "../../Components/TicketSummary/TableTickets";
@@ -39,6 +39,34 @@ const TicketsSummary = () => {
                                 />
                             </Space>
                         </Space>
+                    </Card>
+                </Col>
+            </Row>
+
+            <Row gutter={16} style={{marginTop: '2%', marginBottom: '2%'}}>
+                <Col span={4}>
+                    <Card bordered={true}>
+                        <Statistic title="Total Tickets" value={45} valueStyle={{ color: '#3f8600' }} />
+                    </Card>
+                </Col>
+                <Col span={4}>
+                    <Card bordered={true}>
+                        <Statistic title="Total Paid Amount" value={1128} suffix={"GHc"} valueStyle={{ color: '#3f8600' }} />
+                    </Card>
+                </Col>
+                <Col span={4}>
+                    <Card bordered={true}>
+                        <Statistic title="Unpaid Tickets" value={37}  valueStyle={{ color: '#cf1322' }} />
+                    </Card>
+                </Col>
+                <Col span={4}>
+                    <Card bordered={true}>
+                        <Statistic title="Unpaid Ticket Amount" value={119} suffix={"GHc"} valueStyle={{ color: '#cf1322' }} />
+                    </Card>
+                </Col>
+                <Col span={4}>
+                    <Card bordered={true}>
+                        <Statistic title="Agents" value={5} valueStyle={{ color: '#3f8600' }} />
                     </Card>
                 </Col>
             </Row>

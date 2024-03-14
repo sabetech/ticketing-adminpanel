@@ -13,6 +13,7 @@ import Agents from '../Agent_Summary/Agents';
 import Profile from '../Agent_Summary/Profile';
 import StationHome from '../Station/StationHome';
 import Rates from '../RatesAndCategories/Rates';
+import ThirdPartyCustomers from "../OnCreditCustomers/ThirdPartyCustomers";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -46,6 +47,11 @@ const Sidebar: React.FC = () => {
     {
       title: "Rates and Categories",
       key: "rates-and-categories",
+      icon: UserOutlined
+    },
+    {
+      title: "Third Party(On Credit) ",
+      key: "on-credit-customers",
       icon: UserOutlined
     },
     {
@@ -122,6 +128,7 @@ const Sidebar: React.FC = () => {
               <Route path="/agent-summary/agents/:id" element={<Profile />} />
               <Route path="/station-summary" element={<StationHome />} />
               <Route path="/rates-and-categories" element={<Rates />} />
+              <Route path="/on-credit-customers" element={<ThirdPartyCustomers />} />
             </Routes>
 
           </div>
