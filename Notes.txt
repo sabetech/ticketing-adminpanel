@@ -1,0 +1,6 @@
+Each vehicle type has to have a properties : pay as you go OR on Credit
+A different table will handle this corelation
+
+if ticket coming in is On-Credit Vehicle, don't save the payment amout.
+create another field in the toll_tickets table called 
+payment_made bool to specify whether or not payment has been made by a On-Credit

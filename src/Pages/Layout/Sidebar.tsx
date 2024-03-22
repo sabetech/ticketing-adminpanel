@@ -14,14 +14,21 @@ import Profile from '../Agent_Summary/Profile';
 import StationHome from '../Station/StationHome';
 import Rates from '../RatesAndCategories/Rates';
 import ThirdPartyCustomers from "../OnCreditCustomers/ThirdPartyCustomers";
-
+import { TAuthUserResponse } from '../../Types/Auth';
 const { Header, Content, Footer, Sider } = Layout;
 
-const Sidebar: React.FC = () => {
+type SidebarProps = {
+  userInfo: TAuthUserResponse
+}
+
+export const UserContext = React.createContext<TAuthUserResponse | null>(null)
+
+const Sidebar: React.FC<SidebarProps> = ( { userInfo } ) => {
 
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
 
   const sidebarMenuItems = [
     {
@@ -120,16 +127,18 @@ const Sidebar: React.FC = () => {
               borderRadius: borderRadiusLG,
             }}
           >
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/tickets-summary" element={<TicketsSummary />} />
-              <Route path="/agent-summary" element={<Agents />} />
-              <Route path="/agent-summary/agents/:id" element={<Profile />} />
-              <Route path="/station-summary" element={<StationHome />} />
-              <Route path="/rates-and-categories" element={<Rates />} />
-              <Route path="/on-credit-customers" element={<ThirdPartyCustomers />} />
-            </Routes>
+            <UserContext.Provider value={userInfo}>
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/tickets-summary" element={<TicketsSummary />} />
+                <Route path="/agent-summary" element={<Agents />} />
+                <Route path="/agent-summary/agents/:id" element={<Profile />} />
+                <Route path="/station-summary" element={<StationHome />} />
+                <Route path="/rates-and-categories" element={<Rates />} />
+                <Route path="/on-credit-customers" element={<ThirdPartyCustomers />} />
+              </Routes>
+            </UserContext.Provider>
 
           </div>
         </Content>

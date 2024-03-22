@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://ticketing.koajay.com/api/v2/";
+const BASE_URL = "https://ticketing.koajay.com/api/v2";
 
 const post = (url: string, data: any, headers: object) => {
     const formData = new FormData();
@@ -8,7 +8,7 @@ const post = (url: string, data: any, headers: object) => {
     Object.keys(data).forEach(key => {
         formData.append(key, data[key]);
     });
-    
+
     return axios(BASE_URL+url, {
          method: 'POST',
          headers: {
@@ -54,13 +54,12 @@ const put = (url: string, data: any, headers: object) => {
     });
 }
 
-const auth = (url: string, data: any, headers: object) => {
-    return axios(BASE_URL+url, {
+const login = (data: any) => {
+    return axios(BASE_URL+'/login', {
         method: 'POST',
         headers: {
             'Content-Type': '"application/json"',
-            'Accept': 'application/json',
-            ...headers,
+            'Accept': 'application/json'
         },
         data: JSON.stringify(data)
     });
@@ -84,4 +83,4 @@ const postWithFile = (url: string, data: any, headers: object) => {
        });
    }
 
-   export { post, postWithFile, get, deleteRequest, put, auth };
+   export { post, postWithFile, get, deleteRequest, put, login };

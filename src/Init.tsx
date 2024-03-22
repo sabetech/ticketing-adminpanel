@@ -1,13 +1,16 @@
-import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated';
 import Sidebar from './Pages/Layout/Sidebar';
 import Login from './Pages/Auth/Login';
+import { getUserInfo } from './Utils/Auth';
 
 function Init() {   
-    const isAuthenticated = useIsAuthenticated();
+  
+    const userInfo = getUserInfo();
+
+    console.log(userInfo);
 
     return (
         <>
-            { isAuthenticated() ? <Sidebar /> : <Login /> }
+            { userInfo ? <Sidebar userInfo={ userInfo }/> : <Login /> }
         </>
     )
 }
