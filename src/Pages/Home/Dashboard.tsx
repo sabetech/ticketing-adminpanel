@@ -8,7 +8,6 @@ import CardInfo from '../../Components/Dashboard/CardInfo';
 import { useQuery } from '@tanstack/react-query';
 import { getTicketCount, getTicketRevenue, getUnpaidAmount } from '../../Services/TicketService'
 import { getAgentCount, getAgentOnlineStatus } from '../../Services/AgentService';
-import { Ticket } from '../../Types/Tickets';
 
 import dayjs from 'dayjs';
 import { AppError, RemoteResponse } from '../../Types/Remote';
