@@ -1,7 +1,8 @@
 import { Table } from "antd";
 import type { TableProps } from 'antd';
+import { TAgentOnlineStatus } from '../../Types/Agent'
 
-const TableAgentsOnline = () => {
+const TableAgentsOnline = ({agentsOnline}) => {
     type ColumnProps = {
         key: string;
         agent: string;
@@ -12,7 +13,8 @@ const TableAgentsOnline = () => {
         {
             title: 'Agent',
             dataIndex: 'agent',
-            key: 'agent'
+            key: 'agent',
+            render: (value: TAgentOnlineStatus) => value.agent.fname +" "+value.agent.lname
         }, 
         {
             title: 'Station',
@@ -24,6 +26,7 @@ const TableAgentsOnline = () => {
     return (
         <Table 
             columns={columns}
+            dataSource={agentsOnline}
         />
     )
 }

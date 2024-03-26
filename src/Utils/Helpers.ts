@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 const safeParseJson = <T>(str: string | null): T | false => {
     try {
         const jsonValue: T = JSON.parse(str ?? "");
@@ -7,4 +9,9 @@ const safeParseJson = <T>(str: string | null): T | false => {
     }
 }
 
-export {safeParseJson}
+const formatDateTime = (dateTime: string) => {
+    
+    return dayjs(dateTime).format("DD-MMM-YYYY hh:mm:ss A")
+}
+
+export {safeParseJson, formatDateTime}

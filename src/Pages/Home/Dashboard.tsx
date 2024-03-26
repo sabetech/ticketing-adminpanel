@@ -7,49 +7,49 @@ import { DatePicker } from 'antd';
 import CardInfo from '../../Components/Dashboard/CardInfo';
 import { useQuery } from '@tanstack/react-query';
 import { getTicketCount, getTicketRevenue, getUnpaidAmount } from '../../Services/TicketService'
-import { getAgentCount } from '../../Services/AgentService';
+import { getAgentCount, getAgentOnlineStatus } from '../../Services/AgentService';
 import { Ticket } from '../../Types/Tickets';
+
 import dayjs from 'dayjs';
 import { AppError, RemoteResponse } from '../../Types/Remote';
 
-const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-  console.log(date, dateString);
-};
+
 
 const Dashboard = () => {
     const [ticketCount, setTicketCount] = useState<number>(0);
     const [ticketRevenue, setTicketRevenue] = useState<number>(0);
     const [unpaidTicketsAmount, setUnpaidTicketsAmount] = useState<number>(0);
     const [agentCount, setAgentCount] = useState<number>(0);
-
     const now = dayjs().format("YYYY-MM-DD");
-
-    //Get Ticket Count
-    // const { data, isLoading } = useQuery<RemoteResponse<Ticket[]> | AppError>({
-    //   queryKey: ['ticketsIssued'],
-    //   queryFn: async () => getTicketsIssued(now)
-    // });
-    //Get Ticket Count
+    const [date, setDate] = useState<string>(now)
+    
 
     const { data: ticketsNumber, isLoading: isTicketCountLoading } = useQuery<RemoteResponse<number> | AppError>({
-      queryKey: ['ticketsCount'],
-      queryFn: async () => getTicketCount(now)
+      queryKey: ['ticketsCount', date],
+      queryFn: async () => getTicketCount(date)
     });
 
     const { data: ticketsRevenueData, isLoading: isTicketRevenueLoading } = useQuery<RemoteResponse<number> | AppError>({
-      queryKey: ['ticketsRevenue'],
-      queryFn: async () => getTicketRevenue(now)
+      queryKey: ['ticketsRevenue', date],
+      queryFn: async () => getTicketRevenue(date)
     });
 
     const { data: ticketsUnpaidAmountData, isLoading: isTicketUnpaidAmountLoading } = useQuery<RemoteResponse<number> | AppError>({
-      queryKey: ['ticketsUnpaidAmount'],
-      queryFn: async () => getUnpaidAmount(now)
+      queryKey: ['ticketsUnpaidAmount', date],
+      queryFn: async () => getUnpaidAmount(date)
     });
 
     const { data: agentsDataCount, isLoading: isAgentsCountLoading } = useQuery<RemoteResponse<number> | AppError>({
-      queryKey: ['agentCount'],
-      queryFn: async () => getAgentCount(now)
+      queryKey: ['agentCount', date],
+      queryFn: async () => getAgentCount(date)
     });
+
+    const { data: agentsOnline, isLoading: isAgentsOnlineLoading } = useQuery(
+      {
+        queryKey: ['agentCount'],
+        queryFn: async () => getAgentOnlineStatus()
+      })
+
 
     useEffect(() => {
       if (ticketsNumber?.success) {
@@ -72,6 +72,9 @@ const Dashboard = () => {
       
     }, [ticketsNumber, ticketsRevenueData, ticketsUnpaidAmountData, agentsDataCount]);
     
+    const onChange: DatePickerProps['onChange'] = (_, dateString) => {
+      if (typeof dateString == 'string') setDate(dateString)
+    };
     
     return (
         <>
@@ -94,13 +97,13 @@ const Dashboard = () => {
         </Row>
         <Row gutter={12} style={{marginTop: 50}}>
           <Col span={11}>
-            <Card title="Top 5 Tickets On { Date }">
+            <Card title="Top 5 Agents Tickets On { Date }">
               <TableAgentsTickets />
             </Card>
           </Col>
           <Col span={11}>
             <Card title="Agent Online Status">
-              <TableAgentsOnline />
+              <TableAgentsOnline agentsOnline={agentsOnline} />
             </Card>
           </Col>
         </Row>
