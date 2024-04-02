@@ -1,6 +1,7 @@
 export type Agent = {
     id: number
-    fname: string
+    fname: string,
+    lname: string
 }
 
 export type TAgentOnlineStatus = {

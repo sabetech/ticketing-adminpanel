@@ -43,11 +43,11 @@ const Dashboard = () => {
       queryFn: async () => getAgentCount(date)
     });
 
-    const { data: agentsOnline, isLoading: isAgentsOnlineLoading } = useQuery(
-      {
-        queryKey: ['agentCount'],
-        queryFn: async () => getAgentOnlineStatus()
-      })
+    // const { data: agentsOnline, isLoading: isAgentsOnlineLoading } = useQuery(
+    //   {
+    //     queryKey: ['agentCount'],
+    //     queryFn: async () => getAgentOnlineStatus()
+    //   })
 
 
     useEffect(() => {
@@ -102,7 +102,7 @@ const Dashboard = () => {
           </Col>
           <Col span={11}>
             <Card title="Agent Online Status">
-              <TableAgentsOnline agentsOnline={agentsOnline} />
+              {/* <TableAgentsOnline agentsOnline={agentsOnline} /> */}
             </Card>
           </Col>
         </Row>
