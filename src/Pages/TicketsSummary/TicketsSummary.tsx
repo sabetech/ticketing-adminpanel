@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Card, Row, Col, Typography, Space, Button, Statistic, AutoComplete } from "antd";
+import { Card, Row, Col, Typography, Space, Statistic, AutoComplete, message } from "antd";
 import { DatePicker, Input } from 'antd';
 import TableTickets from "../../Components/TicketSummary/TableTickets";
 import dayjs from "dayjs";
@@ -19,11 +19,20 @@ const TicketsSummary = () => {
         label: JSX.Element, 
         value: string
     }[]>();
-    
-    const { data: ticketData, isLoading } = useQuery<RemoteResponse<Ticket[]> | AppError>({
+    const [messageApi, contextHolder] = message.useMessage();
+    const { data: ticketData, isLoading, isError, error } = useQuery<RemoteResponse<Ticket[]> | AppError>({
       queryKey: ['ticketsIssued', dateRange],
       queryFn: async () => getTicketsIssued(dateRange)
     });
+
+    if (isError) {
+        
+        messageApi.open({
+            type: 'error',
+            content: error.message,
+          });
+          
+    }
 
     useEffect(() => {
         if (ticketData?.success) {
@@ -126,6 +135,7 @@ const TicketsSummary = () => {
 
     return (
         <>
+        {contextHolder}
             <Row>
                 <Col span={23}>
                     <Card title={"Filter Tickets"} style={{textAlign: 'left'}}>
