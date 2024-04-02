@@ -1,7 +1,13 @@
-import { Table } from "antd";
+import { Avatar, Table } from "antd";
 import type { TableProps } from 'antd';
+import { Agent } from "../../Types/Agent";
 
-const AgentList = () => {
+type TableAgentProp = {
+    agents: Agent[],
+    isLoading: boolean
+}
+
+const AgentList: React.FC<TableAgentProp> = ({ agents, isLoading }) => {
     type ColumnProps = {
         key: string;
         agentName: string;
@@ -11,45 +17,40 @@ const AgentList = () => {
         station: string;
         totalTickets: number;
       }
-    const columns: TableProps<ColumnProps>['columns'] = [
+      //https://tickets.koajay.com/assets/img/profile_photos/
+      //https://tickets.koajay.com/assets
+    const columns: TableProps<Agent>['columns'] = [
         {
             title: '',
-            dataIndex: 'agent_img',
+            dataIndex: 'photo',
             key: 'agent_img',
+            render: (value) => <Avatar size={"large"} src={`https://tickets.koajay.com/assets/${value}`} />
         },
         {
             title: 'Agent Name',
-            dataIndex: 'agent_name',
+            dataIndex: '',
             key: 'agent_name',
+            render: (_, record) => `${record.fname} ${record.lname}`
         },
         {
             title: 'Agent Email',
-            dataIndex: 'agent_email',
+            dataIndex: 'email',
             key: 'agent_email',
         },
         {
-            title: 'Agent Role',
-            dataIndex: 'agent_role',
-            key: 'agent_role',
-        },
-        {
             title: 'Station',
-            dataIndex: 'station',
+            dataIndex: 'stationInfo',
             key: 'station',
-        },
-        {
-            title: 'Total Tickets',
-            dataIndex: 'total_tickets',
-            key: 'total_tickets',
+            render: (value) => value.name
         }
-       
-
     ]
 
     return (
         <>
             <Table 
                 columns={columns}
+                dataSource={agents}
+                loading={isLoading}
             />
         </>
     );
