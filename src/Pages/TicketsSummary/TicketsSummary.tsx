@@ -39,12 +39,23 @@ const TicketsSummary = () => {
         setDateRange(dateRange)
     }
 
+    const onSearchChange = (text:string) => {
+        if (text === "") {
+            if (ticketData?.success) {
+                setTickets(ticketData.data)
+                if (typeof ticketData.data !== 'undefined')
+                    setAutocompleteOptions(constructAutoCompleteOptions(ticketData.data))
+            }
+        }
+    }
+
     const onsearchselect = (text: string) => {
         
         const searchedTickets = tickets.filter(tkt => 
                 `${tkt.agent.fname} ${tkt.agent.lname}` === text
                 || tkt.car_number === text 
                 || tkt.title === text
+                || tkt.name === text
             );
         
         setTickets(searchedTickets);
@@ -82,6 +93,13 @@ const TicketsSummary = () => {
 
         for(let i = 0; i < ticketsData.length; i++) {
             
+            if (!options.some(x => x.value === ticketsData[i].name))
+                options.push({
+                    key: i+ticketsData[i].name,
+                    label: renderItem(ticketsData[i].name),
+                    value: ticketsData[i].name
+                    });
+
             if (!options.some(x => x.value === ticketsData[i].car_number))
                 options.push({
                     key: i+ticketsData[i].car_number,
@@ -116,9 +134,6 @@ const TicketsSummary = () => {
                                 <Typography>Date Filter</Typography>
                                 <Space direction="horizontal" >
                                     <RangePicker showTime size={'large'} onChange={onchange} defaultValue={[dayjs().startOf('day'), dayjs()]} />
-                                    <Button type="primary" size={'large'} style={{justifySelf:'flex-end'}}>
-                                        Go!
-                                    </Button>
                                 </Space>
                             </Space>
 
@@ -127,15 +142,15 @@ const TicketsSummary = () => {
                                 <AutoComplete 
                                     allowClear
                                     onClear={onSearchClear}
+                                    onChange={onSearchChange}
                                     options={autocompletOptions}
                                     style={{ width: 500 }}
                                     size="large"
                                     filterOption={(inputValue, option) => 
                                         option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
                                     }
-                                    placeholder="Search by Car Number, Ticket ID, Agent Name" 
+                                    placeholder="Search by Car Number, Ticket ID, Agent Name, Station" 
                                     onSelect={(text: string, option: any) => onsearchselect(text)}
-                                    
                                 />
                                    
                             </Space>

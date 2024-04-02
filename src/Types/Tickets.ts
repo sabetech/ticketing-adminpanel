@@ -7,6 +7,8 @@ export type Ticket = {
     paid: boolean,
     car_number: string,
     title: string,
+    issued_date_time: string,
+    name: string,
     rate: {
         on_credit: boolean
     },

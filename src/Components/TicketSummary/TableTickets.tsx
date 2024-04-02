@@ -1,6 +1,7 @@
 import { Table } from "antd";
 import type { TableProps } from 'antd';
 import { Ticket } from "../../Types/Tickets";
+import { Rate } from "../../Types/Rate";
 import { Agent } from "../../Types/Agent";
 import * as utils from "../../Utils/Helpers"
 
@@ -25,13 +26,14 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
         },
         {
             title: 'Station',
-            dataIndex: 'station',
+            dataIndex: 'name',
             key: 'station'
         },
         {
             title: 'Category',
-            dataIndex: 'category',
-            key: 'category'
+            dataIndex: 'rate',
+            key: 'category',
+            render: (rate: Rate) => rate.rate_type.toUpperCase()
         },
         {
             title: 'Amount',
@@ -42,12 +44,14 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
             title: 'Agent',
             dataIndex: 'agent', 
             key: 'agent',
+            sorter: true,
             render: (agent: Agent) => agent.fname
         },
         {
             title: 'Date & time',
             dataIndex: 'issued_date_time',
             key: 'date_time',
+            sorter: true,
             render: (dateTime: string) => utils.formatDateTime(dateTime)
         }
     ]
