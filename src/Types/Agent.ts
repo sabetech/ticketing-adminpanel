@@ -1,7 +1,11 @@
+import { Station } from "./Station"
+import { Ticket } from "./Tickets"
+
 export type Agent = {
     id: number
     fname: string,
-    lname: string
+    lname: string,
+    stationInfo: Station
 }
 
 export type TAgentOnlineStatus = {
@@ -11,4 +15,9 @@ export type TAgentOnlineStatus = {
         fname: string
         lname: string
     }
+}
+
+export type TAgentTicketInfo = {
+    agent: Agent,
+    tickets: Ticket[]
 }

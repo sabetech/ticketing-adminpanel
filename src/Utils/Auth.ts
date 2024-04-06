@@ -3,11 +3,11 @@ import * as constants from "../Constants/LocalStorageKeys";
 import * as utils from "../Utils/Helpers";
 
 export function signIn(userAuthInfo: TAuthUserResponse) {
-    console.log("YEAAH::", userAuthInfo);
     localStorage.setItem(constants.AUTH_USER_INFO, JSON.stringify(userAuthInfo))
 }
 
 export function signOut() {
+    location.reload();
     localStorage.removeItem(constants.AUTH_USER_INFO);
 }
 

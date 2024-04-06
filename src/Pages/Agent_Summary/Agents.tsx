@@ -1,20 +1,15 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Row, Col, Card, Space, Typography } from 'antd';
-import { Input } from 'antd';
-import type { SearchProps } from 'antd/es/input/Search';
+import { Row, Col, Card, Space, Typography, AutoComplete } from 'antd';
 import AgentList from '../../Components/Agents/AgentList';
 import { Agent } from "../../Types/Agent";
 import { AppError, RemoteResponse } from "../../Types/Remote";
 import {getAgentList} from "../../Services/AgentService";
 
 
-const { Search } = Input;
-const onSearch: SearchProps['onSearch'] = (value, _e, info) => console.log(info?.source, value);
-
 const Agents = () => {
     const [agents, setAgents] = useState<Agent[]>([]);
-    const { data, isLoading } = useQuery<RemoteResponse<Agent[]> | AppError>({
+    const { data, isLoading, isSuccess } = useQuery<RemoteResponse<Agent[]> | AppError>({
         queryKey: ['agents'],
         queryFn: async () => getAgentList()
     });
@@ -25,7 +20,23 @@ const Agents = () => {
             setAgents(data.data)
         }
 
-    },[data])
+    },[data]);
+
+    const [value, setValue] = useState('');
+    
+    const onChange = (data: string) => {
+        setValue(data);
+    };
+    
+    const onSelect = (data: string) => {
+        const selectedAgent = agents.filter(agt => agt.fname+" "+agt.lname ===data);
+        setAgents(selectedAgent)
+    };
+    
+    const clearSearch = () => {
+        if (isSuccess && data.success)
+            setAgents(data.data);
+    }
     
 
 return (
@@ -37,13 +48,23 @@ return (
                             
                             <Space direction="vertical" style={{textAlign: 'left'}}>
                                 <Typography>Search For Agents</Typography>
-                                <Search
-                                    placeholder="Search Agent Name"
-                                    allowClear
-                                    enterButton="Search"
+                                <AutoComplete
                                     size="large"
-                                    onSearch={onSearch}
+                                    value={value}
+                                    onClear={clearSearch}
+                                    allowClear
+                                    options={agents.map( agt => ({
+                                        key: agt.id,
+                                        label: `${agt.fname} ${agt.lname} (${agt?.stationInfo?.name ?? "No Station"})`,
+                                        value: agt.fname +" "+agt.lname
+                                    }))}
                                     style={{ width: 500 }}
+                                    onSelect={onSelect}
+                                    onChange={onChange}
+                                    placeholder="Search for Agents"
+                                    filterOption={(inputValue, option) => 
+                                        option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                                    }
                                 />
                             </Space>
 

@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import {
   UserOutlined,
+  DownOutlined
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Layout, Menu, Typography, theme } from 'antd';
+import { Layout, Menu, Typography, theme, Dropdown, Space, Modal, Avatar } from 'antd';
 import './Sidebar.css';
 import Dashboard from '../Home/Dashboard';
 import TicketsSummary from '../TicketsSummary/TicketsSummary';
@@ -16,6 +17,9 @@ import Rates from '../RatesAndCategories/Rates';
 import ThirdPartyCustomers from "../OnCreditCustomers/ThirdPartyCustomers";
 import { TAuthUserResponse } from '../../Types/Auth';
 const { Header, Content, Footer, Sider } = Layout;
+import { logout } from '../../Services/Auth';
+import * as utils from "../../Utils/Auth";
+import { getUserInfo } from '../../Utils/Auth';
 
 type SidebarProps = {
   userInfo: TAuthUserResponse
@@ -24,11 +28,44 @@ type SidebarProps = {
 export const UserContext = React.createContext<TAuthUserResponse | null>(null)
 
 const Sidebar: React.FC<SidebarProps> = ( { userInfo } ) => {
-
+  const [open, setOpen] = useState<boolean>(false);
+  const [confirmLoading, setConfirmingLoading] = useState<boolean>(false)
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
+  const showConfirmLogout = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    e.preventDefault();
+    setOpen(true)
+  }
+
+  const handleLogout = async () => {
+    setConfirmingLoading(true)
+
+    const userInfo = getUserInfo()
+    console.log(userInfo);
+    if (!userInfo) window.location.reload();
+
+    await logout();
+    setConfirmingLoading(false)
+    utils.signOut();
+  };
+  const handleCancel = () => setOpen(false);
+
+  const UserDropdown: MenuProps['items'] = [
+    {
+      type: 'divider',
+    },
+    {
+      label: (
+        <a onClick={showConfirmLogout}>
+          Logout
+        </a>
+      ),
+      key: 'logout',
+      
+    },
+  ];
 
   const sidebarMenuItems = [
     {
@@ -77,6 +114,11 @@ const Sidebar: React.FC<SidebarProps> = ( { userInfo } ) => {
         : location.pathname,
   );
 
+  const handleManageUsers = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    e.preventDefault();
+    navigate("/users/manage");
+  }
+
   useEffect(() => {
     console.log(location.pathname)
       if (location) {
@@ -111,12 +153,32 @@ const Sidebar: React.FC<SidebarProps> = ( { userInfo } ) => {
           <Menu theme="dark" mode="vertical" onClick={onClick}  defaultSelectedKeys={['1']} items={items} style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }} />
       </Sider>
       <Layout style={{ marginLeft: 220, width: '87vw', top: 0, height: '100vh' }}>
-        <Header style={{ padding: 0, background: colorBgContainer }}>
-          <Typography.Title level={3} style={{padding:5}}> 
-          {
-            sidebarMenuItems.find(menuItem => '/'+menuItem.key === current)?.title || 'Dashboard'
-          } 
-          </Typography.Title>
+        <Header style={{ padding: 0, background: colorBgContainer, display: 'flex', justifyContent: 'space-between' }}>
+          <Space>
+            <Typography.Title level={3} style={{padding:5}}> 
+            {
+              sidebarMenuItems.find(menuItem => '/'+menuItem.key === current)?.title || 'Dashboard'
+            } 
+            </Typography.Title>
+          </Space>
+          <Space style={{marginRight: '2em'}}>
+            <Dropdown menu={ {items: [{
+                                label: (
+                                  <a onClick={handleManageUsers}>
+                                    Manage Users
+                                  </a>
+                                ),
+                                key: 'manage_users',
+                              }, ...UserDropdown,]} }>
+            <a onClick={(e) => e.preventDefault()}>
+              <Space>
+              <h3>{ userInfo.user.fname }({userInfo.user.email})</h3>
+              <Avatar size={"large"} icon={<UserOutlined />} />
+                <DownOutlined />
+              </Space>
+            </a>
+          </Dropdown>
+        </Space>
         </Header>
         <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
           <div
@@ -133,7 +195,7 @@ const Sidebar: React.FC<SidebarProps> = ( { userInfo } ) => {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/tickets-summary" element={<TicketsSummary />} />
                 <Route path="/agent-summary" element={<Agents />} />
-                <Route path="/agent-summary/agents/:id" element={<Profile />} />
+                <Route path="/agent-summary/:id/detail" element={<Profile />} />
                 <Route path="/station-summary" element={<StationHome />} />
                 <Route path="/rates-and-categories" element={<Rates />} />
                 <Route path="/on-credit-customers" element={<ThirdPartyCustomers />} />
@@ -146,6 +208,16 @@ const Sidebar: React.FC<SidebarProps> = ( { userInfo } ) => {
           AL ©{new Date().getFullYear()} Created by Albert
         </Footer>
       </Layout>
+      <Modal
+        title="Title"
+        open={open}
+        onOk={handleLogout}
+        confirmLoading={confirmLoading}
+        onCancel={handleCancel}
+        okText={"Logout!"}
+      >
+        <p>Are you sure you want to logout?</p>
+      </Modal>
     </Layout>
   );
 };

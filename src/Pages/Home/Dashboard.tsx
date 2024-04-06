@@ -95,11 +95,11 @@ const Dashboard = () => {
             </Col>
         </Row>
         <Row gutter={12} style={{marginTop: 50}}>
-          <Col span={11}>
+          {/* <Col span={11}>
             <Card title="Top 5 Agents Tickets On { Date }">
               <TableAgentsTickets />
             </Card>
-          </Col>
+          </Col> */}
           <Col span={11}>
             <Card title="Agent Online Status">
               {/* <TableAgentsOnline agentsOnline={agentsOnline} /> */}

@@ -12,7 +12,9 @@ const { RangePicker } = DatePicker;
 
 const TicketsSummary = () => {
 
-    const [dateRange, setDateRange] = useState<[string, string]>([dayjs().startOf('day').format("YYYY-MM-DD HH:mm:ss"), dayjs(new Date()).format("YYYY-MM-DD HH:mm:ss")])
+    const defaultDateRange = [dayjs().startOf('day').format("YYYY-MM-DD HH:mm:ss"), dayjs(new Date()).format("YYYY-MM-DD HH:mm:ss")];
+
+    const [dateRange, setDateRange] = useState<string[]>(defaultDateRange)
     const [tickets, setTickets] = useState<Ticket[]>([]);
     const [autocompletOptions, setAutocompleteOptions] = useState<{
         key: string,
@@ -31,7 +33,6 @@ const TicketsSummary = () => {
             type: 'error',
             content: error.message,
           });
-          
     }
 
     useEffect(() => {
@@ -57,7 +58,7 @@ const TicketsSummary = () => {
             }
         }
     }
-
+    
     const onsearchselect = (text: string) => {
         
         const searchedTickets = tickets.filter(tkt => 

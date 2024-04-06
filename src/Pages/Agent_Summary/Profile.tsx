@@ -1,17 +1,41 @@
+import { useEffect, useState } from 'react';
 import { Card, Avatar } from 'antd';
 import {SettingOutlined, EditOutlined, EllipsisOutlined} from '@ant-design/icons';
+import { useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { getAgentDetail } from '../../Services/AgentService';
+import { TAgentTicketInfo } from '../../Types/Agent';
+
 
 const { Meta } = Card;
 const Profile = () => {
+    const [agentTicketInfo, setAgentTicketInfo] = useState<TAgentTicketInfo>();
 
+    const { id } = useParams();
+
+    const { data: agentTicketInfoData, isSuccess } = useQuery({
+        queryKey: ['agentsTicketInfoData'],
+        queryFn: async () => getAgentDetail(id)
+    });
+
+    useEffect(() => {
+
+        if (isSuccess) {
+            setAgentTicketInfo(agentTicketInfo);
+        }
+
+    },[agentTicketInfoData])
+
+    console.log("Agent Ticket Info Data::",agentTicketInfo);
+    
     return (
         <>
             <Card
                 style={{ width: 300 }}
                 cover={
                 <img
-                    alt="example"
-                    src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+                    alt="agent-photo"
+                    src={`https://tickets.koajay.com/assets/${agentTicketInfo?.agent.photo}`}
                 />
                 }
                 actions={[

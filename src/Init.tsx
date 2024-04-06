@@ -6,8 +6,6 @@ function Init() {
   
     const userInfo = getUserInfo();
 
-    console.log(userInfo);
-
     return (
         <>
             { userInfo ? <Sidebar userInfo={ userInfo }/> : <Login /> }

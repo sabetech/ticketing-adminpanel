@@ -65,6 +65,16 @@ const login = (data: any) => {
     });
 }
 
+const logout = (token: string) => {
+    return axios(BASE_URL+'/logout', {
+        headers: {
+            'Content-Type': '"application/json"',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer '+token
+        }
+    });
+}
+
 const postWithFile = (url: string, data: any, headers: object) => {
     const formData = new FormData();
     
@@ -83,4 +93,4 @@ const postWithFile = (url: string, data: any, headers: object) => {
        });
    }
 
-   export { post, postWithFile, get, deleteRequest, put, login };
+   export { post, postWithFile, get, deleteRequest, put, login, logout };

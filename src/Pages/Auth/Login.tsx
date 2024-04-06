@@ -22,10 +22,10 @@ const Login: React.FC = () => {
     {
       mutationFn: (values: TLoginValues): Promise<TAuthUserResponse> => login(values),
       onSuccess: (data: TAuthUserResponse) => {
-        console.log("DATA RESPONSE::", data);
+        
         signIn(data)
-        console.log("login should be successful here");
         location.reload();
+        
       },
       onError: (error: RemoteError<TErrorResponse>, variables) => {
         console.log("ERROR RESPONSE::",error.response.data.message)

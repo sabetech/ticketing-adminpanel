@@ -1,7 +1,7 @@
 import * as api from './requests/API';
 import { getUserInfo } from '../Utils/Auth';
 import { AppError, RemoteResponse } from '../Types/Remote';
-import { Agent, TAgentOnlineStatus } from '../Types/Agent'
+import { Agent, TAgentOnlineStatus, TAgentTicketInfo } from '../Types/Agent'
 
 export const getAgentCount = async (date: string): Promise<RemoteResponse<number> | AppError> => {
     const userInfo = getUserInfo()
@@ -30,6 +30,26 @@ export const getAgentList = async (): Promise<RemoteResponse<Agent[]> | AppError
 
     if (userInfo)
         return (await api.get(`/agent/all`, {'Authorization': 'Bearer '+userInfo.token})).data
+    else
+        return new Promise<AppError>((_, reject) => {
+            reject("User is not logged In");
+        });
+}
+
+export const getAgentDetail = async (agentId: string | undefined): Promise<RemoteResponse<TAgentTicketInfo> | AppError> => {
+    
+   
+    if (typeof agentId == 'undefined') 
+        return new Promise<AppError>((_, reject) => {
+            reject("Id id undefined. Specify Agent ID");
+        });
+    
+    let id = parseInt(agentId);
+
+    const userInfo = getUserInfo();
+    
+    if (userInfo)
+        return (await api.get(`/agent/${id}/detail`, {'Authorization': 'Bearer '+userInfo.token})).data
     else
         return new Promise<AppError>((_, reject) => {
             reject("User is not logged In");

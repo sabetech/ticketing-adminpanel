@@ -1,41 +1,48 @@
+import { Rate } from "../../Types/Rate";
 import { Table } from "antd";
 import type { TableProps } from 'antd';
+import { Station } from "../../Types/Station";
 
-const RatesTable = () => {
+type RatesProps = {
+    rates: Rate[],
+    isloading: boolean
 
-    type ColumnProps = {
-        key: string;
-        agent: string;
-        ticketsIssued: number;
-        amount: number;
-        station: string
-      }
+}
 
-    const columns: TableProps<ColumnProps>['columns'] = [
+const RatesTable= ({ rates, isloading }: RatesProps) => {
+
+    type RateProps = {
+        
+    }
+
+    const columns: TableProps<RateProps>['columns'] = [
         {
             title: 'Vehicle Category',
-            dataIndex: 'vehicle_category',
+            dataIndex: 'title',
             key: 'vehicle_category'
         },
         {
             title: 'Icon',
             dataIndex: 'icon',
-            key: 'icon'
+            key: 'icon',
+            render: (value: string) => <img src={value} width='92'/>
         },
         {
             title: 'Rate',
-            dataIndex: 'rate',
+            dataIndex: 'amount',
             key: 'rate'
         },
         {
             title: 'Station',
             dataIndex: 'station',
-            key: 'station'
+            key: 'station',
+            render: (value: Station) => value.name
         },
         {
             title: 'Pay as you Go',
-            dataIndex: 'pay_as_you_go',
-            key: 'pay_as_you_go'
+            dataIndex: 'is_postpaid',
+            key: 'pay_as_you_go',
+            render: (value: string) => ((parseInt(value) === 0) ? "Yes" : "NO")
         },
         {
             title: 'Action',
@@ -49,6 +56,8 @@ const RatesTable = () => {
         <>
             <Table 
                 columns={columns}
+                dataSource={rates}
+                loading={isloading}
             />
         </>
     )
