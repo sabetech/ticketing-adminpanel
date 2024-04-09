@@ -36,9 +36,8 @@ export const getAgentList = async (): Promise<RemoteResponse<Agent[]> | AppError
         });
 }
 
-export const getAgentDetail = async (agentId: string | undefined): Promise<RemoteResponse<TAgentTicketInfo> | AppError> => {
+export const getAgentDetail = async (agentId: string | undefined, dateRange: {from:string, to: string} | undefined): Promise<RemoteResponse<TAgentTicketInfo> | AppError> => {
     
-   
     if (typeof agentId == 'undefined') 
         return new Promise<AppError>((_, reject) => {
             reject("Id id undefined. Specify Agent ID");
@@ -47,9 +46,12 @@ export const getAgentDetail = async (agentId: string | undefined): Promise<Remot
     let id = parseInt(agentId);
 
     const userInfo = getUserInfo();
-    
-    if (userInfo)
-        return (await api.get(`/agent/${id}/detail`, {'Authorization': 'Bearer '+userInfo.token})).data
+
+    if (userInfo) {
+        if (typeof dateRange === 'undefined')
+            return (await api.get(`/agent/${id}/detail`, {'Authorization': 'Bearer '+userInfo.token})).data
+        return (await api.get(`/agent/${id}/detail?from=${dateRange?.from}&to=${dateRange?.to}`, {'Authorization': 'Bearer '+userInfo.token})).data
+    }
     else
         return new Promise<AppError>((_, reject) => {
             reject("User is not logged In");

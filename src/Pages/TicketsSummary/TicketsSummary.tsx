@@ -44,7 +44,6 @@ const TicketsSummary = () => {
 
     },[ticketData]);
 
-    //write an onChange handler for the RangePicker
     const onchange = (_: any, dateRange: [string, string]) => {
         setDateRange(dateRange)
     }
