@@ -1,7 +1,8 @@
 import { Rate } from "../../Types/Rate";
-import { Table } from "antd";
+import { Button, Popconfirm, Table } from "antd";
 import type { TableProps } from 'antd';
 import { Station } from "../../Types/Station";
+import { DeleteFilled, EditFilled } from '@ant-design/icons';
 
 type RatesProps = {
     rates: Rate[],
@@ -13,6 +14,18 @@ const RatesTable= ({ rates, isloading }: RatesProps) => {
 
     type RateProps = {
         
+    }
+
+    const handleDeleteClick = () => {
+        
+    }
+
+    const handleDeleteConfirm = () => {
+
+    }
+
+    const popOverContent = () => {
+        return <></>
     }
 
     const columns: TableProps<RateProps>['columns'] = [
@@ -47,7 +60,20 @@ const RatesTable= ({ rates, isloading }: RatesProps) => {
         {
             title: 'Action',
             dataIndex: 'action', 
-            key: 'action'
+            key: 'action',
+            render: () => <>
+                <Button icon={<EditFilled />}>Edit</Button>
+                <Popconfirm
+                    title="Delete the User"
+                    description="Are you sure to delete this User?"
+                    onConfirm={ () => handleDeleteConfirm() }
+                    onCancel={() =>{}}
+                    okText="Yes"
+                    cancelText="No"
+                >
+                    <Button type="text" danger icon={<DeleteFilled />} onClick={handleDeleteClick}/>
+                </Popconfirm></>
+                
         }
     ]
 

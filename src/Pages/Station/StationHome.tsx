@@ -8,6 +8,10 @@ const { RangePicker } = DatePicker;
 
 const StationHome = () => {
 
+    //load stations
+
+    //load all tickets from all stations
+
     const handleChange = (value: string) => {
         console.log(`selected ${value}`);
       };
@@ -21,8 +25,9 @@ const StationHome = () => {
                             <Space direction="vertical" style={{textAlign: 'left'}}>
                                 <Typography>Select Station</Typography>
                                 <Select
+                                    size='large'
                                     defaultValue="All"
-                                    style={{ width: 120 }}
+                                    style={{ width: '20vw' }}
                                     onChange={handleChange}
                                     options={[
                                         { value: 'all', label: 'All' },

@@ -32,6 +32,11 @@ const AgentTickets = ({agentTickets}:AgentTicketsProp) => {
             title: 'Station',
             dataIndex: 'station',
             key: 'station',
+        },
+        {
+            title: 'Action',
+            dataIndex: '',
+            key: 'station',
         }
     ]
 
@@ -39,7 +44,7 @@ const AgentTickets = ({agentTickets}:AgentTicketsProp) => {
     return (
         <>
             <Table 
-                style={{width: '50vw'}}
+                style={{width: '60vw'}}
                 columns={columns}
                 dataSource={agentTickets}
                 scroll={{y: 500}}
