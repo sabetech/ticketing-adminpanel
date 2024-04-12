@@ -5,6 +5,8 @@ import { useQuery } from '@tanstack/react-query';
 import { getRates } from '../../Services/Rate';
 import { AppError, RemoteResponse } from '../../Types/Remote';
 import { Rate } from '../../Types/Rate';
+import FormAddEdit from '../../Components/RatesAndCategories/FormAddEdit';
+import ModalFormAddEdit from '../../Components/RatesAndCategories/ModalFormAddEdit';
 
 const Rates = () => {
     const [stationSelect, setStationSelect] = useState<number|null>(null)
@@ -32,16 +34,16 @@ const Rates = () => {
     }
 
     return (
-        <>
-        <Modal
-            title="Add or Edit a Rate"
-            open={modalOpen}
-            onOk={handleOk}
+    <>
+        <ModalFormAddEdit 
+            title={"Add New Rate"}
+            modalOpen={modalOpen}
+            setModalOpen={setModalOpen}
+            handleOk={handleOk}
             confirmLoading={confirmLoading}
-            onCancel={() => setModalOpen(false)}
         >
-        <p>{"Form goes here"}</p>
-      </Modal>
+            <FormAddEdit initialValues={undefined}/>
+        </ModalFormAddEdit>
             <Row>
                 <Col span={23}>
                     <Card title={"Rates"} style={{textAlign: 'left'}}>

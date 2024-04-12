@@ -1,5 +1,6 @@
-import { Table } from "antd";
+import { Button, Popconfirm, Table } from "antd";
 import type { TableProps } from 'antd';
+import { DeleteFilled, EditFilled } from '@ant-design/icons';
 import { Ticket } from "../../Types/Tickets";
 import { Rate } from "../../Types/Rate";
 import { Agent } from "../../Types/Agent";
@@ -53,8 +54,34 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
             key: 'date_time',
             sorter: true,
             render: (dateTime: string) => utils.formatDateTime(dateTime)
+        },
+        {
+            title: 'Action',
+            dataIndex: '',
+            key: 'action',
+            render: () => <>
+            <Button icon={<EditFilled />}>Edit</Button>
+                <Popconfirm
+                    title="Delete the User"
+                    description="Are you sure to delete this User?"
+                    onConfirm={ () => handleDeleteConfirm() }
+                    onCancel={() =>{}}
+                    okText="Yes"
+                    cancelText="No"
+                >
+                    <Button type="text" danger icon={<DeleteFilled />} onClick={handleDeleteClick}/>
+                </Popconfirm>
+            </>
         }
     ]
+
+    const handleDeleteClick = () => {
+        
+    }
+
+    const handleDeleteConfirm = () => {
+
+    }
 
     return (
         <>

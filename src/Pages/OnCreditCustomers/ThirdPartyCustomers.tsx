@@ -1,12 +1,46 @@
 import { Row, Col, Card, Space, Typography, DatePicker, Input, Statistic, Button } from 'antd';
 import type { SearchProps } from 'antd/es/input/Search';
 import PendingTickets from '../../Components/ThirdParty/PendingTickets';
+import { useQuery } from '@tanstack/react-query';
+import { Ticket } from '../../Types/Tickets';
+import { RemoteResponse, AppError } from '../../Types/Remote';
+import { useEffect, useState } from 'react';
+import { getThirdPartyTickets } from '../../Services/TicketService';
+import dayjs from 'dayjs';
+import type { Dayjs } from 'dayjs';
+
+const stationSelect = 'stationSelect';
 
 const { RangePicker } = DatePicker;
 const { Search } = Input;
 const onSearch: SearchProps['onSearch'] = (value, _e, info) => console.log(info?.source, value);
 
 const ThirdPartyCustomers = () => {
+
+    const [dateRange, setDateRange] = useState<{from:string, to:string} | undefined>({ from: dayjs().add(-1, 'd').format("YYYY-MM-DD HH:mm:ss"), to: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+    const [thirdPartyTickets, setThirdPartyTicket] = useState<Ticket[]>([]);
+
+    const { data:thirdPartyTicketsData, isLoading, isSuccess } = useQuery<RemoteResponse<Ticket[]> | AppError>({
+        queryKey: ['thirdpartyticket'],
+        queryFn: async () => getThirdPartyTickets(dateRange?.from, dateRange?.to)
+    });
+
+    useEffect(() => {
+
+        if (isSuccess && thirdPartyTicketsData.success) {
+            setThirdPartyTicket(thirdPartyTicketsData.data);
+        }
+
+    }, []);
+
+    const onRangeChange = (dates: null | (Dayjs | null)[], dateStrings: string[]) => {
+        if (dates) {
+            setDateRange({from: dateStrings[0], to: dateStrings[1]});
+        } else {
+            console.log('Clear');
+        }
+    };
+
     return (
     <>
         <Row>
@@ -16,7 +50,12 @@ const ThirdPartyCustomers = () => {
                         <Space direction="vertical" style={{textAlign: 'left', marginRight: '3rem'}}> 
                             <Typography>Date Filter</Typography>
                             <Space direction="horizontal" >
-                                <RangePicker showTime size={'large'}/>
+                                <RangePicker 
+                                    onChange={onRangeChange}
+                                    showTime 
+                                    size={'large'}
+                                    defaultValue={[dayjs().startOf('day'), dayjs()]}
+                                />
                                 
                             </Space>
                         </Space>
