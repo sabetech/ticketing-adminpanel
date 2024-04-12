@@ -74,10 +74,12 @@ const ThirdPartyCustomers = () => {
                     </Space>
                     <Row gutter={16} style={{marginTop: '2%'}}>
                         <Col span={4}>
-                            <Statistic title="Pending Payments" value={89} />
+                            <Statistic title="Pending Payments" value={thirdPartyTickets.length} />
                         </Col>
                         <Col span={4}>
-                            <Statistic title="Pending Amount GHC" value={112893} precision={2} />
+                            <Statistic title="Pending Amount GHC" 
+                                        value={thirdPartyTickets.reduce((acc, tkt) => acc + parseFloat(tkt.amount) ,0) } 
+                                        precision={2} />
                             <Button style={{ marginTop: 16 }} type="primary">
                                 Make Payment
                             </Button>

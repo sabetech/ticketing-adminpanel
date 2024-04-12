@@ -16,12 +16,11 @@ const ManageUsers = () => {
 
     useEffect(() => {
         if (isSuccess) {
-            console.log("USERSS::", users);
             if (users?.success) {
                 setUsersList(users.data);
             }
         }
-    },[]);
+    },[users]);
 
     
 
@@ -30,7 +29,6 @@ const ManageUsers = () => {
             const selectedUser = users.data.filter(usr => usr.fname+" "+usr.lname === data);
             setUsersList(selectedUser)
         }
-            
     };
 
     const [value, setValue] = useState('');

@@ -69,7 +69,7 @@ export const getThirdPartyTickets = async (from?: string, to?: string): Promise<
     const userInfo = getUserInfo()  
 
     if (userInfo)
-        return (await api.get(`ticket/third-party-tickets?from=${from}&${to}`, {'Authorization': 'Bearer '+userInfo.token})).data
+        return (await api.get(`/ticket/third-party-tickets?from=${from}&${to}`, {'Authorization': 'Bearer '+userInfo.token})).data
     else
         return new Promise<AppError>((_, reject) => {
             reject("User is not logged In");
