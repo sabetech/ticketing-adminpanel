@@ -20,6 +20,7 @@ const { Header, Content, Footer, Sider } = Layout;
 import { logout } from '../../Services/Auth';
 import * as utils from "../../Utils/Auth";
 import { getUserInfo } from '../../Utils/Auth';
+import ManageUsers from '../UserManagement/ManageUsers';
 
 type SidebarProps = {
   userInfo: TAuthUserResponse
@@ -199,6 +200,8 @@ const Sidebar: React.FC<SidebarProps> = ( { userInfo } ) => {
                 <Route path="/station-summary" element={<StationHome />} />
                 <Route path="/rates-and-categories" element={<Rates />} />
                 <Route path="/on-credit-customers" element={<ThirdPartyCustomers />} />
+                <Route path="/user-management" element={<ManageUsers />} />
+                <Route path="/users/manage" element={<ManageUsers />} />
               </Routes>
             </UserContext.Provider>
 

@@ -83,17 +83,20 @@ const RatesTable= ({ rates, isloading }: RatesProps) => {
             dataIndex: 'action', 
             key: 'action',
             render: (_, record: Rate) => <>
+             <Space size="middle">
                 <Button icon={<EditFilled />} onClick={() => handleRateEdit(record)}>Edit</Button>
                 <Popconfirm
                     title="Delete the User"
-                    description="Are you sure to delete this User?"
+                    description="Are you sure to delete this Rate?"
                     onConfirm={ () => handleDeleteConfirm() }
                     onCancel={() =>{}}
                     okText="Yes"
                     cancelText="No"
                 >
-                    <Button type="text" danger icon={<DeleteFilled />} onClick={() => handleDeleteClick()}/>
-                </Popconfirm></>
+                    <Button type="primary" danger icon={<DeleteFilled />} onClick={() => handleDeleteClick()}/>
+                </Popconfirm></Space>
+                </>
+                
                 
         }
     ]
