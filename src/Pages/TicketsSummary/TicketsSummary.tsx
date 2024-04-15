@@ -37,7 +37,7 @@ const TicketsSummary = () => {
 
     useEffect(() => {
         if (ticketData?.success) {
-            setTickets(ticketData.data)
+            setTickets(ticketData.data.map(tkt => ({...tkt, key: tkt.id})))
             if (typeof ticketData.data !== 'undefined')
                 setAutocompleteOptions(constructAutoCompleteOptions(ticketData.data))
         }

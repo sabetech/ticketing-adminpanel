@@ -1,4 +1,5 @@
-import { Button, Popconfirm, Table } from "antd";
+import { useState } from "react";
+import { Button, Popconfirm, Table, Typography, Modal } from "antd";
 import type { TableProps } from 'antd';
 import { DeleteFilled, EditFilled } from '@ant-design/icons';
 import { Ticket } from "../../Types/Tickets";
@@ -14,11 +15,25 @@ type TableTicketProp = {
 
 const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
 
+    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+    
+    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+        console.log('selectedRowKeys changed: ', newSelectedRowKeys);
+        setSelectedRowKeys(newSelectedRowKeys);
+    };
+
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: onSelectChange,
+    };
+
+    
+
     const columns: TableProps<Ticket>['columns'] = [
         {
             title: 'Ticket No',
             dataIndex: 'title',
-            key: 'ticket_no'
+            key: 'key'
         },
         {
             title: 'Car Number',
@@ -59,12 +74,12 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
             title: 'Action',
             dataIndex: '',
             key: 'action',
-            render: () => <>
+            render: (_, record: Ticket) => <>
             <Button icon={<EditFilled />}>Edit</Button>
                 <Popconfirm
-                    title="Delete the User"
-                    description="Are you sure to delete this User?"
-                    onConfirm={ () => handleDeleteConfirm() }
+                    title="Delete the Ticket"
+                    description="Are you sure to delete this Ticket?"
+                    onConfirm={ () => handleDeleteConfirm(record.id) }
                     onCancel={() =>{}}
                     okText="Yes"
                     cancelText="No"
@@ -79,13 +94,39 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
         
     }
 
-    const handleDeleteConfirm = () => {
-
+    const handleDeleteConfirm = (ticketId: number) => {
+        console.log("TICKET ID IS HERE::", ticketId)
     }
+
+    const handleOk = () => {
+        console.log("DELETE THESE IDS::", selectedRowKeys);
+      };
+    
+
+    const onDeleteMultiple = () => {
+        Modal.confirm({
+            title: 'Confirm Delete?',
+            onOk: handleOk,
+            content: 'Are you sure you want to delete the Tickets selected?',
+            footer: (_, { OkBtn, CancelBtn }) => (
+              <>
+                <CancelBtn />
+                <OkBtn />
+              </>
+            ),
+    })}
+
+    const hasSelected = selectedRowKeys.length > 0;
 
     return (
         <>
+            <span style={{ float: 'left' }}>
+                {hasSelected ? <>
+                    <Typography.Title level={5}>Selected {selectedRowKeys.length} items: <Button danger onClick={onDeleteMultiple}>Delete?</Button> </Typography.Title></> : ''}
+                
+            </span>
             <Table 
+                rowSelection={rowSelection}
                 columns={columns}  
                 dataSource={ticketData} 
                 loading={isLoading}

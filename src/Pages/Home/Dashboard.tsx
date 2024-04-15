@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import {Row, Col, Card} from 'antd';
 import TableAgentsOnline from '../../Components/Dashboard/TableAgentsOnline';
-import TableAgentsTickets from '../../Components/Dashboard/TableAgentsTickets';
 import type { DatePickerProps } from 'antd';
 import { DatePicker } from 'antd';
 import CardInfo from '../../Components/Dashboard/CardInfo';
@@ -11,6 +10,7 @@ import { getAgentCount, getAgentOnlineStatus } from '../../Services/AgentService
 
 import dayjs from 'dayjs';
 import { AppError, RemoteResponse } from '../../Types/Remote';
+import { TAgentOnlineStatus } from '../../Types/Agent';
 
 
 
@@ -19,6 +19,7 @@ const Dashboard = () => {
     const [ticketRevenue, setTicketRevenue] = useState<number>(0);
     const [unpaidTicketsAmount, setUnpaidTicketsAmount] = useState<number>(0);
     const [agentCount, setAgentCount] = useState<number>(0);
+    const [agentOnlineStatus, setAgentOnlineStatus] = useState<TAgentOnlineStatus[]>([]);
     const now = dayjs().format("YYYY-MM-DD");
     const [date, setDate] = useState<string>(now)
     
@@ -43,12 +44,11 @@ const Dashboard = () => {
       queryFn: async () => getAgentCount(date)
     });
 
-    // const { data: agentsOnline, isLoading: isAgentsOnlineLoading } = useQuery(
-    //   {
-    //     queryKey: ['agentCount'],
-    //     queryFn: async () => getAgentOnlineStatus()
-    //   })
-
+    const { data: agentsOnline, isLoading: isAgentsOnlineLoading } = useQuery(
+      {
+        queryKey: ['agentCount'],
+        queryFn: async () => getAgentOnlineStatus()
+      })
 
     useEffect(() => {
       if (ticketsNumber?.success) {
@@ -65,16 +65,23 @@ const Dashboard = () => {
 
       if (agentsDataCount?.success) {
         setAgentCount(agentsDataCount.data);
-      }
-
-
-      
+      }      
     }, [ticketsNumber, ticketsRevenueData, ticketsUnpaidAmountData, agentsDataCount]);
-    
+
+    useEffect(() => {
+
+      if (agentsOnline?.success) {
+        setAgentOnlineStatus(agentsOnline.data);
+      } 
+
+    }, [agentsOnline]);
+
     const onChange: DatePickerProps['onChange'] = (_, dateString) => {
       if (typeof dateString == 'string') setDate(dateString)
     };
-    
+
+    console.log("AGENTSONLINE::", agentOnlineStatus);
+
     return (
         <>
         <Row style={{marginBottom: 20}} >
@@ -102,7 +109,7 @@ const Dashboard = () => {
           </Col> */}
           <Col span={11}>
             <Card title="Agent Online Status">
-              {/* <TableAgentsOnline agentsOnline={agentsOnline} /> */}
+              <TableAgentsOnline agentsOnline={agentOnlineStatus} isLoading={isAgentsOnlineLoading}/>
             </Card>
           </Col>
         </Row>
