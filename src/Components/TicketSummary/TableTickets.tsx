@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Button, Popconfirm, Table, Typography, Modal } from "antd";
+import {Button, Popconfirm, Table, Typography, Modal } from "antd";
 import type { TableProps } from 'antd';
 import { DeleteFilled, EditFilled } from '@ant-design/icons';
 import { Ticket } from "../../Types/Tickets";
 import { Rate } from "../../Types/Rate";
+import FormEditTicket from "./FormEditTicket"
 import { Agent } from "../../Types/Agent";
 import * as utils from "../../Utils/Helpers"
-
 
 type TableTicketProp = {
     ticketData: Ticket[],
@@ -16,7 +16,9 @@ type TableTicketProp = {
 const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-    
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [editTicketInfo, setEditTicketInfo] = useState<Ticket>();
+
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
         console.log('selectedRowKeys changed: ', newSelectedRowKeys);
         setSelectedRowKeys(newSelectedRowKeys);
@@ -75,7 +77,11 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
             dataIndex: '',
             key: 'action',
             render: (_, record: Ticket) => <>
-            <Button icon={<EditFilled />}>Edit</Button>
+            <Button icon={<EditFilled />} onClick={() => {
+                setModalOpen(true)
+                setEditTicketInfo(record)
+                }
+            } >Edit</Button>
                 <Popconfirm
                     title="Delete the Ticket"
                     description="Are you sure to delete this Ticket?"
@@ -101,6 +107,14 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
     const handleOk = () => {
         console.log("DELETE THESE IDS::", selectedRowKeys);
       };
+
+    const handleEditTicket = (id: number) => {
+        console.log("EDIT TICKET")
+    }
+
+    const handleCancel = () => {
+        setModalOpen(false);
+    }
     
 
     const onDeleteMultiple = () => {
@@ -120,6 +134,9 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
 
     return (
         <>
+            <Modal title="Edit Ticket" open={isModalOpen}  onCancel={handleCancel}>
+               {editTicketInfo && <FormEditTicket oldFormFields={editTicketInfo}  />}
+            </Modal>
             <span style={{ float: 'left' }}>
                 {hasSelected ? <>
                     <Typography.Title level={5}>Selected {selectedRowKeys.length} items: <Button danger onClick={onDeleteMultiple}>Delete?</Button> </Typography.Title></> : ''}

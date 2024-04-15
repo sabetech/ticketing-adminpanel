@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Card, Row, Col, Typography, Space, Statistic, AutoComplete, message } from "antd";
-import { DatePicker, Input } from 'antd';
+import {Card, Row, Col, Typography, Space, Statistic, AutoComplete, message } from "antd";
+import { DatePicker } from 'antd';
 import TableTickets from "../../Components/TicketSummary/TableTickets";
 import dayjs from "dayjs";
 import { getTicketsIssued } from "../../Services/TicketService";
@@ -136,6 +136,7 @@ const TicketsSummary = () => {
     return (
         <>
         {contextHolder}
+        
             <Row>
                 <Col span={23}>
                     <Card title={"Filter Tickets"} style={{textAlign: 'left'}}>
