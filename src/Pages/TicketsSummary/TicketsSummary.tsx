@@ -178,7 +178,13 @@ const TicketsSummary = () => {
                 </Col>
                 <Col span={4}>
                     <Card bordered={true}>
-                        <Statistic title="Total Paid Amount" value={ tickets.reduce( (acc: number, tkt: Ticket) => { return parseFloat(tkt.amount) + acc}, 0 ) } suffix={"GHc"} valueStyle={{ color: '#3f8600' }} />
+                        <Statistic title="Total Paid Amount" value={ tickets.reduce( (acc: number, tkt: Ticket) => 
+                        { 
+                            if (tkt.paid) {
+                                return acc + parseFloat(tkt.amount);
+                            }
+                            return acc
+                        }, 0 ) } suffix={"GHc"} valueStyle={{ color: '#3f8600' }} />
                     </Card>
                 </Col>
                 <Col span={4}>
@@ -189,7 +195,7 @@ const TicketsSummary = () => {
                 <Col span={4}>
                     <Card bordered={true}>
                         <Statistic title="Unpaid Ticket Amount" value={ tickets.reduce( (acc: number, tkt: Ticket) => { 
-                            if (!tkt.paid) {
+                            if (tkt.paid != true) {
                                 return acc + parseFloat(tkt.amount);
                             }
                             return acc;
@@ -199,7 +205,15 @@ const TicketsSummary = () => {
                 </Col>
                 <Col span={4}>
                     <Card bordered={true}>
-                        <Statistic title="Agents" value={5} valueStyle={{ color: '#3f8600' }} />
+                        <Statistic title="Agents" value={
+                            tickets.reduce(( acc: any, current: Ticket ) => {
+                                if (!acc[current.agent.id]) {
+                                    acc[current.agent.id] = true;
+                                    acc.count++
+                                }
+                                return acc
+                            }, {count: 0}).count
+                        } valueStyle={{ color: '#3f8600' }} />
                     </Card>
                 </Col>
             </Row>

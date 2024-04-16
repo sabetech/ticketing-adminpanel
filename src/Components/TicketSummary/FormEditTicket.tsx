@@ -1,5 +1,7 @@
-import  { Form, Input } from 'antd'
+import  { Form, Input, Select } from 'antd'
 import { Ticket } from '../../Types/Tickets';
+import { DatePicker } from 'antd';
+import dayjs from 'dayjs';
 
 type Props = {
     oldFormFields: Ticket
@@ -8,8 +10,10 @@ type Props = {
 const FormEditTicket:React.FC<Props> = ({oldFormFields}) => {
 
     const [form] = Form.useForm();
-    form.setFieldsValue(oldFormFields)
-    console.log("DOFMR::",oldFormFields)
+    form.setFieldValue('title', oldFormFields.title)
+    form.setFieldValue('car_number', oldFormFields.car_number)
+    form.setFieldValue('amount', oldFormFields.amount)
+    form.setFieldValue('agent', `${oldFormFields.agent.fname} ${oldFormFields.agent.lname}`)
 
     return (
         <Form
@@ -39,17 +43,23 @@ const FormEditTicket:React.FC<Props> = ({oldFormFields}) => {
             </Form.Item>
             <Form.Item
                 label="Agent"
-                name="fname"
+                name="agent"
                 rules={[{ required: true, message: 'Please input agent' }]}
             >
-                <Input />
+                <Select
+                    showSearch
+                    placeholder="Select an Agent"
+                />
             </Form.Item>
             <Form.Item
                 label="Date and Time"
                 name="issued_date_time"
                 rules={[{ required: true, message: 'Please input date and time' }]}
             >
-                <Input />
+                <DatePicker 
+                    showTime
+                    defaultPickerValue={dayjs(oldFormFields.issued_date_time)}
+                />
             </Form.Item>
         </Form>
     )
