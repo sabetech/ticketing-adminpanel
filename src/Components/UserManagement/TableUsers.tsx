@@ -1,17 +1,25 @@
 import type { TableProps } from 'antd';
-import { Table, Tag, Avatar, Space, Button } from "antd";
+import { Table, Tag, Avatar, Space, Button, Popconfirm } from "antd";
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { User } from '../../Types/User';
 import { Role } from '../../Types/User';
 import * as urls from '../../Constants/Urls'
+import { useMutation } from '@tanstack/react-query';
+import { deleteUser } from '../../Services/User';
 
 type TableUsersProp = {
     isLoading: boolean
-    users: User[]
+    users: User[] 
 }
 
 const TableUsers: React.FC<TableUsersProp> = ({isLoading, users}) => {
+     
+    const { mutate: removeUser } = useMutation({
+        mutationFn: (id: number) => deleteUser(id)
+    });
     
+
+
     const columns: TableProps<User>['columns'] = [
         {
             title: 'User ID',
@@ -52,9 +60,16 @@ const TableUsers: React.FC<TableUsersProp> = ({isLoading, users}) => {
             title: 'Actions',
             dataIndex: '',
             key: 'action',
-            render: () => <Space size="middle">
+            render: (record: User) => <Space size="middle">
                 <Button type="primary" icon={<EditOutlined />} >Edit</Button>
-                <Button type="primary" danger icon={<DeleteOutlined />} />
+                <Popconfirm
+                    title="Are you sure to delete this user?"
+                    onConfirm={() => removeUser(record.id)}
+                    okText="Yes"
+                    cancelText="No"
+                >
+                    <Button type="primary" danger icon={<DeleteOutlined />} />
+                </Popconfirm>
             </Space>
 
         },
