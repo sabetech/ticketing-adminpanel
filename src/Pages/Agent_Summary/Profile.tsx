@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Card, Row, Col, Statistic, Space } from 'antd';
+import { Card, Row, Col, Statistic, Space, Button } from 'antd';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getAgentDetail } from '../../Services/AgentService';
+import { useNavigate } from 'react-router-dom';
 import { TAgentTicketInfo } from '../../Types/Agent';
 import { DatePicker } from "antd";
 import type { TimeRangePickerProps } from 'antd';
@@ -18,6 +20,7 @@ const Profile = () => {
     const [dateRange, setDateRange] = useState<{from:string, to:string} | undefined>(undefined);
 
     const { id } = useParams();
+    const navigate = useNavigate();
 
     const { data: agentTicketInfoData, isSuccess, isLoading } = useQuery({
         queryKey: ['agentsTicketInfoData', dateRange],
@@ -48,6 +51,8 @@ const Profile = () => {
       
     return (
         <>
+        <Button icon={<ArrowLeftOutlined />} size={'large'} 
+            style={{display:'block', marginBottom: 10}} onClick={() => navigate(-1)}>Back</Button>
             <div style={{display: "flex"}}>
                 <Space direction={"horizontal"} align="start">
                     <Card

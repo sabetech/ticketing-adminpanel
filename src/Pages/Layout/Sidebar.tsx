@@ -1,5 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import {
+  DashboardOutlined,
+  DollarOutlined,
+  FileDoneOutlined,
+  ThunderboltOutlined,
+  UsergroupAddOutlined,
   UserOutlined,
   DownOutlined
 } from '@ant-design/icons';
@@ -72,17 +77,17 @@ const Sidebar: React.FC<SidebarProps> = ( { userInfo } ) => {
     {
       title: "Dashboard",
       key: "dashboard",
-      icon: UserOutlined
+      icon: DashboardOutlined
      },
     {
       title: "Ticket Summary",
       key: "tickets-summary",
-      icon: UserOutlined
+      icon: FileDoneOutlined
     },
     {
       title: "Agent Summary",
       key: "agent-summary",
-      icon: UserOutlined
+      icon: UsergroupAddOutlined
     },
     {
       title: "Station Summary",
@@ -92,12 +97,12 @@ const Sidebar: React.FC<SidebarProps> = ( { userInfo } ) => {
     {
       title: "Rates and Categories",
       key: "rates-and-categories",
-      icon: UserOutlined
+      icon: DollarOutlined
     },
     {
       title: "Third Party(On Credit) ",
       key: "on-credit-customers",
-      icon: UserOutlined
+      icon: ThunderboltOutlined
     },
     {
       title: "User Management",
