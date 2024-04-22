@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Rate } from "../../Types/Rate";
 import { Button, Popconfirm, Table, Tag, Space, Modal } from "antd";
 import type { TableProps } from 'antd';
@@ -14,8 +14,8 @@ type RatesProps = {
 
 const RatesTable= ({ rates, isloading }: RatesProps) => {
     const [modalOpen, setModalOpen] = useState(false)
-    const [confirmLoading, setConfirmingLoading] = useState(false);
-    const [initialValues, setInitialValues] = useState<object | undefined>(undefined);
+    const [initialValues, setInitialValues] = useState<Rate | undefined>(undefined);
+    const [stations, _] = useState<Station[]>([...new Set(rates.map(item => JSON.stringify(item.station)))].map(station => JSON.parse(station)));
 
     const handleDeleteClick = () => {
         
@@ -27,13 +27,13 @@ const RatesTable= ({ rates, isloading }: RatesProps) => {
 
     const handleRateEdit = (record: Rate) => {
         //show the edit modal here ...
-        const initialValues= {
-            category: record.title,
+        const initialValues = {
+            title: record.title,
             amount: record.amount,
-            station: record.station.name,
-            flexible: false,
-            postpaid: false
-        }
+            station: record.station,
+            is_postpaid: false,
+            rate_type: record.rate_type
+        } as Rate
 
         setInitialValues(initialValues);
 
@@ -108,10 +108,8 @@ const RatesTable= ({ rates, isloading }: RatesProps) => {
             title={"Edit Rate"}
             modalOpen={modalOpen}
             setModalOpen={setModalOpen}
-            handleOk={handleOk}
-            confirmLoading={confirmLoading}
         >
-            <FormAddEdit initialValues={initialValues}/>
+            <FormAddEdit initialValues={initialValues} stations={ stations } setModalOpen={setModalOpen}/>
         </ModalFormAddEdit>
             
             <Table 

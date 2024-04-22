@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Row, Col, Card, Select, Typography, Space, Button, Modal } from 'antd';
+import { Row, Col, Card, Select, Typography, Space, Button, message } from 'antd';
 import RatesTable from '../../Components/RatesAndCategories/RatesTable';
 import { useQuery } from '@tanstack/react-query';
 import { getRates } from '../../Services/Rate';
 import { AppError, RemoteResponse } from '../../Types/Remote';
 import { Rate } from '../../Types/Rate';
+import { Station } from '../../Types/Station';
 import FormAddEdit from '../../Components/RatesAndCategories/FormAddEdit';
 import ModalFormAddEdit from '../../Components/RatesAndCategories/ModalFormAddEdit';
 
@@ -12,9 +13,11 @@ const Rates = () => {
     const [stationSelect, setStationSelect] = useState<number|null>(null)
     const [rates, setRates] = useState<Rate[]>([])
     const [modalOpen, setModalOpen] = useState(false)
-    const [confirmLoading, setConfirmingLoading] = useState(false);
+    const [messageApi, contextHolder] = message.useMessage();
 
-    const { data:ratesData, isLoading, isSuccess } = useQuery<RemoteResponse<Rate[]> | AppError>({
+    const [stations, setStations] = useState<Station[]>([]);
+
+    const { data:ratesData, isLoading, isSuccess, isError } = useQuery<RemoteResponse<Rate[]> | AppError>({
         queryKey: ['rates', stationSelect],
         queryFn: async () => getRates(stationSelect)
     })
@@ -22,16 +25,26 @@ const Rates = () => {
     useEffect(() => {
         if (isSuccess && ratesData.success) {
             setRates(ratesData.data);
+            setStations([...new Set(ratesData.data.map(item => JSON.stringify(item.station)))].map(station => JSON.parse(station)));
         }
     },[ratesData])
+
+    if (isError) {
+        messageApi.open({
+            type: 'error',
+            content: 'Could not load Rates. Check your internet connection',
+          });
+    }
     
     const handleChange = (value: number) => {
         setStationSelect(value)
     };
 
-    const handleOk = () => {
-
+    const handleOk = (values: any) => {
+        console.log("VALUE FROM FOFM MODAL::", values)
     }
+
+    console.log("STATIONS BEFORE TRANSFER::", stations);
 
     return (
     <>
@@ -39,10 +52,8 @@ const Rates = () => {
             title={"Add New Rate"}
             modalOpen={modalOpen}
             setModalOpen={setModalOpen}
-            handleOk={handleOk}
-            confirmLoading={confirmLoading}
         >
-            <FormAddEdit initialValues={undefined}/>
+            <FormAddEdit initialValues={undefined} stations={stations} setModalOpen={setModalOpen} />
         </ModalFormAddEdit>
             <Row>
                 <Col span={23}>
@@ -52,13 +63,12 @@ const Rates = () => {
                                 <Typography>Select Station</Typography>
                                 <Select
                                     defaultValue={null}
-                                    style={{ width: 120 }}
+                                    style={{ width: 250 }}
                                     size='large'
                                     onChange={handleChange}
                                     options={[
                                         { value: null, label: 'All' },
-                                        { value: 1, label: 'Achimota' },
-                                        { value: 2, label: 'Circle' },
+                                        ...stations.map(stn => ({value: stn.id, label: stn.name}))
                                     ]}
                                 />
                             </Space>

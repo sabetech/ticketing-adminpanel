@@ -16,3 +16,35 @@ export const getRates = async (station: number | null = null): Promise<RemoteRes
             reject("User is not logged In");
         })
 }
+
+export const deleteRate = async (rateId: number) => {
+    const userInfo = getUserInfo()
+    if (userInfo)
+
+    return new Promise<AppError>((_, reject) => {
+        reject("User is not logged In");
+    })
+}
+
+export const editRate = async (values: Rate, rateId: number) => {
+    const userInfo = getUserInfo()
+    if (userInfo)
+        return ( await api.postWithFile(`/rates/${rateId}/edit`, values, {'Authorization': 'Bearer '+userInfo.token})).data
+    return new Promise<AppError>((_, reject) => {
+        reject("User is not logged In");
+    })
+}
+
+export const addRate = async (values: Rate) => {
+
+    console.log("ADD RATE REQUEST::", values);
+
+    const userInfo = getUserInfo()
+    if (userInfo)
+        return ( await api.postWithFile(`/rates/create`, values, {'Authorization': 'Bearer '+userInfo.token})).data
+    return new Promise<AppError>((_, reject) => {
+        reject("User is not logged In");
+    })
+}
+
+//export const addOrEditRate = async (values, rateId: number): Promise<

@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
-import {Row, Col, Card, Space, Typography, AutoComplete} from 'antd'
+import {Row, Col, Card, Space, Typography, AutoComplete, Button} from 'antd'
+import { UserAddOutlined } from '@ant-design/icons';
 import TableUsers from '../../Components/UserManagement/TableUsers';
 import { useQuery } from '@tanstack/react-query';
 import { AppError, RemoteResponse } from '../../Types/Remote';
 import { User } from '../../Types/User';
 import { getAllUsers } from '../../Services/User';
+import ModalAddUsers from '../../Components/UserManagement/ModalAddUsers';
 const ManageUsers = () => {
 
     const [usersList, setUsersList] = useState<User[]>([]);
+    const [modalOpen, setModalOpen] = useState(false)
 
     const { data: users, isLoading, isSuccess } = useQuery<RemoteResponse<User[]> | AppError>({
         queryKey: ['users'],
@@ -45,6 +48,7 @@ const ManageUsers = () => {
 
     return (
         <>
+            <ModalAddUsers open={modalOpen} setModalOpen={setModalOpen}/>
             <Row>
                 <Col span={23}>
                     <Card title={"Manage Users"} style={{textAlign: 'left'}}>
@@ -69,6 +73,10 @@ const ManageUsers = () => {
                                         option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
                                     }
                                 />
+                            </Space>
+                            <Space direction='vertical'>
+                                <Typography />
+                                <Button size={"large"} type={"primary"} icon={<UserAddOutlined />} onClick={() => setModalOpen(true)}>Add User</Button>
                             </Space>
                         </Space>
                     </Card>

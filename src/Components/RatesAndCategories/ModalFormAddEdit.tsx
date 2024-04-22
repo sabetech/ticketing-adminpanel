@@ -3,23 +3,20 @@ import { Modal } from 'antd'
 type ModalProps = {
     title: string
     modalOpen: boolean
-    setModalOpen: (value: boolean) => void
-    handleOk: () => void
-    confirmLoading: boolean
     children: React.ReactNode
+    setModalOpen: any
 
 }
 
-const ModalFormAddEdit = ({title, modalOpen, setModalOpen, handleOk, confirmLoading, children}: ModalProps) => 
+const ModalFormAddEdit = ({title, modalOpen, setModalOpen, children}: ModalProps) => 
     <Modal
         title={title}
         open={modalOpen}
-        onOk={handleOk}
-        confirmLoading={confirmLoading}
+        footer={null}
+        closable={true}
         onCancel={() => setModalOpen(false)}
     >
         {children}
-        {/* <FormAddEdit title={""} initialValues={undefined} /> */}
     </Modal>
 
 export default ModalFormAddEdit

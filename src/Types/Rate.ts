@@ -6,5 +6,7 @@ export type Rate = {
     is_postpaid: boolean
     rate_type: string
     title: string
-    station: Station
+    station: Station | string,
+    rate_image: any
+
 }

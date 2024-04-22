@@ -17,11 +17,11 @@ const onSearch: SearchProps['onSearch'] = (value, _e, info) => console.log(info?
 
 const ThirdPartyCustomers = () => {
 
-    const [dateRange, setDateRange] = useState<{from:string, to:string} | undefined>({ from: dayjs().add(-1, 'd').format("YYYY-MM-DD HH:mm:ss"), to: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+    const [dateRange, setDateRange] = useState<{from:string, to:string} | undefined>({ from: dayjs().startOf('day').format("YYYY-MM-DD HH:mm:ss"), to: dayjs().format("YYYY-MM-DD HH:mm:ss") });
     const [thirdPartyTickets, setThirdPartyTicket] = useState<Ticket[]>([]);
 
     const { data:thirdPartyTicketsData, isLoading, isSuccess } = useQuery<RemoteResponse<Ticket[]> | AppError>({
-        queryKey: ['thirdpartyticket'],
+        queryKey: ['thirdpartyticket', dateRange],
         queryFn: async () => getThirdPartyTickets(dateRange?.from, dateRange?.to)
     });
 
@@ -31,7 +31,7 @@ const ThirdPartyCustomers = () => {
             setThirdPartyTicket(thirdPartyTicketsData.data);
         }
 
-    }, []);
+    }, [thirdPartyTicketsData, dateRange]);
 
     const onRangeChange = (dates: null | (Dayjs | null)[], dateStrings: string[]) => {
         if (dates) {
@@ -74,16 +74,46 @@ const ThirdPartyCustomers = () => {
                     </Space>
                     <Row gutter={16} style={{marginTop: '2%'}}>
                         <Col span={4}>
-                            <Statistic title="Pending Payments" value={thirdPartyTickets.length} />
+                            <Card bordered={false}>
+                                <Statistic title="Paid" value={ thirdPartyTickets.reduce((acc, tkt) => {
+                                    if (tkt.paid == true) acc +=  parseFloat(tkt.amount)
+                                    return acc
+                            } ,0) }
+                                    precision={2}
+                                    suffix={'GHc'}
+                                    valueStyle={{ color: '#3f8600' }}
+                                />
+                            </Card>
+                            </Col>
+                        <Col span={4}>
+                            <Card bordered={false}>
+                                <Statistic title="Paid Tickets" value={thirdPartyTickets.length} />
+                            </Card>
                         </Col>
                         <Col span={4}>
-                            <Statistic title="Pending Amount GHC" 
-                                        value={thirdPartyTickets.reduce((acc, tkt) => acc + parseFloat(tkt.amount) ,0) } 
-                                        precision={2} />
-                            <Button style={{ marginTop: 16 }} type="primary">
-                                Make Payment
-                            </Button>
+                            <Card bordered={false}>
+                                <Statistic title="Pending Amount GHC" 
+                                            value={thirdPartyTickets.reduce((acc, tkt) => {
+                                                if (tkt.paid == false) acc += parseFloat(tkt.amount)
+                                                return acc
+                                            } ,0) } 
+                                            precision={2} />
+                                <Button style={{ marginTop: 16 }} type="primary">
+                                    Make Payment
+                                </Button>
+                            </Card>
                         </Col>
+                        <Col span={4}>
+                            <Card bordered={false}>
+                                <Statistic title="Pending Tickets" 
+                                            value={thirdPartyTickets.reduce((acc, tkt) => {
+                                                if (tkt.paid == false) acc += 1
+                                                return acc
+                                            } ,0) } 
+                                            />
+                            </Card>
+                        </Col>
+                        
                     </Row>
                 </Card>
             </Col>
@@ -91,7 +121,7 @@ const ThirdPartyCustomers = () => {
 
         <Row>
             <Col span={23}>
-                <PendingTickets />
+                <PendingTickets isLoading={isLoading} tickets={thirdPartyTickets}/>
             </Col>
         </Row>
     </>
