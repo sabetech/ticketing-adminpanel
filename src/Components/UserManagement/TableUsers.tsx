@@ -1,10 +1,10 @@
 import type { TableProps } from 'antd';
-import { Table, Tag, Avatar, Space, Button, Popconfirm } from "antd";
+import { Table, Tag, Avatar, Space, Button, Popconfirm, message } from "antd";
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { User } from '../../Types/User';
 import { Role } from '../../Types/User';
 import * as urls from '../../Constants/Urls'
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteUser } from '../../Services/User';
 
 type TableUsersProp = {
@@ -13,9 +13,18 @@ type TableUsersProp = {
 }
 
 const TableUsers: React.FC<TableUsersProp> = ({isLoading, users}) => {
-     
+    const [messageApi, contextHolder] = message.useMessage();
+    const queryClient = useQueryClient()
+
     const { mutate: removeUser } = useMutation({
-        mutationFn: (id: number) => deleteUser(id)
+        mutationFn: (id: number) => deleteUser(id),
+        onSuccess: (data: any) => { 
+            messageApi.open({
+                type: 'success',
+                content: data.message,
+              });
+              queryClient.invalidateQueries({ queryKey: ['users'] })
+        }
     });
     
 
@@ -75,12 +84,15 @@ const TableUsers: React.FC<TableUsersProp> = ({isLoading, users}) => {
         },
     ]
     
-    return <Table 
+    return <>
+        {contextHolder}
+        <Table 
             loading={isLoading}
             columns={columns}
             dataSource={users}
             scroll={{y: 480}}
         />
+    </>
 }
 
 export default TableUsers;

@@ -12,11 +12,12 @@ const ModalAddUsers: React.FC<ModalAddUsersProps> = ({open, setModalOpen}) => {
     <Modal
         width={'35vw'}
         title={"Add User"}
+        footer={null}
         open={open}
         onCancel={() => setModalOpen(false)}
         closable={true}
     >
-        <FormAddUsers />
+        <FormAddUsers setModalOpen={setModalOpen}/>
     </Modal>)
 }
 

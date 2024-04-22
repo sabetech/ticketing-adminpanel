@@ -16,8 +16,6 @@ const FormAddEdit = ({initialValues, stations, setModalOpen}: formProps) => {
     const { Option } = Select;
     const [messageApi, contextHolder] = message.useMessage();
 
-    console.log("TRNASFERED::", stations)
-
     form.setFieldsValue(initialValues)
 
     const { mutate: deleteRateItem } = useMutation({
@@ -35,7 +33,7 @@ const FormAddEdit = ({initialValues, stations, setModalOpen}: formProps) => {
             return editRate(rateValues.values, rateValues.values.id)
         },
         onSuccess: (data: any) => { 
-            console.log("rate mod ON SUCCESS:::", data)
+            
             setModalOpen(false)
             messageApi.open({
                 type: 'success',
@@ -61,7 +59,7 @@ const FormAddEdit = ({initialValues, stations, setModalOpen}: formProps) => {
                 is_postpaid: typeof formValues.is_postpaid === 'undefined' ? false : true,
                 rate_type: typeof formValues.rate_type === 'undefined' ? 'fixed' : 'flexible',
                 rate_image: formValues.rate_image[0].originFileObj,
-                station: formValues.station
+                station: formValues.station,
             } as Rate,
             action: typeof formValues.id !== 'undefined'? 'add':'edit'
             }
