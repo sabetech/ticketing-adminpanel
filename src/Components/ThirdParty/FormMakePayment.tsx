@@ -60,9 +60,9 @@ const FormMakePayment:React.FC<FormMakePaymentProps> = ( {dateRange, setModalOpe
         console.log("STataion::", station, ' customer: ', client.value, ' amount: ', amount, ' dateRange:', dateRange)
         const paymentRequest = {
             station_id: station, 
-            client_id: client,
+            client_id: client.value,
             amount: amount,
-            dateRange: dateRange
+            dateRange: JSON.stringify(dateRange)
         } as PayOnCreditRequest
 
         mutate(paymentRequest);

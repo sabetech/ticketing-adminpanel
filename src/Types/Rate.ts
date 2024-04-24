@@ -15,5 +15,5 @@ export type PayOnCreditRequest = {
     station_id: number,
     client_id: number,
     amount: number,
-    dateRange: {from: string, to: string}
+    dateRange: string
 }
