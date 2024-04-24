@@ -22,7 +22,7 @@ const Profile = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const { data: agentTicketInfoData, isSuccess, isLoading } = useQuery({
+    const { data: agentTicketInfoData, isSuccess, isLoading, isRefetching } = useQuery({
         queryKey: ['agentsTicketInfoData', dateRange],
         queryFn: async () => getAgentDetail(id, dateRange)
     });
@@ -56,7 +56,7 @@ const Profile = () => {
             <div style={{display: "flex"}}>
                 <Space direction={"horizontal"} align="start">
                     <Card
-                        loading={isLoading}
+                        loading={isRefetching}
                         hoverable
                         style={{ width: 240, marginRight: 50 }}
                         cover={<img alt="example" src={ `https://tickets.koajay.com/assets/${agentTicketInfo?.agent.photo}` } />}

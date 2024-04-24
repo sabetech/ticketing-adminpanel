@@ -6,6 +6,7 @@ import { Ticket } from '../../Types/Tickets';
 import { RemoteResponse, AppError } from '../../Types/Remote';
 import { useEffect, useState } from 'react';
 import { getThirdPartyTickets } from '../../Services/TicketService';
+import ModalMakePayment from '../../Components/ThirdParty/ModalMakePayment'
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 
@@ -19,8 +20,9 @@ const ThirdPartyCustomers = () => {
 
     const [dateRange, setDateRange] = useState<{from:string, to:string} | undefined>({ from: dayjs().startOf('day').format("YYYY-MM-DD HH:mm:ss"), to: dayjs().format("YYYY-MM-DD HH:mm:ss") });
     const [thirdPartyTickets, setThirdPartyTicket] = useState<Ticket[]>([]);
+    const [openPaymentModal, setPaymentModalOpen] = useState(false);
 
-    const { data:thirdPartyTicketsData, isLoading, isSuccess } = useQuery<RemoteResponse<Ticket[]> | AppError>({
+    const { data:thirdPartyTicketsData, isLoading,  isSuccess, isFetching } = useQuery<RemoteResponse<Ticket[]> | AppError>({
         queryKey: ['thirdpartyticket', dateRange],
         queryFn: async () => getThirdPartyTickets(dateRange?.from, dateRange?.to)
     });
@@ -28,8 +30,8 @@ const ThirdPartyCustomers = () => {
     useEffect(() => {
 
         if (isSuccess && thirdPartyTicketsData.success) {
-            setThirdPartyTicket(thirdPartyTicketsData.data);
-        }
+            setThirdPartyTicket(thirdPartyTicketsData.data); 
+        } 
 
     }, [thirdPartyTicketsData, dateRange]);
 
@@ -41,8 +43,15 @@ const ThirdPartyCustomers = () => {
         }
     };
 
+    const showPaymentModal = () => {
+        setPaymentModalOpen(true);
+    }
+
+    // console.log("DATE RANGE VAL::", dateRange)
+
     return (
     <>
+        <ModalMakePayment open={openPaymentModal} dateRange={dateRange} setModalOpen={setPaymentModalOpen}/>
         <Row>
             <Col span={23}>
                 <Card title={"Filter Options"} style={{textAlign: 'left'}}>
@@ -98,7 +107,7 @@ const ThirdPartyCustomers = () => {
                                                 return acc
                                             } ,0) } 
                                             precision={2} />
-                                <Button style={{ marginTop: 16 }} type="primary">
+                                <Button style={{ marginTop: 16 }} type="primary" size={'large'} onClick={() => showPaymentModal()} loading={isFetching} >
                                     Make Payment
                                 </Button>
                             </Card>

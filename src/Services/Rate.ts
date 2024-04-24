@@ -47,4 +47,13 @@ export const addRate = async (values: Rate) => {
     })
 }
 
+export const getPostPaidRates = async (selectedStation: number): Promise<RemoteResponse<Rate[]> | AppError> => {
+    const userInfo = getUserInfo()
+    if (userInfo)
+        return ( await api.get(`/rates?station=${selectedStation}&postpaid=true`, {'Authorization': 'Bearer '+userInfo.token})).data
+    return new Promise<AppError>((_, reject) => {
+        reject("User is not logged In");
+    })
+}
+
 //export const addOrEditRate = async (values, rateId: number): Promise<

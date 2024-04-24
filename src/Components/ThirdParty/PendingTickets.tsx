@@ -15,14 +15,20 @@ const PendingTickets:React.FC<PendingTicketsProps> = ({isLoading, tickets}) => {
             title: 'Date',
             dataIndex: 'issued_date_time',
             key: 'date',
-            width: '15%',
+            width: '13%',
             render: (val:string) => dayjs(val).format("DD MMM YYYY h:mm A")
         },
         {
             title: 'Client',
             dataIndex: 'title',
             key: 'client',
-            width: '25%',
+            width: '15%',
+        },
+        {
+            title: 'Car Number',
+            dataIndex: 'car_number',
+            key: 'car_number',
+            width: '10%',
         },
         {
             title: 'Amount',
@@ -42,7 +48,7 @@ const PendingTickets:React.FC<PendingTicketsProps> = ({isLoading, tickets}) => {
             columns={columns}
             loading={isLoading}
             dataSource={tickets}
-            scroll={{y: 500}}
+            scroll={{y: 410}}
         />
     );
 }

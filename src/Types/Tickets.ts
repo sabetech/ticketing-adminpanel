@@ -9,7 +9,9 @@ export type Ticket = {
     title: string,
     issued_date_time: string,
     name: string,
+    rate_title: string,
     rate: {
+        id: number
         on_credit: boolean
     },
     agent: Agent
