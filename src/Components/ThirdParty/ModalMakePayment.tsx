@@ -20,7 +20,7 @@ const ModalMakePayment:React.FC<ModalMakePaymentProps> = ({open, dateRange, setM
             onCancel={() => setModalOpen(false)}
             footer={false}
         >
-            <FormMakePayment dateRange={dateRange}/>
+            <FormMakePayment dateRange={dateRange} setModalOpen={setModalOpen}/>
         </Modal>
     </>);
 }

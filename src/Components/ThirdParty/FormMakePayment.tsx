@@ -1,23 +1,26 @@
 import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Form, Select, InputNumber, Alert, Typography, Button, Space } from "antd";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Form, Select, InputNumber, Alert, Typography, Button, Space , message} from "antd";
 import { getPostPaidRates } from "../../Services/Rate"
 import { AppError, RemoteResponse } from "../../Types/Remote";
-import { Rate } from "../../Types/Rate";
+import { PayOnCreditRequest, Rate } from "../../Types/Rate";
 import { Station } from "../../Types/Station";
 import { getStations } from '../../Services/Station';
 import { Ticket } from "../../Types/Tickets";
+import { makePayment } from "../../Services/Rate";
 import dayjs from "dayjs";
 
 type FormMakePaymentProps = {
     dateRange: {from:string, to:string} | undefined
+    setModalOpen: any
 }
 
-const FormMakePayment:React.FC<FormMakePaymentProps> = ( {dateRange} ) => {
+const FormMakePayment:React.FC<FormMakePaymentProps> = ( {dateRange, setModalOpen} ) => {
     const [form] = Form.useForm();
     const [selectedStation, setSelectedStation] = useState<number | undefined>(undefined)
     const [selectedClient, setSelectedClient] = useState<{value: number, label: React.ReactNode} | undefined>(undefined)
     const queryClient = useQueryClient();
+    const [messageApi, contextHolder] = message.useMessage();
 
     const {data: stations} = useQuery<RemoteResponse<Station[]> | AppError>({
         queryKey: ['stations'],
@@ -26,6 +29,16 @@ const FormMakePayment:React.FC<FormMakePaymentProps> = ( {dateRange} ) => {
 
     const cachedData: RemoteResponse<Ticket[]> | undefined = queryClient.getQueryData(['thirdpartyticket', dateRange]);
     
+    const { mutate } = useMutation({ 
+        mutationFn: (values: PayOnCreditRequest) => makePayment(values),
+        onSuccess: (data: any) => { 
+            messageApi.open({
+                type: 'success',
+                content: data.message,
+            });
+        }
+    });
+
     // console.log("DATE RANGE", dateRange);
     // console.log("Cached Data:::", cachedData)
 
@@ -41,11 +54,24 @@ const FormMakePayment:React.FC<FormMakePaymentProps> = ( {dateRange} ) => {
         enabled: typeof selectedStation !== 'undefined'
     });
 
-    const onFinish = () => {
+    const onFinish = (values: any) => {
+        console.log("VALUESS FROM FORM::", values);
+        const {station, client, amount} = values;
+        console.log("STataion::", station, ' customer: ', client.value, ' amount: ', amount, ' dateRange:', dateRange)
+        const paymentRequest = {
+            station_id: station, 
+            client_id: client,
+            amount: amount,
+            dateRange: dateRange
+        } as PayOnCreditRequest
 
+        mutate(paymentRequest);
+        setModalOpen(false);
+        
     }
 
     return (<>
+        {contextHolder}
         <Form
             form={form}
             onFinish={onFinish}
@@ -95,8 +121,12 @@ const FormMakePayment:React.FC<FormMakePaymentProps> = ( {dateRange} ) => {
             </Form.Item>
             { typeof selectedClient !== 'undefined' &&
             <Alert
+                showIcon
                 message={<Typography.Paragraph>Amount to be Paid by <strong>{selectedClient.label}</strong> from <strong>{dayjs(dateRange?.from).format("DD MMMM YYYY")} to {dayjs(dateRange?.to).format("DD MMMM YYYY")}</strong></Typography.Paragraph>}
-                description={
+                description={<>
+                <Typography.Title level={5}>
+                    { (cachedData && cachedData?.success) ? cachedData.data.filter(tkt => (parseInt(tkt.rate_title) === selectedClient.value && tkt.paid == false)).length:0 } x Tickets
+                </Typography.Title>
                 <Typography.Title level={3}>
                    { (cachedData && cachedData?.success) ? cachedData.data.filter(tkt => parseInt(tkt.rate_title) === selectedClient.value).reduce((acc, tkt: Ticket) => {
                     if (Number(tkt.paid) === 0) {
@@ -106,6 +136,7 @@ const FormMakePayment:React.FC<FormMakePaymentProps> = ( {dateRange} ) => {
                     }
                    }, 0): 0 } GHc
                 </Typography.Title>
+                </>
                 }
                 type="info"
             />
@@ -124,7 +155,7 @@ const FormMakePayment:React.FC<FormMakePaymentProps> = ( {dateRange} ) => {
             <Form.Item>
                 <Space>
                     <Button htmlType="submit" type={'primary'}>Submit</Button>
-                    <Button>Cancel</Button>
+                    <Button onClick={() => setModalOpen(false)}>Cancel</Button>
                 </Space>
             </Form.Item>
         </Form>

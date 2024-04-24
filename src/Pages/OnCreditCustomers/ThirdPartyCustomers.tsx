@@ -108,7 +108,7 @@ const ThirdPartyCustomers = () => {
                                             } ,0) } 
                                             precision={2} />
                                 <Button style={{ marginTop: 16 }} type="primary" size={'large'} onClick={() => showPaymentModal()} loading={isFetching} >
-                                    Make Payment
+                                    {isFetching ? "Please Wait":"Make Payment"}
                                 </Button>
                             </Card>
                         </Col>
