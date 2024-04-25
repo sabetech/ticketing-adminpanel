@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Rate } from "../../Types/Rate";
-import { Button, Popconfirm, Table, Tag, Space, Modal } from "antd";
+import { Button, Popconfirm, Table, Tag, Space } from "antd";
 import type { TableProps } from 'antd';
 import { Station } from "../../Types/Station";
 import { DeleteFilled, EditFilled } from '@ant-design/icons';
@@ -41,9 +41,9 @@ const RatesTable= ({ rates, isloading }: RatesProps) => {
         
     }
 
-    const handleOk = () => {
+    // const handleOk = () => {
 
-    }
+    // }
 
     const columns: TableProps<Rate>['columns'] = [
         {

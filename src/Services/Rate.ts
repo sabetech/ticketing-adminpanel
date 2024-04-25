@@ -17,14 +17,14 @@ export const getRates = async (station: number | null = null): Promise<RemoteRes
         })
 }
 
-export const deleteRate = async (rateId: number) => {
-    const userInfo = getUserInfo()
-    if (userInfo)
+// export const deleteRate = async (rateId: number) => {
+//     const userInfo = getUserInfo()
+//     if (userInfo)
 
-    return new Promise<AppError>((_, reject) => {
-        reject("User is not logged In");
-    })
-}
+//     return new Promise<AppError>((_, reject) => {
+//         reject("User is not logged In");
+//     })
+// }
 
 export const editRate = async (values: Rate, rateId: number) => {
     const userInfo = getUserInfo()

@@ -22,7 +22,7 @@ const Profile = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const { data: agentTicketInfoData, isSuccess, isLoading, isRefetching } = useQuery({
+    const { data: agentTicketInfoData, isSuccess, isRefetching } = useQuery({
         queryKey: ['agentsTicketInfoData', dateRange],
         queryFn: async () => getAgentDetail(id, dateRange)
     });

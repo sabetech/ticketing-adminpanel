@@ -55,9 +55,9 @@ const FormMakePayment:React.FC<FormMakePaymentProps> = ( {dateRange, setModalOpe
     });
 
     const onFinish = (values: any) => {
-        console.log("VALUESS FROM FORM::", values);
+        
         const {station, client, amount} = values;
-        console.log("STataion::", station, ' customer: ', client.value, ' amount: ', amount, ' dateRange:', dateRange)
+        
         const paymentRequest = {
             station_id: station, 
             client_id: client.value,

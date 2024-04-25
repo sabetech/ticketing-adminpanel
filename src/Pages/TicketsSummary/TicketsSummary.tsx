@@ -161,7 +161,7 @@ const TicketsSummary = () => {
                                         option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
                                     }
                                     placeholder="Search by Car Number, Ticket ID, Agent Name, Station" 
-                                    onSelect={(text: string, option: any) => onsearchselect(text)}
+                                    onSelect={(text: string, _: any) => onsearchselect(text)}
                                 />
                                    
                             </Space>

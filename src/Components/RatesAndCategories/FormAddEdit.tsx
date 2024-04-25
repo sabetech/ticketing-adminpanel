@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { Select, Form, Input, InputNumber, Space, Checkbox, Upload, Button, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { addRate, deleteRate, editRate } from '../../Services/Rate'
+import { addRate, editRate } from '../../Services/Rate'
 import { Rate } from '../../Types/Rate';
 import { Station } from '../../Types/Station';
 
@@ -18,12 +18,12 @@ const FormAddEdit = ({initialValues, stations, setModalOpen}: formProps) => {
 
     form.setFieldsValue(initialValues)
 
-    const { mutate: deleteRateItem } = useMutation({
-        mutationFn: (id: number) => deleteRate(id),
-        onSuccess: (data: any) => { 
-            console.log("rate mod ON SUCCESS:::", data)
-        }
-    });
+    // const { mutate: deleteRateItem } = useMutation({
+    //     mutationFn: (id: number) => deleteRate(id),
+    //     onSuccess: (data: any) => { 
+    //         console.log("rate mod ON SUCCESS:::", data)
+    //     }
+    // });
 
     const { mutate: addOrEditRateItem, isPending } = useMutation({
         mutationFn: (rateValues: {values: Rate, action: string}) => {

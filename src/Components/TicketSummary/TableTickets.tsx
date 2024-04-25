@@ -108,9 +108,9 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
         console.log("DELETE THESE IDS::", selectedRowKeys);
       };
 
-    const handleEditTicket = (id: number) => {
-        console.log("EDIT TICKET")
-    }
+    // const handleEditTicket = (id: number) => {
+    //     console.log("EDIT TICKET")
+    // }
 
     const handleCancel = () => {
         setModalOpen(false);

@@ -10,8 +10,6 @@ import ModalMakePayment from '../../Components/ThirdParty/ModalMakePayment'
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 
-const stationSelect = 'stationSelect';
-
 const { RangePicker } = DatePicker;
 const { Search } = Input;
 const onSearch: SearchProps['onSearch'] = (value, _e, info) => console.log(info?.source, value);

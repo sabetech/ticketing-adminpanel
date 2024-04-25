@@ -40,14 +40,15 @@ const Rates = () => {
         setStationSelect(value)
     };
 
-    const handleOk = (values: any) => {
-        console.log("VALUE FROM FOFM MODAL::", values)
-    }
+    // const handleOk = (values: any) => {
+    //     console.log("VALUE FROM FOFM MODAL::", values)
+    // }
 
     console.log("STATIONS BEFORE TRANSFER::", stations);
 
     return (
     <>
+    {contextHolder}
         <ModalFormAddEdit 
             title={"Add New Rate"}
             modalOpen={modalOpen}
