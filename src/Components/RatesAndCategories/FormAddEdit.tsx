@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { Select, Form, Input, InputNumber, Space, Checkbox, Upload, Button, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { addRate, editRate } from '../../Services/Rate'
@@ -15,15 +15,9 @@ const FormAddEdit = ({initialValues, stations, setModalOpen}: formProps) => {
     const [form] = Form.useForm();
     const { Option } = Select;
     const [messageApi, contextHolder] = message.useMessage();
+    const queryClient = useQueryClient()
 
     form.setFieldsValue(initialValues)
-
-    // const { mutate: deleteRateItem } = useMutation({
-    //     mutationFn: (id: number) => deleteRate(id),
-    //     onSuccess: (data: any) => { 
-    //         console.log("rate mod ON SUCCESS:::", data)
-    //     }
-    // });
 
     const { mutate: addOrEditRateItem, isPending } = useMutation({
         mutationFn: (rateValues: {values: Rate, action: string}) => {
@@ -34,6 +28,8 @@ const FormAddEdit = ({initialValues, stations, setModalOpen}: formProps) => {
         },
         onSuccess: (data: any) => { 
             
+            queryClient.invalidateQueries();
+
             setModalOpen(false)
             messageApi.open({
                 type: 'success',
@@ -51,20 +47,36 @@ const FormAddEdit = ({initialValues, stations, setModalOpen}: formProps) => {
 
     const onFinish = (formValues: Rate) => {
 
-        const rateValues = {
-            values: {
-                id: formValues.id,
-                title: formValues.title,
-                amount: formValues.amount,
-                is_postpaid: typeof formValues.is_postpaid === 'undefined' ? false : true,
-                rate_type: typeof formValues.rate_type === 'undefined' ? 'fixed' : 'flexible',
-                rate_image: formValues.rate_image[0].originFileObj,
-                station: formValues.station,
-            } as Rate,
-            action: typeof formValues.id !== 'undefined'? 'add':'edit'
+        if (typeof formValues.rate_image === 'undefined') {
+            const rateValues = {
+                values: {
+                    id: formValues.id,
+                    title: formValues.title,
+                    amount: formValues.amount,
+                    is_postpaid: typeof formValues.is_postpaid === 'undefined' ? false : true,
+                    rate_type: typeof formValues.rate_type === 'undefined' ? 'fixed' : 'flexible',
+                } as Rate,
+                action: typeof formValues.id === 'undefined' ? 'add':'edit'
             }
+            addOrEditRateItem(rateValues);
+        }else {
+            const rateValues = {
+                values: {
+                    id: formValues.id,
+                    title: formValues.title,
+                    amount: formValues.amount,
+                    is_postpaid: typeof formValues.is_postpaid === 'undefined' ? false : true,
+                    rate_type: typeof formValues.rate_type === 'undefined' ? 'fixed' : 'flexible',
+                    rate_image: formValues.rate_image[0].originFileObj,
+                    station: formValues.station,
+                } as Rate,
+                action: typeof formValues.id === 'undefined' ? 'add':'edit'
+                }
+            addOrEditRateItem(rateValues);
+        }
         
-        addOrEditRateItem(rateValues);
+        
+        
         
     }
       
@@ -73,7 +85,7 @@ const FormAddEdit = ({initialValues, stations, setModalOpen}: formProps) => {
         <>
         {contextHolder}
         <Form size='large' onFinish={onFinish} layout="vertical" form={form} name="form_in_modal" initialValues={initialValues}>
-            <Form.Item hidden={true} name={'id'}/>
+            <Form.Item hidden={true} name={'id'} />
             <Form.Item
                 name="title"
                 label="Rate Category"
@@ -97,7 +109,7 @@ const FormAddEdit = ({initialValues, stations, setModalOpen}: formProps) => {
                 <Checkbox>Postpaid Rate</Checkbox>
             </Form.Item>
 
-            <Form.Item label="Upload" valuePropName="fileList" name="rate_image" getValueFromEvent={normFile} rules={[{ required: true, message: 'Please upload image!' }]}>
+            <Form.Item label="Upload" valuePropName="fileList" name="rate_image" getValueFromEvent={normFile} rules={typeof initialValues === 'undefined' ? [{ required: true, message: 'Please upload image!' }]: []}>
                 <Upload listType="picture-card">
                     <button style={{ border: 0, background: 'none' }} type="button">
                         <PlusOutlined />

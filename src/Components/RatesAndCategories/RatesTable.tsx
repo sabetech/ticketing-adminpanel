@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { Rate } from "../../Types/Rate";
-import { Button, Popconfirm, Table, Tag, Space } from "antd";
+import { Button, Popconfirm, Table, Tag, Space, message } from "antd";
 import type { TableProps } from 'antd';
 import { Station } from "../../Types/Station";
 import { DeleteFilled, EditFilled } from '@ant-design/icons';
 import ModalFormAddEdit from "./ModalFormAddEdit";
 import FormAddEdit from "./FormAddEdit";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import * as Urls from '../../Constants/Urls';
+import { deleteRate } from "../../Services/Rate";
 
 type RatesProps = {
     rates: Rate[],
@@ -14,20 +17,33 @@ type RatesProps = {
 
 const RatesTable= ({ rates, isloading }: RatesProps) => {
     const [modalOpen, setModalOpen] = useState(false)
+    const queryClient = useQueryClient();
+    const [messageApi, contextHolder] = message.useMessage();
     const [initialValues, setInitialValues] = useState<Rate | undefined>(undefined);
     const [stations, _] = useState<Station[]>([...new Set(rates.map(item => JSON.stringify(item.station)))].map(station => JSON.parse(station)));
+    const [idToDelete, setIdToDelete] = useState(0);
 
-    const handleDeleteClick = () => {
-        
-    }
+    const { mutate: deleteRateItem, isPending } = useMutation({
+        mutationFn: (id: number) => deleteRate(id),
+        onSuccess: (data: any) => { 
+            queryClient.invalidateQueries();
+            messageApi.success(data.message);
+        }
+    });
 
-    const handleDeleteConfirm = () => {
-
+    const handleDeleteConfirm = (rateId: number|undefined) => {
+        if (rateId){
+            setIdToDelete(rateId)
+            deleteRateItem(rateId)
+        } else {
+            messageApi.error('Error deleting rate');
+        }
     }
 
     const handleRateEdit = (record: Rate) => {
-        //show the edit modal here ...
+        
         const initialValues = {
+            id: record.id,
             title: record.title,
             amount: record.amount,
             station: record.station,
@@ -41,10 +57,6 @@ const RatesTable= ({ rates, isloading }: RatesProps) => {
         
     }
 
-    // const handleOk = () => {
-
-    // }
-
     const columns: TableProps<Rate>['columns'] = [
         {
             title: 'Vehicle Category',
@@ -55,7 +67,12 @@ const RatesTable= ({ rates, isloading }: RatesProps) => {
             title: 'Icon',
             dataIndex: 'icon',
             key: 'icon',
-            render: (value: string) => <img src={value} width='92'/>
+            render: (value: string) => {
+            return (value.startsWith('http')) ?
+            <img src={value} width='92'/> 
+            :
+            <img src={`${Urls.RATE_BASE_URL}${value.substring(6) }`} width='92'/>
+             }
         },
         {
             title: 'Rate',
@@ -88,15 +105,16 @@ const RatesTable= ({ rates, isloading }: RatesProps) => {
                 <Popconfirm
                     title="Delete the User"
                     description="Are you sure to delete this Rate?"
-                    onConfirm={ () => handleDeleteConfirm() }
+                    onConfirm={ () => handleDeleteConfirm(record.id) }
                     onCancel={() =>{}}
                     okText="Yes"
                     cancelText="No"
                 >
-                    <Button type="primary" danger icon={<DeleteFilled />} onClick={() => handleDeleteClick()}/>
+                    <Button type="primary" danger icon={<DeleteFilled />} 
+                        loading={(idToDelete === record.id) && isPending}
+                    />
                 </Popconfirm></Space>
                 </>
-                
                 
         }
     ]
@@ -104,6 +122,7 @@ const RatesTable= ({ rates, isloading }: RatesProps) => {
 
     return (
         <>
+        {contextHolder}
         <ModalFormAddEdit 
             title={"Edit Rate"}
             modalOpen={modalOpen}

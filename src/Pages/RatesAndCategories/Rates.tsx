@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Row, Col, Card, Select, Typography, Space, Button, message } from 'antd';
+import { Row, Col, Card, Select, Typography, Space, Button, message, AutoComplete } from 'antd';
 import RatesTable from '../../Components/RatesAndCategories/RatesTable';
 import { useQuery } from '@tanstack/react-query';
 import { getRates } from '../../Services/Rate';
@@ -16,6 +16,11 @@ const Rates = () => {
     const [messageApi, contextHolder] = message.useMessage();
 
     const [stations, setStations] = useState<Station[]>([]);
+    const [autocompletOptions, setAutocompleteOptions] = useState<{
+        key: string,
+        label: JSX.Element, 
+        value: string
+    }[]>();
 
     const { data:ratesData, isLoading, isSuccess, isError } = useQuery<RemoteResponse<Rate[]> | AppError>({
         queryKey: ['rates', stationSelect],
@@ -26,6 +31,9 @@ const Rates = () => {
         if (isSuccess && ratesData.success) {
             setRates(ratesData.data);
             setStations([...new Set(ratesData.data.map(item => JSON.stringify(item.station)))].map(station => JSON.parse(station)));
+
+        
+
         }
     },[ratesData])
 
@@ -43,7 +51,14 @@ const Rates = () => {
     // const handleOk = (values: any) => {
     //     console.log("VALUE FROM FOFM MODAL::", values)
     // }
+    const onSearchClear = () => {
+        if (isSuccess && ratesData.success) setRates(ratesData.data);
+    }
 
+    const onsearchselect = (data: string) => {
+        const selectedRate = rates.filter(rt => rt.title === data);
+        setRates(selectedRate)
+    };
     console.log("STATIONS BEFORE TRANSFER::", stations);
 
     return (
@@ -73,6 +88,27 @@ const Rates = () => {
                                     ]}
                                 />
                             </Space>
+                            
+                            <Space direction="vertical" style={{textAlign: 'left'}}>
+                                <Typography>Search</Typography>
+                                    <AutoComplete 
+                                        allowClear
+                                        onClear={onSearchClear}
+                                        options={rates.map( rate => ({
+                                            key: rate.id,
+                                            label: rate.title,
+                                            value: rate.title,
+                                        }))}
+                                        style={{ width: 500 }}
+                                        size="large"
+                                        filterOption={(inputValue, option) => 
+                                            option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                                        }
+                                        placeholder="Search Rates" 
+                                        onSelect={(text: string, _: any) => onsearchselect(text)}
+                                    />
+                            </Space>
+
                             <Button type={'primary'} size={'large'} style={{float: 'right'}} onClick={() => setModalOpen(true)}>Add New Rate</Button>
                         </Space>
                         
