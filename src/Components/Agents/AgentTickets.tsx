@@ -1,11 +1,20 @@
-import { Table, TableProps } from "antd";
+import { Table, TableProps, Space, Button, Popconfirm } from "antd";
 import { Ticket } from "../../Types/Tickets";
+import { EditFilled, DeleteFilled } from "@ant-design/icons";
 
 type AgentTicketsProp = {
     agentTickets: Ticket[] | undefined
 }
 
 const AgentTickets = ({agentTickets}:AgentTicketsProp) => {
+
+    const handleDeleteConfirm = (id: number) => {
+
+    }
+
+    const handleTicketEdit = (rec: Ticket) => {
+
+    }
 
     const columns: TableProps<Ticket>['columns'] = [
         {
@@ -15,8 +24,9 @@ const AgentTickets = ({agentTickets}:AgentTicketsProp) => {
         },
         {
             title: 'Ticket Type',
-            dataIndex: 'ticket_type',
+            dataIndex: 'rate',
             key: 'ticket_type',
+            render: (value) => value.title
         },
         {
             title: 'Car Number or Subject',
@@ -29,14 +39,24 @@ const AgentTickets = ({agentTickets}:AgentTicketsProp) => {
             key: 'ticket_cost',
         },
         {
-            title: 'Station',
-            dataIndex: 'station',
-            key: 'station',
-        },
-        {
             title: 'Action',
             dataIndex: '',
-            key: 'station',
+            key: 'action',
+            render: (_, record: Ticket) => <Space size="middle">
+                <Button icon={<EditFilled />} onClick={() => handleTicketEdit(record)}>Edit</Button>
+                <Popconfirm
+                    title="Delete the User"
+                    description="Are you sure to delete this Rate?"
+                    onConfirm={ () => handleDeleteConfirm(record.id) }
+                    onCancel={() =>{}}
+                    okText="Yes"
+                    cancelText="No"
+                >
+                    <Button type="primary" danger icon={<DeleteFilled />} 
+                        
+                    />
+                </Popconfirm>
+            </Space>
         }
     ]
 

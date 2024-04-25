@@ -6,7 +6,8 @@ import {
   ThunderboltOutlined,
   UsergroupAddOutlined,
   UserOutlined,
-  DownOutlined
+  DownOutlined,
+  ExclamationCircleOutlined
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, Typography, theme, Dropdown, Space, Modal, Avatar } from 'antd';
@@ -17,7 +18,7 @@ import logo from '../../assets/koajay_logo_new.jpeg'
 import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import Agents from '../Agent_Summary/Agents';
 import Profile from '../Agent_Summary/Profile';
-import StationHome from '../Station/StationHome';
+import TaskForce from '../Station/TaskForce';
 import Rates from '../RatesAndCategories/Rates';
 import ThirdPartyCustomers from "../OnCreditCustomers/ThirdPartyCustomers";
 import { TAuthUserResponse } from '../../Types/Auth';
@@ -90,9 +91,9 @@ const Sidebar: React.FC<SidebarProps> = ( { userInfo } ) => {
       icon: UsergroupAddOutlined
     },
     {
-      title: "Station Summary",
-      key: "station-summary",
-      icon: UserOutlined
+      title: "Task Force",
+      key: "task-force",
+      icon: ExclamationCircleOutlined
     },
     {
       title: "Rates and Categories",
@@ -202,7 +203,7 @@ const Sidebar: React.FC<SidebarProps> = ( { userInfo } ) => {
                 <Route path="/tickets-summary" element={<TicketsSummary />} />
                 <Route path="/agent-summary" element={<Agents />} />
                 <Route path="/agent-summary/:id/detail" element={<Profile />} />
-                <Route path="/station-summary" element={<StationHome />} />
+                <Route path="/task-force" element={<TaskForce />} />
                 <Route path="/rates-and-categories" element={<Rates />} />
                 <Route path="/on-credit-customers" element={<ThirdPartyCustomers />} />
                 <Route path="/user-management" element={<ManageUsers />} />

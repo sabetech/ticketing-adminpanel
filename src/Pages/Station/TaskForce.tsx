@@ -6,7 +6,7 @@ const { RangePicker } = DatePicker;
 // const { Search } = Input;
 // const onSearch: SearchProps['onSearch'] = (value, _e, info) => console.log(info?.source, value);
 
-const StationHome = () => {
+const TaskForce = () => {
 
     //load stations
 
@@ -20,7 +20,7 @@ const StationHome = () => {
         <>
             <Row>
                 <Col span={23}>
-                    <Card title={"Station"} style={{textAlign: 'left'}}>
+                    <Card title={"Task force"} style={{textAlign: 'left'}}>
                         <Space direction="horizontal" size={'large'} style={{display: 'flex', justifyContent: 'flex-start', alignContent: 'flex-start'}}>
                             <Space direction="vertical" style={{textAlign: 'left'}}>
                                 <Typography>Select Station</Typography>
@@ -59,4 +59,4 @@ const StationHome = () => {
     )
 }
 
-export default StationHome;
+export default TaskForce;

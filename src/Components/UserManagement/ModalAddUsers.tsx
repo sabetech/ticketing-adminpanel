@@ -10,7 +10,7 @@ const ModalAddUsers: React.FC<ModalAddUsersProps> = ({open, setModalOpen}) => {
 
     return (
     <Modal
-        width={'35vw'}
+        width={'45vw'}
         title={"Add User"}
         footer={null}
         open={open}

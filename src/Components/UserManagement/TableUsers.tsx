@@ -39,7 +39,7 @@ const TableUsers: React.FC<TableUsersProp> = ({isLoading, users}) => {
             title: 'Picture',
             dataIndex: 'photo',
             key: 'image_url',
-            render: (value: string) => <Avatar size={60} src={`${urls.IMAGE_BASE_URL}${value}`} />
+            render: (value: string) => <Avatar size={60} src={value.includes('unknown') ? 'https://img.icons8.com/ios-filled/50/gender-neutral-user.png' : `${urls.IMAGE_BASE_URL}${value.substring(19)}`} />
         },
         {
             title: 'Name',

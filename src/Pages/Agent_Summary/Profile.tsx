@@ -11,6 +11,7 @@ import type { TimeRangePickerProps } from 'antd';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 import AgentTickets from '../../Components/Agents/AgentTickets';
+import * as urls from '../../Constants/Urls';
 
 const { RangePicker } = DatePicker;
 
@@ -59,7 +60,7 @@ const Profile = () => {
                         loading={isRefetching}
                         hoverable
                         style={{ width: 240, marginRight: 50 }}
-                        cover={<img alt="example" src={ `https://tickets.koajay.com/assets/${agentTicketInfo?.agent.photo}` } />}
+                        cover={<img alt="example" src={agentTicketInfo?.agent.photo.includes('unknown') ? 'https://img.icons8.com/ios-filled/50/gender-neutral-user.png' : `${urls.IMAGE_BASE_URL}${agentTicketInfo?.agent.photo.substring(19)}`} />}
                     >
                         <Meta title={agentTicketInfo?.agent.fname + " "+agentTicketInfo?.agent.lname} description={"Achimota(Agent)"} />
                     </Card>

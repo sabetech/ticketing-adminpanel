@@ -39,7 +39,7 @@ const AgentList: React.FC<TableAgentProp> = ({ agents, isLoading }) => {
             dataIndex: 'photo',
             key: 'agent_img',
             width: '10%',
-            render: (value) => <Avatar size={60} src={`${urls.IMAGE_BASE_URL}${value}`} />
+            render: (value) => <Avatar size={60} src={value.includes('unknown') ? 'https://img.icons8.com/ios-filled/50/gender-neutral-user.png' : `${urls.IMAGE_BASE_URL}${value.substring(19)}`} />
         },
         {
             title: 'Agent Name',
