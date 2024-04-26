@@ -9,11 +9,11 @@ type AgentTicketsProp = {
 const AgentTickets = ({agentTickets}:AgentTicketsProp) => {
 
     const handleDeleteConfirm = (id: number) => {
-
+        console.log(id)
     }
 
     const handleTicketEdit = (rec: Ticket) => {
-
+        console.log(rec)
     }
 
     const columns: TableProps<Ticket>['columns'] = [

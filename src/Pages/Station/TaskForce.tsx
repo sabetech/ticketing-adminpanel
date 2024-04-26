@@ -1,5 +1,12 @@
-import { Row, Col, Space, Typography, Card, Button } from 'antd';
+import { useState, useEffect } from 'react';
+import { Row, Col, Space, Typography, Card, Button, Statistic } from 'antd';
 import { Select, DatePicker } from 'antd';
+import TableTaskForce from '../../Components/TaskForce/TableTaskForce';
+import { useQuery } from '@tanstack/react-query';
+import { RemoteResponse, AppError } from '../../Types/Remote';
+import { Ticket } from '../../Types/Tickets';
+import { getTaskforceTickets } from '../../Services/TicketService';
+import dayjs from 'dayjs';
 // import type { SearchProps } from 'antd/es/input/Search';
 
 const { RangePicker } = DatePicker;
@@ -8,9 +15,25 @@ const { RangePicker } = DatePicker;
 
 const TaskForce = () => {
 
-    //load stations
+    const defaultDateRange = [dayjs().startOf('day').format("YYYY-MM-DD HH:mm:ss"), dayjs(new Date()).format("YYYY-MM-DD HH:mm:ss")];
 
-    //load all tickets from all stations
+    const [dateRange, setDateRange] = useState<string[]>(defaultDateRange)
+
+    //load tickets for taskforce for the default date range
+    const { data: taskforceData, isLoading, isError, error } = useQuery<RemoteResponse<Ticket[]> | AppError>({
+        queryKey: ['taskforceTickets', dateRange],
+        queryFn: async () => getTaskforceTickets(dateRange)
+      });
+
+    const [tickets, setTickets] = useState<Ticket[]>([]);
+    useEffect(() => {
+        if (taskforceData?.success) {
+            setTickets(taskforceData.data.map(tkt => ({...tkt, key: tkt.id})))
+            // if (typeof taskforceData.data !== 'undefined')
+            //     setAutocompleteOptions(constructAutoCompleteOptions(ticketData.data))
+        }
+
+    },[taskforceData]);
 
     const handleChange = (value: string) => {
         console.log(`selected ${value}`);
@@ -49,10 +72,17 @@ const TaskForce = () => {
                     </Card>
                 </Col>
             </Row>
+            <Row gutter={16} style={{marginTop: '2%', marginBottom: '2%'}}>
+                <Col span={4}>
+                    <Card bordered={true}>
+                        <Statistic title="Taskforce Tickets" value={tickets.length ?? 0} valueStyle={{ color: '#3f8600' }} />
+                    </Card>
+                </Col>
+            </Row>
 
             <Row>
                 <Col span={23}>
-                    
+                    <TableTaskForce />
                 </Col>
             </Row>
         </>

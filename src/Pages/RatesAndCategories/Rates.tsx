@@ -16,11 +16,11 @@ const Rates = () => {
     const [messageApi, contextHolder] = message.useMessage();
 
     const [stations, setStations] = useState<Station[]>([]);
-    const [autocompletOptions, setAutocompleteOptions] = useState<{
-        key: string,
-        label: JSX.Element, 
-        value: string
-    }[]>();
+    // const [autocompletOptions, setAutocompleteOptions] = useState<{
+    //     key: string,
+    //     label: JSX.Element, 
+    //     value: string
+    // }[]>();
 
     const { data:ratesData, isLoading, isSuccess, isError } = useQuery<RemoteResponse<Rate[]> | AppError>({
         queryKey: ['rates', stationSelect],

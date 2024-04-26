@@ -75,3 +75,14 @@ export const getThirdPartyTickets = async (from?: string, to?: string): Promise<
             reject("User is not logged In");
         })
 }
+
+export const getTaskforceTickets = async (date: string[]): Promise<RemoteResponse<Ticket[]> | AppError> => {
+    const userInfo = getUserInfo()  
+
+    if (userInfo)
+        return (await api.get(`/ticket/taskforce?date_range=${date}`, {'Authorization': 'Bearer '+userInfo.token})).data
+    else
+        return new Promise<AppError>((_, reject) => {
+            reject("User is not logged In");
+        })
+}
