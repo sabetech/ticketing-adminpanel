@@ -17,10 +17,10 @@ const TaskForce = () => {
 
     const defaultDateRange = [dayjs().startOf('day').format("YYYY-MM-DD HH:mm:ss"), dayjs(new Date()).format("YYYY-MM-DD HH:mm:ss")];
 
-    const [dateRange, setDateRange] = useState<string[]>(defaultDateRange)
+    const [dateRange, _] = useState<string[]>(defaultDateRange)
 
     //load tickets for taskforce for the default date range
-    const { data: taskforceData, isLoading, isError, error } = useQuery<RemoteResponse<Ticket[]> | AppError>({
+    const { data: taskforceData } = useQuery<RemoteResponse<Ticket[]> | AppError>({
         queryKey: ['taskforceTickets', dateRange],
         queryFn: async () => getTaskforceTickets(dateRange)
       });
