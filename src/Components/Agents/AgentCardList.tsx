@@ -24,11 +24,11 @@ const AgentListCard: React.FC<TableAgentProp> = ({ agents }) => {
                     stats={[
                         {
                             name: 'Tickets',
-                            value: 21
+                            value: "TBD"
                         },
                         {
                             name: 'Amount',
-                            value: 37
+                            value: "TBD"
                         }
                     ]}
                 />
