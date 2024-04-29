@@ -1,7 +1,6 @@
 import { Space } from "antd";
 import { Agent } from "../../Types/Agent";
 import * as urls from '../../Constants/Urls';
-// import ProgressiveImage from 'react-progressive-graceful-image'
 import { UserCard } from 'react-ui-cards';
 
 type TableAgentProp = {

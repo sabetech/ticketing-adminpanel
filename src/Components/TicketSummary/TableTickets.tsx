@@ -10,6 +10,7 @@ import * as utils from "../../Utils/Helpers"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteTicket } from "../../Services/TicketService";
 import { getRates } from "../../Services/Rate";
+import  { getAgentList } from "../../Services/AgentService"
 
 type TableTicketProp = {
     ticketData: Ticket[],
@@ -46,6 +47,11 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
     const { data: rates } = useQuery({
         queryKey: ['rates'],
         queryFn: () => getRates(),
+    });
+
+    const { data: agents } = useQuery({
+        queryKey: ['agents'],
+        queryFn: () => getAgentList(),
     });
     
 
@@ -110,20 +116,12 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
     const handleDeleteClick = (record: Ticket) => {
         Modal.warning({
                 title: 'Delete Ticket?',
-                content: (
-                <Typography.Text>Are you sure you want to delete this Ticket?</Typography.Text>
-            ),
+                content: `Are you sure you want to delete this Ticket?`,
             okText: 'Yes',
             cancelText: 'No',
             onOk: () => handleDeleteConfirm(record.id),
             onCancel: () => console.log("Canceled"),
             closable: true,
-            footer: (_, { OkBtn, CancelBtn }) => (
-                <>
-                  <CancelBtn />
-                  <OkBtn />
-                </>
-              ),
         });
     }
 
@@ -165,7 +163,7 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
         <>
         {contextHolder}
             <Modal title="Edit Ticket" open={isModalOpen}  onCancel={handleCancel}>
-               {editTicketInfo && <FormEditTicket oldFormFields={editTicketInfo} rates={ rates?.success ? rates.data : []} />}
+               {editTicketInfo && <FormEditTicket oldFormFields={editTicketInfo} rates={ rates?.success ? rates.data : []} agents={agents?.success ? agents.data : []}/>}
             </Modal>
             <span style={{ float: 'left' }}>
                 {hasSelected ? <>
