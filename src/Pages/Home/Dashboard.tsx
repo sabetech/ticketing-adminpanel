@@ -7,7 +7,7 @@ import CardInfo from '../../Components/Dashboard/CardInfo';
 import { useQuery } from '@tanstack/react-query';
 import { getTicketCount, getTicketRevenue, getUnpaidAmount } from '../../Services/TicketService'
 import { getAgentCount, getAgentOnlineStatus } from '../../Services/AgentService';
-
+import TableAgentsTickets from '../../Components/Dashboard/TableAgentsTickets';
 import dayjs from 'dayjs';
 import { AppError, RemoteResponse } from '../../Types/Remote';
 import { TAgentOnlineStatus } from '../../Types/Agent';
@@ -102,11 +102,11 @@ const Dashboard = () => {
             </Col>
         </Row>
         <Row gutter={12} style={{marginTop: 50}}>
-          {/* <Col span={11}>
-            <Card title="Top 5 Agents Tickets On { Date }">
+          <Col span={11}>
+            <Card title="show the agents eg 8 on the dashboard">
               <TableAgentsTickets />
             </Card>
-          </Col> */}
+          </Col>
           <Col span={11}>
             <Card title="Agent Online Status">
               <TableAgentsOnline agentsOnline={agentOnlineStatus} isLoading={isAgentsOnlineLoading}/>

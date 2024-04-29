@@ -213,9 +213,9 @@ const Sidebar: React.FC<SidebarProps> = ( { userInfo } ) => {
 
           </div>
         </Content>
-        <Footer >
+        {/* <Footer >
           AL ©{new Date().getFullYear()} Created by Albert
-        </Footer>
+        </Footer> */}
       </Layout>
       <Modal
         title="Title"

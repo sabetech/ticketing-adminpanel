@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Row, Col, Card, Space, Typography, AutoComplete } from 'antd';
-import AgentList from '../../Components/Agents/AgentList';
+import AgentListCard from '../../Components/Agents/AgentCardList';
 import { Agent } from "../../Types/Agent";
 import { AppError, RemoteResponse } from "../../Types/Remote";
 import {getAgentList} from "../../Services/AgentService";
@@ -75,7 +75,7 @@ return (
 
             <Row>
                 <Col span={23}>
-                    <AgentList agents={agents} isLoading={isLoading} />
+                    <AgentListCard agents={agents} isLoading={isLoading} />
                 </Col>
             </Row>
         </>
