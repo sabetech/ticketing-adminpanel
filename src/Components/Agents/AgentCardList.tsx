@@ -9,7 +9,7 @@ type TableAgentProp = {
     isLoading: boolean
 }
 
-const AgentListCard: React.FC<TableAgentProp> = ({ agents, isLoading }) => {
+const AgentListCard: React.FC<TableAgentProp> = ({ agents }) => {
     return (<>
     <Space size={[5, 16]} wrap>
         {

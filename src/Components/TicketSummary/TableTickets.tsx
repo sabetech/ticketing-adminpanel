@@ -23,6 +23,7 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
     const [editTicketInfo, setEditTicketInfo] = useState<Ticket>();
     const queryClient = useQueryClient();
     const [messageApi, contextHolder] = message.useMessage();
+    const [idToDelete, setIDToDelete] = useState(0);
 
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
         console.log('selectedRowKeys changed: ', newSelectedRowKeys);
@@ -99,8 +100,8 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
                 setEditTicketInfo(record)
                 }
             } >Edit</Button>
-               
-            <Button type="text" danger icon={<DeleteFilled />} onClick={() => handleDeleteClick(record)} />
+            
+            <Button type="text" danger icon={<DeleteFilled />} onClick={() => handleDeleteClick(record)} loading={(idToDelete === record.id) && isPending }/>
                 
             </>
         }
@@ -128,6 +129,7 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
 
     const handleDeleteConfirm = (ticketId: number) => {
         console.log("TICKET ID IS HERE::", ticketId)
+        setIDToDelete(ticketId)
         deleteTicketMutation(ticketId)
     }
 
