@@ -162,8 +162,11 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
     return (
         <>
         {contextHolder}
-            <Modal title="Edit Ticket" open={isModalOpen}  onCancel={handleCancel}>
-               {editTicketInfo && <FormEditTicket oldFormFields={editTicketInfo} rates={ rates?.success ? rates.data : []} agents={agents?.success ? agents.data : []}/>}
+            <Modal 
+                title="Edit Ticket" open={isModalOpen}  onCancel={handleCancel}
+                footer={null}
+                >
+               {editTicketInfo && <FormEditTicket oldFormFields={editTicketInfo} rates={ rates?.success ? rates.data : []} agents={agents?.success ? agents.data : []} setModalOpen={setModalOpen}/>}
             </Modal>
             <span style={{ float: 'left' }}>
                 {hasSelected ? <>

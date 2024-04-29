@@ -97,3 +97,14 @@ export const deleteTicket = async (ticketId: number) => {
             reject("User is not logged In");
         })
 }   
+
+export const editTicket = async (id: number, values: any) => {
+    const userInfo = getUserInfo()  
+
+    if (userInfo)
+        return (await api.post(`/ticket/${id}/edit`, values, {'Authorization': 'Bearer '+userInfo.token})).data
+    else
+        return new Promise<AppError>((_, reject) => {
+            reject("User is not logged In");
+        })
+}
