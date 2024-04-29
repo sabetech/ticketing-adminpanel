@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {Button, Popconfirm, Table, Typography, Modal } from "antd";
+import {Button, Popconfirm, Table, Typography, Modal, Tag } from "antd";
 import type { TableProps } from 'antd';
 import { DeleteFilled, EditFilled } from '@ant-design/icons';
 import { Ticket } from "../../Types/Tickets";
@@ -51,7 +51,7 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
             title: 'Category',
             dataIndex: 'rate',
             key: 'category',
-            render: (rate: Rate) => rate.rate_type.toUpperCase()
+            render: (rate: Rate) => <>{rate.title} <Tag>{rate.rate_type.toUpperCase()}</Tag></>
         },
         {
             title: 'Amount',
