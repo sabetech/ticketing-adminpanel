@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {Button, Popconfirm, Table, Typography, Modal, Tag } from "antd";
+import {Button, message, Table, Typography, Modal, Tag } from "antd";
 import type { TableProps } from 'antd';
 import { DeleteFilled, EditFilled } from '@ant-design/icons';
 import { Ticket } from "../../Types/Tickets";
@@ -7,6 +7,9 @@ import { Rate } from "../../Types/Rate";
 import FormEditTicket from "./FormEditTicket"
 import { Agent } from "../../Types/Agent";
 import * as utils from "../../Utils/Helpers"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { deleteTicket } from "../../Services/TicketService";
+import { getRates } from "../../Services/Rate";
 
 type TableTicketProp = {
     ticketData: Ticket[],
@@ -18,6 +21,8 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [isModalOpen, setModalOpen] = useState(false);
     const [editTicketInfo, setEditTicketInfo] = useState<Ticket>();
+    const queryClient = useQueryClient();
+    const [messageApi, contextHolder] = message.useMessage();
 
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
         console.log('selectedRowKeys changed: ', newSelectedRowKeys);
@@ -29,6 +34,18 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
         onChange: onSelectChange,
     };
 
+    const { mutate: deleteTicketMutation, isPending } = useMutation({
+        mutationFn: (id: number) => deleteTicket(id),
+        onSuccess: (data: any) => { 
+            queryClient.invalidateQueries();
+            messageApi.success(data.message);
+        }
+    });
+
+    const { data: rates } = useQuery({
+        queryKey: ['rates'],
+        queryFn: () => getRates(),
+    });
     
 
     const columns: TableProps<Ticket>['columns'] = [
@@ -82,31 +99,41 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
                 setEditTicketInfo(record)
                 }
             } >Edit</Button>
-                <Popconfirm
-                    title="Delete the Ticket"
-                    description="Are you sure to delete this Ticket?"
-                    onConfirm={ () => handleDeleteConfirm(record.id) }
-                    onCancel={() =>{}}
-                    okText="Yes"
-                    cancelText="No"
-                >
-                    <Button type="text" danger icon={<DeleteFilled />} onClick={handleDeleteClick}/>
-                </Popconfirm>
+               
+            <Button type="text" danger icon={<DeleteFilled />} onClick={() => handleDeleteClick(record)} />
+                
             </>
         }
     ]
 
-    const handleDeleteClick = () => {
-        
+    const handleDeleteClick = (record: Ticket) => {
+        Modal.warning({
+                title: 'Delete Ticket?',
+                content: (
+                <Typography.Text>Are you sure you want to delete this Ticket?</Typography.Text>
+            ),
+            okText: 'Yes',
+            cancelText: 'No',
+            onOk: () => handleDeleteConfirm(record.id),
+            onCancel: () => console.log("Canceled"),
+            closable: true,
+            footer: (_, { OkBtn, CancelBtn }) => (
+                <>
+                  <CancelBtn />
+                  <OkBtn />
+                </>
+              ),
+        });
     }
 
     const handleDeleteConfirm = (ticketId: number) => {
         console.log("TICKET ID IS HERE::", ticketId)
+        deleteTicketMutation(ticketId)
     }
 
     const handleOk = () => {
         console.log("DELETE THESE IDS::", selectedRowKeys);
-      };
+    };
 
     // const handleEditTicket = (id: number) => {
     //     console.log("EDIT TICKET")
@@ -134,8 +161,9 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
 
     return (
         <>
+        {contextHolder}
             <Modal title="Edit Ticket" open={isModalOpen}  onCancel={handleCancel}>
-               {editTicketInfo && <FormEditTicket oldFormFields={editTicketInfo}  />}
+               {editTicketInfo && <FormEditTicket oldFormFields={editTicketInfo} rates={ rates?.success ? rates.data : []} />}
             </Modal>
             <span style={{ float: 'left' }}>
                 {hasSelected ? <>

@@ -86,3 +86,14 @@ export const getTaskforceTickets = async (date: string[]): Promise<RemoteRespons
             reject("User is not logged In");
         })
 }
+
+export const deleteTicket = async (ticketId: number) => {
+    const userInfo = getUserInfo()  
+
+    if (userInfo)
+        return (await api.deleteRequest(`ticket/${ticketId}/delete`, {'Authorization': 'Bearer '+userInfo.token})).data
+    else
+        return new Promise<AppError>((_, reject) => {
+            reject("User is not logged In");
+        })
+}   

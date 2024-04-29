@@ -22,7 +22,7 @@ import TaskForce from '../Station/TaskForce';
 import Rates from '../RatesAndCategories/Rates';
 import ThirdPartyCustomers from "../OnCreditCustomers/ThirdPartyCustomers";
 import { TAuthUserResponse } from '../../Types/Auth';
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Sider } = Layout;
 import { logout } from '../../Services/Auth';
 import * as utils from "../../Utils/Auth";
 import { getUserInfo } from '../../Utils/Auth';
@@ -213,9 +213,6 @@ const Sidebar: React.FC<SidebarProps> = ( { userInfo } ) => {
 
           </div>
         </Content>
-        {/* <Footer >
-          AL ©{new Date().getFullYear()} Created by Albert
-        </Footer> */}
       </Layout>
       <Modal
         title="Title"

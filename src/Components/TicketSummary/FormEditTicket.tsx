@@ -1,18 +1,18 @@
 import  { Form, Input, Select } from 'antd'
 import { Ticket } from '../../Types/Tickets';
-import { DatePicker } from 'antd';
-import dayjs from 'dayjs';
+import { Rate } from '../../Types/Rate';
 
 type Props = {
     oldFormFields: Ticket
+    rates: Rate[]
 }
 
-const FormEditTicket:React.FC<Props> = ({oldFormFields}) => {
+const FormEditTicket:React.FC<Props> = ({oldFormFields, rates}) => {
 
     const [form] = Form.useForm();
     form.setFieldValue('title', oldFormFields.title)
     form.setFieldValue('car_number', oldFormFields.car_number)
-    form.setFieldValue('amount', oldFormFields.amount)
+    form.setFieldValue('rate', oldFormFields.rate.title)
     form.setFieldValue('agent', `${oldFormFields.agent.fname} ${oldFormFields.agent.lname}`)
 
     return (
@@ -35,11 +35,17 @@ const FormEditTicket:React.FC<Props> = ({oldFormFields}) => {
                 <Input />
             </Form.Item>
             <Form.Item
-                label="Amount"
-                name="amount"
-                rules={[{ required: true, message: 'Please input the amount!' }]}
+                label="Rate Category"
+                name="rate"
+                rules={[{ required: true, message: 'Please select Rate' }]}
             >
-                <Input />
+                <Select
+                    options={rates.map(rate => ({
+                        value: rate.id,
+                        label: rate.title
+                    }) 
+                )}
+                />
             </Form.Item>
             <Form.Item
                 label="Agent"
@@ -49,16 +55,6 @@ const FormEditTicket:React.FC<Props> = ({oldFormFields}) => {
                 <Select
                     showSearch
                     placeholder="Select an Agent"
-                />
-            </Form.Item>
-            <Form.Item
-                label="Date and Time"
-                name="issued_date_time"
-                rules={[{ required: true, message: 'Please input date and time' }]}
-            >
-                <DatePicker 
-                    showTime
-                    defaultPickerValue={dayjs(oldFormFields.issued_date_time)}
                 />
             </Form.Item>
         </Form>
