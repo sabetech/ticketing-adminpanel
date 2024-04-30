@@ -24,7 +24,7 @@ const Profile = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const { data: agentTicketInfoData, isSuccess, isRefetching } = useQuery({
+    const { data: agentTicketInfoData, isSuccess, isFetching } = useQuery({
         queryKey: ['agentsTicketInfoData', dateRange],
         queryFn: async () => getAgentDetail(id, dateRange)
     });
@@ -63,7 +63,7 @@ const Profile = () => {
             <div style={{display: "flex"}}>
                 <Space direction={"horizontal"} align="start">
                     <Card
-                        loading={isRefetching}
+                        loading={isFetching}
                         hoverable
                         style={{ width: 240, marginRight: 50 }}
                         cover={<img onLoad={() => setImageLoaded(true)} style={imageLoaded ? {} : {display: 'none'}} src={agentTicketInfo?.agent.photo.includes('unknown') ? 'https://img.icons8.com/ios-filled/50/gender-neutral-user.png' : `${urls.IMAGE_BASE_URL}${agentTicketInfo?.agent.photo.substring(19)}`}/>}
