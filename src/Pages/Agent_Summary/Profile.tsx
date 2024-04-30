@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Card, Row, Col, Statistic, Space, Button } from 'antd';
+import { Card, Row, Col, Statistic, Space, Button, Divider } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -11,6 +11,7 @@ import type { TimeRangePickerProps } from 'antd';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 import AgentTickets from '../../Components/Agents/AgentTickets';
+import AgentTicketSummaryList from '../../Components/Agents/AgentTicketSummaryList';
 import * as urls from '../../Constants/Urls';
 
 const { RangePicker } = DatePicker;
@@ -62,16 +63,18 @@ const Profile = () => {
             style={{display:'block', marginBottom: 10}} onClick={() => navigate(-1)}>Back</Button>
             <div style={{display: "flex"}}>
                 <Space direction={"horizontal"} align="start">
-                    <Card
-                        loading={isFetching}
-                        hoverable
-                        style={{ width: 240, marginRight: 50 }}
-                        cover={<img onLoad={() => setImageLoaded(true)} style={imageLoaded ? {} : {display: 'none'}} src={agentTicketInfo?.agent.photo.includes('unknown') ? 'https://img.icons8.com/ios-filled/50/gender-neutral-user.png' : `${urls.IMAGE_BASE_URL}${agentTicketInfo?.agent.photo.substring(19)}`}/>}
-                    >
-                        <Meta title={agentTicketInfo?.agent.fname + " "+agentTicketInfo?.agent.lname} description={agentTicketInfo?.agent?.station_user.station.name ?? "No Station"} />
-                    </Card>
+                    <div style={{display:'block', position: 'fixed', width: 240}}>
+                        <Card
+                            loading={isFetching}
+                            hoverable
+                            style={{ width: 240, marginRight: 50 }}
+                            cover={<img onLoad={() => setImageLoaded(true)} style={imageLoaded ? {} : {display: 'none'}} src={agentTicketInfo?.agent.photo.includes('unknown') ? 'https://img.icons8.com/ios-filled/50/gender-neutral-user.png' : `${urls.IMAGE_BASE_URL}${agentTicketInfo?.agent.photo.substring(19)}`}/>}
+                        >
+                            <Meta title={agentTicketInfo?.agent.fname + " "+agentTicketInfo?.agent.lname} description={agentTicketInfo?.agent?.station_user.station.name ?? "No Station"} />
+                        </Card>
+                    </div>
 
-                    <Space direction={"vertical"} align={'start'}>
+                    <Space direction={"vertical"} align={'start'} style={{marginLeft: 300}}>
                         <RangePicker
                             size={"large"}
                             presets={[
@@ -86,26 +89,27 @@ const Profile = () => {
                             format="YYYY-MM-DD HH:mm:ss"
                             onChange={onRangeChange}
                         />
-                        <Row gutter={16} style={{marginTop: 20, width: '100vh'}}>
-                            
-                            <Col style={{marginRight: '10%'}}>
-                                <Statistic title="Tickets" value={agentTicketInfo?.tickets.length ?? 0} />
+                        
+                        <Row >
+                            <Col span={24}>
+                                <Space>
+                                    <AgentTicketSummaryList agentTicketInfoData={agentTicketInfo?.tickets}/>
+                                </Space>
                             </Col>
-                            
-                            <Col >
-                                <Statistic title="Amount" value={agentTicketInfo?.tickets.reduce((acc, tkt) => acc + parseFloat(tkt.amount), 0)} suffix="GHC" />
-                            </Col>
-                            
                         </Row>
-                        <Space>{
-                            agentTicketInfo?.tickets &&
-                                <AgentTickets agentTickets={agentTicketInfo?.tickets} />
-                            }
-                        </Space>
+
+                        <Divider />
+
+                        <Row>
+                            <Col>
+                                <Space>{
+                                    agentTicketInfo?.tickets &&
+                                        <AgentTickets agentTickets={agentTicketInfo?.tickets} />
+                                    }
+                                </Space>
+                            </Col>
+                        </Row>
                     </Space>
-                    
-                </Space>
-                <Space>
                     
                 </Space>
             </div>
