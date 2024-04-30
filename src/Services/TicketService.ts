@@ -6,9 +6,9 @@ import { AppError, RemoteResponse } from '../Types/Remote';
 
 export const getTicketsIssued = async (date: string | string[] ): Promise<RemoteResponse<Ticket[]> | AppError> => {
     const userInfo = getUserInfo()
-    console.log("Date:",date);
-    console.log("Type Date:",typeof date);
-    console.log("Type Date:",date.length);
+    // console.log("Date:",date);
+    // console.log("Type Date:",typeof date);
+    // console.log("Type Date:",date.length);
 
     if (userInfo)
         if  (typeof date == 'string')

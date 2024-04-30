@@ -3,7 +3,7 @@ import { Table, TableProps, Space, Button, Modal, message } from "antd";
 import { Ticket } from "../../Types/Tickets";
 import { EditFilled, DeleteFilled } from "@ant-design/icons";
 import { deleteTicket } from "../../Services/TicketService";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type AgentTicketsProp = {
     agentTickets: Ticket[] | undefined

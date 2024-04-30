@@ -29,8 +29,7 @@ const TaskForce = () => {
     useEffect(() => {
         if (taskforceData?.success) {
             setTickets(taskforceData.data.map(tkt => ({...tkt, key: tkt.id})))
-            // if (typeof taskforceData.data !== 'undefined')
-            //     setAutocompleteOptions(constructAutoCompleteOptions(ticketData.data))
+            
         }
 
     },[taskforceData]);

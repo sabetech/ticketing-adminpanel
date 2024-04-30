@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Card, Row, Col, Statistic, Space, Button, Divider } from 'antd';
+import { Card, Row, Col, Space, Button, Divider } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';

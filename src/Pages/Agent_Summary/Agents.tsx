@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Row, Col, Card, Space, Typography, AutoComplete } from 'antd';
+import { Row, Col, Card, Space, Typography, AutoComplete, Spin } from 'antd';
 import AgentListCard from '../../Components/Agents/AgentCardList';
 import { Agent } from "../../Types/Agent";
 import { AppError, RemoteResponse } from "../../Types/Remote";
@@ -72,7 +72,9 @@ return (
                     </Card>
                 </Col>
             </Row>
-
+            {
+                isLoading && <Spin /> 
+            }
             <Row>
                 <Col span={23}>
                     <AgentListCard agents={agents} isLoading={isLoading} />
