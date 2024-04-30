@@ -19,7 +19,7 @@ import logo from '../../assets/koajay_logo_new.jpeg'
 import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import Agents from '../Agent_Summary/Agents';
 import Profile from '../Agent_Summary/Profile';
-import TaskForce from '../Station/TaskForce';
+import TaskForce from '../Taskforce/TaskForce';
 import Rates from '../RatesAndCategories/Rates';
 import ThirdPartyCustomers from "../OnCreditCustomers/ThirdPartyCustomers";
 import { TAuthUserResponse } from '../../Types/Auth';

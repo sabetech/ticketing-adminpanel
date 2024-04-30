@@ -12,7 +12,6 @@ import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 import AgentTickets from '../../Components/Agents/AgentTickets';
 import * as urls from '../../Constants/Urls';
-import ReactImageAppear from 'react-image-appear';
 
 const { RangePicker } = DatePicker;
 
@@ -20,6 +19,7 @@ const { Meta } = Card;
 const Profile = () => {
     const [agentTicketInfo, setAgentTicketInfo] = useState<TAgentTicketInfo>();
     const [dateRange, setDateRange] = useState<{from:string, to:string} | undefined>(undefined);
+    const [imageLoaded, setImageLoaded] = useState(false);
 
     const { id } = useParams();
     const navigate = useNavigate();
@@ -50,6 +50,11 @@ const Profile = () => {
             setDateRange({from: dateStrings[0], to: dateStrings[1]});
         }
     };
+    // <ReactImageAppear 
+                            //     src={agentTicketInfo?.agent.photo.includes('unknown') ? 'https://img.icons8.com/ios-filled/50/gender-neutral-user.png' : `${urls.IMAGE_BASE_URL}${agentTicketInfo?.agent.photo.substring(19)}`}
+                            //     animation="zoomIn"
+                            //     animationDuration="1s"
+                            // />
       
     return (
         <>
@@ -61,15 +66,9 @@ const Profile = () => {
                         loading={isRefetching}
                         hoverable
                         style={{ width: 240, marginRight: 50 }}
-                        cover={
-                            <ReactImageAppear 
-                                src={agentTicketInfo?.agent.photo.includes('unknown') ? 'https://img.icons8.com/ios-filled/50/gender-neutral-user.png' : `${urls.IMAGE_BASE_URL}${agentTicketInfo?.agent.photo.substring(19)}`}
-                                animation="zoomIn"
-                                animationDuration="1s"
-                            />
-                        }
+                        cover={<img onLoad={() => setImageLoaded(true)} style={imageLoaded ? {} : {display: 'none'}} src={agentTicketInfo?.agent.photo.includes('unknown') ? 'https://img.icons8.com/ios-filled/50/gender-neutral-user.png' : `${urls.IMAGE_BASE_URL}${agentTicketInfo?.agent.photo.substring(19)}`}/>}
                     >
-                        <Meta title={agentTicketInfo?.agent.fname + " "+agentTicketInfo?.agent.lname} description={agentTicketInfo.agent.stationInfo.name} />
+                        <Meta title={agentTicketInfo?.agent.fname + " "+agentTicketInfo?.agent.lname} description={agentTicketInfo?.agent?.station_user.station.name ?? "No Station"} />
                     </Card>
 
                     <Space direction={"vertical"} align={'start'}>
