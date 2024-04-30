@@ -45,6 +45,10 @@ const FormAddEdit = ({initialValues, stations, setModalOpen}: formProps) => {
         return e?.fileList;
       };
 
+    const handleFlexibleCheck = (e) => {
+        console.log(e.target.value)
+    }
+
     const onFinish = (formValues: Rate) => {
 
         if (typeof formValues.rate_image === 'undefined') {
@@ -102,7 +106,7 @@ const FormAddEdit = ({initialValues, stations, setModalOpen}: formProps) => {
                     <InputNumber prefix="GHc" style={{ width: '90%' }} />
                 </Form.Item>
                 <Form.Item label="Fixed Or Flexible" name="rate_type" valuePropName="checked">
-                    <Checkbox>Flexible</Checkbox>
+                    <Checkbox onClick={handleFlexibleCheck}>Flexible</Checkbox>
                 </Form.Item>
             </Space>
             <Form.Item name="is_postpaid" valuePropName="checked">

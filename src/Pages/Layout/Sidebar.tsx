@@ -7,7 +7,8 @@ import {
   UsergroupAddOutlined,
   UserOutlined,
   DownOutlined,
-  ExclamationCircleOutlined
+  ExclamationCircleOutlined,
+  PushpinOutlined
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, Typography, theme, Dropdown, Space, Modal, Avatar } from 'antd';
@@ -94,6 +95,11 @@ const Sidebar: React.FC<SidebarProps> = ( { userInfo } ) => {
       title: "Task Force",
       key: "task-force",
       icon: ExclamationCircleOutlined
+    },
+    {
+      title: "Station Summary",
+      key: "station-summary",
+      icon: PushpinOutlined
     },
     {
       title: "Rates and Categories",
