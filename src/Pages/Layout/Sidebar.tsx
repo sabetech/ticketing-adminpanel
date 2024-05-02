@@ -22,7 +22,7 @@ import Profile from '../Agent_Summary/Profile';
 import TaskForce from '../Taskforce/TaskForce';
 import Rates from '../RatesAndCategories/Rates';
 import ThirdPartyCustomers from "../OnCreditCustomers/ThirdPartyCustomers";
-import StationSummary from "../Station/StationSummary";
+import StationTicketSummary from "../Station/StationTicketSummary";
 import { TAuthUserResponse } from '../../Types/Auth';
 const { Header, Content, Sider } = Layout;
 import { logout } from '../../Services/Auth';
@@ -211,14 +211,13 @@ const Sidebar: React.FC<SidebarProps> = ( { userInfo } ) => {
                 <Route path="/agent-summary" element={<Agents />} />
                 <Route path="/agent-summary/:id/detail" element={<Profile />} />
                 <Route path="/task-force" element={<TaskForce />} />
-                <Route path="/station-summary" element={<StationSummary />} />
+                <Route path="/station-summary" element={<StationTicketSummary />} />
                 <Route path="/rates-and-categories" element={<Rates />} />
                 <Route path="/on-credit-customers" element={<ThirdPartyCustomers />} />
                 <Route path="/user-management" element={<ManageUsers />} />
                 <Route path="/users/manage" element={<ManageUsers />} />
               </Routes>
             </UserContext.Provider>
-
           </div>
         </Content>
       </Layout>

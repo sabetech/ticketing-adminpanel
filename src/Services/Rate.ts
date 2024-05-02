@@ -5,6 +5,7 @@ import { Rate, PayOnCreditRequest } from '../Types/Rate';
 
 
 export const getRates = async (station: number | null = null): Promise<RemoteResponse<Rate[]> | AppError> => {
+    
     const userInfo = getUserInfo()
     if (userInfo)
         if (!station)

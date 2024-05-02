@@ -4,6 +4,10 @@ import { Ticket } from "../../Types/Tickets";
 import { EditFilled, DeleteFilled } from "@ant-design/icons";
 import { deleteTicket } from "../../Services/TicketService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import FormEditTicket from "../../Components/TicketSummary/FormEditTicket"
+import { useQuery } from "@tanstack/react-query";
+import { getRates } from "../../Services/Rate";
+import  { getAgentList } from "../../Services/AgentService"
 
 type AgentTicketsProp = {
     agentTickets: Ticket[] | undefined
@@ -14,6 +18,8 @@ const AgentTickets = ({agentTickets}:AgentTicketsProp) => {
     const [idToDelete, setIDToDelete] = useState(0);
     const [messageApi, contextHolder] = message.useMessage();
     const queryClient = useQueryClient();
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [editTicketInfo, setEditTicketInfo] = useState<Ticket>();
 
     const { mutate: deleteTicketMutation, isPending } = useMutation({
         mutationFn: (id: number) => deleteTicket(id),
@@ -23,13 +29,23 @@ const AgentTickets = ({agentTickets}:AgentTicketsProp) => {
         }
     });
 
+    const { data: rates } = useQuery({
+        queryKey: ['rates'],
+        queryFn: () => getRates(),
+    });
+
+    const { data: agents } = useQuery({
+        queryKey: ['agents'],
+        queryFn: () => getAgentList(),
+    });
+
     const handleDeleteConfirm = (ticketId: number) => {
         setIDToDelete(ticketId)
         deleteTicketMutation(ticketId)
     }
 
-    const handleTicketEdit = (rec: Ticket) => {
-        console.log(rec)
+    const handleCancel = () => {
+        setModalOpen(false);
     }
 
     const columns: TableProps<Ticket>['columns'] = [
@@ -59,7 +75,11 @@ const AgentTickets = ({agentTickets}:AgentTicketsProp) => {
             dataIndex: '',
             key: 'action',
             render: (_, record: Ticket) => <Space size="middle">
-                <Button icon={<EditFilled />} onClick={() => handleTicketEdit(record)}>Edit</Button>
+                <Button icon={<EditFilled />} onClick={() => {
+                setModalOpen(true)
+                setEditTicketInfo(record)
+                }
+            } >Edit</Button>
             
                     <Button type="primary" danger icon={<DeleteFilled />} 
                         onClick={() => {
@@ -84,6 +104,12 @@ const AgentTickets = ({agentTickets}:AgentTicketsProp) => {
     return (
         <>
             {contextHolder}
+            <Modal 
+                title="Edit Ticket" open={isModalOpen}  onCancel={handleCancel}
+                footer={null}
+                >
+               {editTicketInfo && <FormEditTicket oldFormFields={editTicketInfo} rates={ rates?.success ? rates.data : []} agents={agents?.success ? agents.data : []} setModalOpen={setModalOpen}/>}
+            </Modal>
             <Table 
                 style={{width: '60vw'}}
                 columns={columns}

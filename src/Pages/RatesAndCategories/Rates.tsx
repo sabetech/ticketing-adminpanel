@@ -31,9 +31,6 @@ const Rates = () => {
         if (isSuccess && ratesData.success) {
             setRates(ratesData.data);
             setStations([...new Set(ratesData.data.map(item => JSON.stringify(item.station)))].map(station => JSON.parse(station)));
-
-        
-
         }
     },[ratesData])
 
@@ -59,7 +56,6 @@ const Rates = () => {
         const selectedRate = rates.filter(rt => rt.title === data);
         setRates(selectedRate)
     };
-    console.log("STATIONS BEFORE TRANSFER::", stations);
 
     return (
     <>
