@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Row, Col, Space,Card, DatePicker, Typography, List, Avatar, Divider, Statistic } from 'antd';
+import { Row, Col, Space,Card, DatePicker, Typography, List, Avatar, Divider, Statistic, Spin } from 'antd';
 import type { TimeRangePickerProps } from 'antd';
 import type { Dayjs } from 'dayjs';
 import { getStationSummary } from "../../Services/Station";
@@ -16,10 +16,14 @@ type StationTicketAggregate = {
 }
 
 const StationTicketSummary = () => {
-    const [dateRange, setDateRange] = useState<{from:string, to:string} | undefined>(undefined);
+    const [dateRange, setDateRange] = useState<{from:string, to:string}>(
+        {
+            from: dayjs().startOf('day').format("YYYY-MM-DD HH:mm:ss"), 
+            to: dayjs().endOf('day').format("YYYY-MM-DD HH:mm:ss")
+        });
     const [stationTicketsData, setStationTicketData] = useState<{}>();
 
-    const { data: stationTicketSummaryData } = useQuery({
+    const { data: stationTicketSummaryData, isLoading } = useQuery({
         queryKey: ['stationTicketSummary', dateRange],
         queryFn: async () => {
             if (typeof dateRange === 'undefined') {
@@ -92,7 +96,7 @@ const StationTicketSummary = () => {
     return (<>
         <Row>
             <Col span={23}>
-                <Card title={"Rates"} style={{textAlign: 'left'}}>
+                <Card title={"Station Summary - From: "+dayjs(dateRange.from).format("DD MMM YYYY HH:mm")+" To: "+dayjs(dateRange.to).format("DD MMM YYYY HH:mm")} style={{textAlign: 'left'}}>
                     <Space direction={"vertical"} align={'start'} >
                     <Typography>Date Filter</Typography>
                         <RangePicker
@@ -104,7 +108,7 @@ const StationTicketSummary = () => {
                                 },
                                 ...rangePresets,
                             ]}
-                            defaultValue={[dayjs().startOf('day'), dayjs()]}
+                            defaultValue={[dayjs().startOf('day'), dayjs().endOf('day')]}
                             showTime
                             format="YYYY-MM-DD HH:mm:ss"
                             onChange={onRangeChange}
@@ -113,6 +117,11 @@ const StationTicketSummary = () => {
                 </Card>
             </Col>
         </Row>
+
+        {
+            isLoading && <Spin size="large" style={{marginTop: 20}} />
+        }
+
         <Row style={{marginTop: 20}}>
             <Col>
                 <Space direction="horizontal" style={{alignItems: 'flex-start'}}>

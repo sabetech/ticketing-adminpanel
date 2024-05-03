@@ -15,7 +15,7 @@ const { RangePicker } = DatePicker;
 
 const TaskForce = () => {
 
-    const defaultDateRange = [dayjs().startOf('day').format("YYYY-MM-DD HH:mm:ss"), dayjs(new Date()).format("YYYY-MM-DD HH:mm:ss")];
+    const defaultDateRange = [dayjs().startOf('day').format("YYYY-MM-DD HH:mm:ss"), dayjs().endOf('day').format("YYYY-MM-DD HH:mm:ss")];
 
     const [dateRange, _] = useState<string[]>(defaultDateRange)
 
@@ -29,7 +29,6 @@ const TaskForce = () => {
     useEffect(() => {
         if (taskforceData?.success) {
             setTickets(taskforceData.data.map(tkt => ({...tkt, key: tkt.id})))
-            
         }
 
     },[taskforceData]);
@@ -81,7 +80,7 @@ const TaskForce = () => {
 
             <Row>
                 <Col span={23}>
-                    <TableTaskForce />
+                    <TableTaskForce tickets={tickets} />
                 </Col>
             </Row>
         </>

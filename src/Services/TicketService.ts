@@ -80,7 +80,7 @@ export const getTaskforceTickets = async (date: string[]): Promise<RemoteRespons
     const userInfo = getUserInfo()  
 
     if (userInfo)
-        return (await api.get(`/ticket/taskforce?date_range=${date}`, {'Authorization': 'Bearer '+userInfo.token})).data
+        return (await api.get(`/ticket/taskforce?from=${date[0]}&to=${date[1]}`, {'Authorization': 'Bearer '+userInfo.token})).data
     else
         return new Promise<AppError>((_, reject) => {
             reject("User is not logged In");

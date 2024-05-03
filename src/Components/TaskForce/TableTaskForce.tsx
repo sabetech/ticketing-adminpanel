@@ -1,11 +1,19 @@
 import { Table } from "antd"
-const TableTaskForce = () => {
+import { Ticket } from "../../Types/Tickets"
+import dayjs from "dayjs"
+
+type TableTaskForceProps = {
+    tickets: Ticket[]
+}
+
+const TableTaskForce: React.FC<TableTaskForceProps> = ({ tickets }) => {
 
     const columns = [
             {
                 title: 'Date Time Issued',
                 dataIndex: 'issued_date_time',
-                key: 'issued_date_time'
+                key: 'issued_date_time',
+                render: (value) => dayjs(value).format('DD MMM YYYY HH:mm')
             },
             {
                 title: 'Car Number',
@@ -32,6 +40,7 @@ const TableTaskForce = () => {
     return (
         <Table 
             columns={columns}
+            dataSource={tickets}
         />
     )
 }
