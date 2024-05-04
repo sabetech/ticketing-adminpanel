@@ -64,6 +64,7 @@ const TableAgentsOnline:React.FC<Props> = ({agentsOnline, isLoading}) => {
             loading={isLoading}
             columns={columns}
             dataSource={agentsOnline}
+            pagination={false} 
         />
     )
 }

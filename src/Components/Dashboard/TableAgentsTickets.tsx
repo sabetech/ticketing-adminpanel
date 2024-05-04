@@ -1,7 +1,17 @@
+import { useQuery } from "@tanstack/react-query";
 import { Table } from "antd";
 import type { TableProps } from 'antd';
+import { getAgentTicketTotals } from '../../Services/AgentService'
 
-const TableAgentsTickets = () => {
+const TableAgentsTickets = ({date}) => {
+
+    const {data: agentTicketTotals} = useQuery({
+        queryKey: ['agentTicketTotals'],
+        queryFn: async () => getAgentTicketTotals(date)
+    });
+
+    console.log("agent Ticket totals", agentTicketTotals)
+
     type ColumnProps = {
         key: string;
         agent: string;
@@ -13,29 +23,26 @@ const TableAgentsTickets = () => {
     const columns: TableProps<ColumnProps>['columns'] = [
         {
             title: 'Agent',
-            dataIndex: 'agent',
+            dataIndex: 'fname',
             key: 'agent'
         },
         {
             title: 'Tickets Issued',
-            dataIndex: 'ticketsIssued',
+            dataIndex: 'tickets_issued',
             key: 'ticketsIssued'
         },
         {
             title: 'Amount',
-            dataIndex: 'amount',
+            dataIndex: 'total',
             key: 'amount'
-        },
-        {
-            title: 'Station',
-            dataIndex: 'station',
-            key: 'station'
-        },
+        }
     ]
 
     return (
         <Table 
             columns={columns}
+            dataSource={agentTicketTotals.data}
+            pagination={false} 
         />
     )
 }

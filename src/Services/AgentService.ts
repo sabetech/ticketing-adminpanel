@@ -57,3 +57,14 @@ export const getAgentDetail = async (agentId: string | undefined, dateRange: {fr
             reject("User is not logged In");
         });
 }
+
+export const getAgentTicketTotals = async (date: string) => {
+    const userInfo = getUserInfo();
+
+    if (userInfo) {
+        return (await api.get(`/ticket/by-agents?date=${date}`, {'Authorization': 'Bearer '+userInfo.token})).data
+    } else
+        return new Promise<AppError>((_, reject) => {
+            reject("User is not logged In");
+        });
+}

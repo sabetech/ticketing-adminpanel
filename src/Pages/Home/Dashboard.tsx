@@ -46,7 +46,7 @@ const Dashboard = () => {
 
     const { data: agentsOnline, isLoading: isAgentsOnlineLoading } = useQuery(
       {
-        queryKey: ['agentCount'],
+        queryKey: ['agentOnline'],
         queryFn: async () => getAgentOnlineStatus()
       })
 
@@ -104,7 +104,7 @@ const Dashboard = () => {
         <Row gutter={12} style={{marginTop: 50}}>
           <Col span={11}>
             <Card title="show the agents eg 8 on the dashboard">
-              <TableAgentsTickets />
+              <TableAgentsTickets date={date}/>
             </Card>
           </Col>
           <Col span={11}>
