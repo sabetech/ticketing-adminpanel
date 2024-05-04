@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Table } from "antd";
 import type { TableProps } from 'antd';
 import { getAgentTicketTotals } from '../../Services/AgentService'
+import { Link } from "react-router-dom";
 
 const TableAgentsTickets = ({date}) => {
 
@@ -17,14 +18,15 @@ const TableAgentsTickets = ({date}) => {
         agent: string;
         ticketsIssued: number;
         amount: number;
-        station: string
+        agent_name: string
       }
 
     const columns: TableProps<ColumnProps>['columns'] = [
         {
             title: 'Agent',
             dataIndex: 'fname',
-            key: 'agent'
+            key: 'agent',
+            render: (val, rec) => <Link to={`/agent-summary/${rec.agent_name}/detail`}>{val}</Link>
         },
         {
             title: 'Tickets Issued',
