@@ -5,7 +5,7 @@ import { getAgentTicketTotals } from '../../Services/AgentService'
 
 const TableAgentsTickets = ({date}) => {
 
-    const {data: agentTicketTotals} = useQuery({
+    const {data: agentTicketTotals, isFetched} = useQuery({
         queryKey: ['agentTicketTotals'],
         queryFn: async () => getAgentTicketTotals(date)
     });
@@ -41,7 +41,7 @@ const TableAgentsTickets = ({date}) => {
     return (
         <Table 
             columns={columns}
-            dataSource={agentTicketTotals.data}
+            dataSource={isFetched && agentTicketTotals.data}
             pagination={false} 
         />
     )
