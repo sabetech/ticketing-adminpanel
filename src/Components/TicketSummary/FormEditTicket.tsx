@@ -29,7 +29,10 @@ const FormEditTicket:React.FC<Props> = ({oldFormFields, rates, agents, setModalO
     form.setFieldValue('title', oldFormFields.title)
     form.setFieldValue('car_number', oldFormFields.car_number)
     form.setFieldValue('rate', oldFormFields.rate.title);
-    form.setFieldValue('agent', oldFormFields.agent.fname + " " + oldFormFields.agent.lname)
+
+    console.log("OLD FORM FIELDS::", oldFormFields)
+
+    // form.setFieldValue('agent', oldFormFields.agent.fname + " " + oldFormFields.agent.lname)
 
     const onFinish = (_values: any) => {
         console.log("FORM FIElDS::", _values);

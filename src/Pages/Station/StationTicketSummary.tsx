@@ -147,7 +147,7 @@ const StationTicketSummary = () => {
                                 footer={<Row style={{marginTop: 5}}>
                     
                                 <Col style={{marginRight: '10%'}}>
-                                    <Statistic title="Tickets Issued" value={stationTicketsData[station].length ?? 0} />
+                                    <Statistic title="Tickets Issued" value={stationTicketsData[station]?.reduce((acc, tkt) => acc + parseFloat(tkt.count), 0) ?? 0} />
                                 </Col>
                                 
                                 <Col >

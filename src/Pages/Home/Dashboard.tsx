@@ -103,7 +103,7 @@ const Dashboard = () => {
         </Row>
         <Row gutter={12} style={{marginTop: 50}}>
           <Col span={11}>
-            <Card title="show the agents eg 8 on the dashboard">
+            <Card title={`Agents and Total Tickets Issued for ${dayjs(date).format("MMM DD, YYYY")}`}>
               <TableAgentsTickets date={date}/>
             </Card>
           </Col>

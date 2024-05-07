@@ -114,8 +114,8 @@ const AgentTickets = ({agentTickets}:AgentTicketsProp) => {
                 style={{width: '60vw'}}
                 columns={columns}
                 dataSource={agentTickets}
-                // scroll={{y: 500}}
-                sticky={{ offsetHeader: 200 }}
+                sticky={{ offsetHeader: 0 }}
+                pagination={false}
             />
         </>
     )
