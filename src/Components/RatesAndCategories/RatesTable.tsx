@@ -136,6 +136,7 @@ const RatesTable= ({ rates, isloading }: RatesProps) => {
                 dataSource={rates}
                 loading={isloading}
                 scroll={{y:500}}
+                pagination={false}
             />
         </>
     )

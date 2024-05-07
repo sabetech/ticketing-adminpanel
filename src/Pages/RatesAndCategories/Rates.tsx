@@ -92,7 +92,7 @@ const Rates = () => {
                                         onClear={onSearchClear}
                                         options={rates.map( rate => ({
                                             key: rate.id,
-                                            label: rate.title,
+                                            label: `${rate.title} (${typeof rate.station === 'object' ? rate.station.name : ""})`,
                                             value: rate.title,
                                         }))}
                                         style={{ width: 500 }}
