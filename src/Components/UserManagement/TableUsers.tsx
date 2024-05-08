@@ -91,6 +91,7 @@ const TableUsers: React.FC<TableUsersProp> = ({isLoading, users}) => {
             columns={columns}
             dataSource={users}
             scroll={{y: 480}}
+            pagination={{ pageSize: 80 }}
         />
     </>
 }

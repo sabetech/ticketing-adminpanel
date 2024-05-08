@@ -108,7 +108,7 @@ const Sidebar: React.FC<SidebarProps> = ( { userInfo } ) => {
       icon: DollarOutlined
     },
     {
-      title: "Third Party(On Credit) ",
+      title: "Postpaid (On Credit) ",
       key: "on-credit-customers",
       icon: ThunderboltOutlined
     },

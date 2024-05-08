@@ -76,7 +76,7 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
             title: 'Category',
             dataIndex: 'rate',
             key: 'category',
-            render: (rate: Rate) => <>{rate.title} <Tag>{rate.rate_type.toUpperCase()}</Tag></>
+            render: (rate: Rate) => <>{rate.title} <Tag>{rate.rate_type.toUpperCase()}</Tag> {(rate.is_postpaid == true) && (<Tag color="gold" >Postpaid</Tag>)} </>
         },
         {
             title: 'Amount',
