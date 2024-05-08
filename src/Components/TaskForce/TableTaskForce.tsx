@@ -18,7 +18,8 @@ const TableTaskForce: React.FC<TableTaskForceProps> = ({ tickets }) => {
             {
                 title: 'Car Number',
                 dataIndex: 'car_number',
-                key: 'car_number'
+                key: 'car_number',
+                render: (val: string) => val.toUpperCase()
             },
             {
                 title: 'Amount',

@@ -29,6 +29,7 @@ const PendingTickets:React.FC<PendingTicketsProps> = ({isLoading, tickets}) => {
             dataIndex: 'car_number',
             key: 'car_number',
             width: '10%',
+            render: (val: string) => val.toUpperCase()
         },
         {
             title: 'Amount',

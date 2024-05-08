@@ -64,7 +64,8 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
         {
             title: 'Car Number',
             dataIndex: 'car_number',
-            key: 'car_number'
+            key: 'car_number',
+            render: (val: string) => val.toUpperCase()
         },
         {
             title: 'Station',

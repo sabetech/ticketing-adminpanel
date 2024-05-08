@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {Card, Row, Col, Typography, Space, Statistic, AutoComplete, message } from "antd";
 import { DatePicker } from 'antd';
+import type { TimeRangePickerProps } from 'antd';
 import TableTickets from "../../Components/TicketSummary/TableTickets";
 import dayjs from "dayjs";
 import { getTicketsIssued } from "../../Services/TicketService";
@@ -43,6 +44,14 @@ const TicketsSummary = () => {
         }
 
     },[ticketData]);
+
+    const rangePresets: TimeRangePickerProps['presets'] = [
+        { label: 'Yesterday', value: [dayjs().add(-1, 'd'), dayjs()] },
+        { label: 'Last 7 Days', value: [dayjs().add(-7, 'd'), dayjs()] },
+        { label: 'Last 14 Days', value: [dayjs().add(-14, 'd'), dayjs()] },
+        { label: 'Last 30 Days', value: [dayjs().add(-30, 'd'), dayjs()] },
+        { label: 'Last 90 Days', value: [dayjs().add(-90, 'd'), dayjs()] },
+    ];
 
     const onchange = (_: any, dateRange: [string, string]) => {
         setDateRange(dateRange)
@@ -144,7 +153,20 @@ const TicketsSummary = () => {
                             <Space direction="vertical" style={{textAlign: 'left', marginRight: '3rem'}}> 
                                 <Typography>Date Filter</Typography>
                                 <Space direction="horizontal" >
-                                    <RangePicker showTime size={'large'} onChange={onchange} defaultValue={[dayjs().startOf('day'), dayjs()]} />
+                                    <RangePicker 
+                                        showTime 
+                                        size={'large'} 
+                                        onChange={onchange} 
+                                        defaultValue={[dayjs().startOf('day'), dayjs()]} 
+                                        presets={[
+                                            {
+                                            label: <span aria-label="Start of Day to Now">Start of Day ~ End of Day</span>,
+                                            value: () => [dayjs().startOf('day'), dayjs().endOf('day')],
+                                            },
+                                            ...rangePresets,
+                                        ]}
+
+                                        />
                                 </Space>
                             </Space>
 

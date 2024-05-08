@@ -58,7 +58,7 @@ const StationTicketSummary = () => {
             
                     const groupedTotals = transactions.reduce((acc, transaction) => {
                         const rateTitle = transaction.rate.title;
-                        const amount = parseFloat(transaction.rate.amount);
+                        const amount = parseFloat(transaction.amount);
             
                         if (!acc[rateTitle]) {
                             // Initialize a new entry for this rate title
@@ -87,8 +87,6 @@ const StationTicketSummary = () => {
             }
 
             setStationTicketData(transformedOutput)
-
-            console.log("Only NANA::", transformedOutput);
 
         }
     }, [stationTicketSummaryData]);
@@ -138,7 +136,7 @@ const StationTicketSummary = () => {
                                     <List.Item.Meta
                                         avatar={<Avatar src={item.icon} />}
                                         title={<a href="#">{item.title}</a>}
-                                        description={"Ticket Issued:"+item.count}/>
+                                        description={"Ticket Issued: "+item.count}/>
                                 
                                 <div><Typography.Title level={4}>{item.total}</Typography.Title></div>
                                 

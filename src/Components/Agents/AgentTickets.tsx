@@ -64,6 +64,7 @@ const AgentTickets = ({agentTickets}:AgentTicketsProp) => {
             title: 'Car Number or Subject',
             dataIndex: 'car_number',
             key: 'car_number',
+            render: (val: string) => val.toUpperCase()
         },
         {
             title: 'Ticket Cost',
