@@ -40,13 +40,22 @@ const TableAgentsOnline:React.FC<Props> = ({agentsOnline, isLoading}) => {
                     }else{
                         const latestOnlineAt = dayjs(record.latest_online_at);
                         const minutesPassed = dayjs().diff(latestOnlineAt, 'minute');
-                        if (minutesPassed > 10) {
+                        if ((minutesPassed > 15) && (minutesPassed < 90)) {
                             return (<>
-                                <Tag color="orange">Active Since <strong>{minutesPassed}</strong> mins</Tag>
+                                <Tag color="orange">Online Since <strong>{
+                                    (minutesPassed > 60 ? `${Math.floor(minutesPassed / 60)} hrs ${minutesPassed % 60} mins` : `${minutesPassed} mins`)
+                                }</strong> mins</Tag>
                             </>)
-                        }else {
+                        }else if (minutesPassed >= 90) {
                             return (<>
-                                <Tag color="green">Active Since <strong>{minutesPassed}</strong> mins</Tag>
+                                <Tag color="red">Online Since <strong>{
+                                    `${Math.floor(minutesPassed / 60)} hrs ${minutesPassed % 60} mins`
+                                }</strong></Tag>
+                            </>)
+                        }
+                        else {
+                            return (<>
+                                <Tag color="green">Online Since <strong>{minutesPassed}</strong> mins</Tag>
                             </>)
                         }
                         

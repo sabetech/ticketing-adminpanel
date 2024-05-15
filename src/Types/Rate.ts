@@ -7,7 +7,7 @@ export type Rate = {
     rate_type: string
     title: string
     station: Station | string,
-    rate_image: any
+    icon: any
 
 }
 

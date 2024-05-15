@@ -8,7 +8,8 @@ import {
   UserOutlined,
   DownOutlined,
   ExclamationCircleOutlined,
-  PushpinOutlined
+  PushpinOutlined,
+  UserSwitchOutlined
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, Typography, theme, Dropdown, Space, Modal, Avatar } from 'antd';
@@ -29,6 +30,7 @@ import { logout } from '../../Services/Auth';
 import * as utils from "../../Utils/Auth";
 import { getUserInfo } from '../../Utils/Auth';
 import ManageUsers from '../UserManagement/ManageUsers';
+import AgentRateAssignment from '../RatesAndCategories/AgentRateAssignment';
 
 type SidebarProps = {
   userInfo: TAuthUserResponse
@@ -106,6 +108,11 @@ const Sidebar: React.FC<SidebarProps> = ( { userInfo } ) => {
       title: "Rates and Categories",
       key: "rates-and-categories",
       icon: DollarOutlined
+    },
+    {
+      title: "Agent-Rates Assignment",
+      key: "agent-rate-assignment",
+      icon: UserSwitchOutlined
     },
     {
       title: "Postpaid (On Credit) ",
@@ -213,6 +220,7 @@ const Sidebar: React.FC<SidebarProps> = ( { userInfo } ) => {
                 <Route path="/task-force" element={<TaskForce />} />
                 <Route path="/station-summary" element={<StationTicketSummary />} />
                 <Route path="/rates-and-categories" element={<Rates />} />
+                <Route path="/agent-rate-assignment"element={<AgentRateAssignment />} />
                 <Route path="/on-credit-customers" element={<ThirdPartyCustomers />} />
                 <Route path="/user-management" element={<ManageUsers />} />
                 <Route path="/users/manage" element={<ManageUsers />} />
