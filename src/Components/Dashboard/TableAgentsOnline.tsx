@@ -44,7 +44,7 @@ const TableAgentsOnline:React.FC<Props> = ({agentsOnline, isLoading}) => {
                             return (<>
                                 <Tag color="orange">Online Since <strong>{
                                     (minutesPassed > 60 ? `${Math.floor(minutesPassed / 60)} hrs ${minutesPassed % 60} mins` : `${minutesPassed} mins`)
-                                }</strong> mins</Tag>
+                                }</strong></Tag>
                             </>)
                         }else if (minutesPassed >= 90) {
                             return (<>
