@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Row, Col, Card, List, Avatar, Typography, message } from 'antd';
+import { Row, Col, Card, List, Avatar, Typography } from 'antd';
 import { CheckCircleTwoTone, LoadingOutlined } from '@ant-design/icons';
 import { getAgentList } from '../../Services/AgentService';
 import { Rate } from '../../Types/Rate';

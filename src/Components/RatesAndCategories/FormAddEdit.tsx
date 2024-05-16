@@ -20,7 +20,7 @@ const FormAddEdit = ({initialValues, stations, setModalOpen}: formProps) => {
     form.setFieldsValue(initialValues)
 
     const { mutate: addOrEditRateItem, isPending } = useMutation({
-        mutationFn: (rateValues: {values: Rate, action: string}) => {
+        mutationFn: (rateValues: {values: any, action: string}) => {
             if (rateValues.action === 'add' || typeof rateValues.values.id === 'undefined') {
                 return addRate(rateValues.values)
             }
@@ -51,7 +51,7 @@ const FormAddEdit = ({initialValues, stations, setModalOpen}: formProps) => {
 
     const onFinish = (formValues: Rate) => {
 
-        if (typeof formValues.rate_image === 'undefined') {
+        if (typeof formValues.icon === 'undefined') {
             const rateValues = {
                 values: {
                     id: formValues.id,
@@ -71,9 +71,9 @@ const FormAddEdit = ({initialValues, stations, setModalOpen}: formProps) => {
                     amount: formValues.amount,
                     is_postpaid: typeof formValues.is_postpaid === 'undefined' ? false : true,
                     rate_type: typeof formValues.rate_type === 'undefined' ? 'fixed' : 'flexible',
-                    rate_image: formValues.rate_image[0].originFileObj,
+                    rate_image: formValues.icon[0].originFileObj,
                     station: formValues.station,
-                } as Rate,
+                },
                 action: typeof formValues.id === 'undefined' ? 'add':'edit'
                 }
             addOrEditRateItem(rateValues);
@@ -113,7 +113,7 @@ const FormAddEdit = ({initialValues, stations, setModalOpen}: formProps) => {
                 <Checkbox>Postpaid Rate</Checkbox>
             </Form.Item>
 
-            <Form.Item label="Upload" valuePropName="fileList" name="rate_image" getValueFromEvent={normFile} rules={typeof initialValues === 'undefined' ? [{ required: true, message: 'Please upload image!' }]: []}>
+            <Form.Item label="Upload" valuePropName="fileList" name="icon" getValueFromEvent={normFile} rules={typeof initialValues === 'undefined' ? [{ required: true, message: 'Please upload image!' }]: []}>
                 <Upload listType="picture-card">
                     <button style={{ border: 0, background: 'none' }} type="button">
                         <PlusOutlined />
