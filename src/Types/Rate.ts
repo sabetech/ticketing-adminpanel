@@ -8,7 +8,7 @@ export type Rate = {
     title: string
     station: Station | string,
     icon: any
-
+    pivot? : any
 }
 
 export type PayOnCreditRequest = {

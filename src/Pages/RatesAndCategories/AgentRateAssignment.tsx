@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Row, Col, Card, List, Avatar, Typography, message } from 'antd';
 import { CheckCircleTwoTone, LoadingOutlined } from '@ant-design/icons';
@@ -8,7 +8,7 @@ import { RemoteResponse, AppError } from '../../Types/Remote';
 import { Agent } from '../../Types/Agent';
 import * as urls from '../../Constants/Urls';
 import "./AgentRateAssignment.css";
-import { getRateByAgent } from '../../Services/AgentService'
+import { getRateByAgent, updateAgentRateAssignment } from '../../Services/AgentService'
 import * as Urls from '../../Constants/Urls'
 
 
@@ -16,41 +16,47 @@ const AgentRateAssignment = () => {
 
     const [selectedAgent, setSelectedAgent] = useState<Agent>();
     const [selectedRateIds, setSelectedRateIds] = useState<number[]>([]);
+    const [hasFilter, setHasFilter] = useState(false);
     const queryClient = useQueryClient();
-    const [messageApi, contextHolder] = message.useMessage();
 
     const { data: agents, isLoading } = useQuery<RemoteResponse<Agent[]> | AppError>({
         queryKey: ['agents'],
         queryFn: async () => getAgentList()
     });
 
-    const { data: agentRates, isLoading: loadingRates } = useQuery({
+    const { data: agentRates, isLoading: loadingRates, isRefetching, isFetchedAfterMount  } = useQuery({
         queryKey: ['agent_rates', selectedAgent],
+        enabled: typeof selectedAgent !== 'undefined',
         queryFn: async () => getRateByAgent(selectedAgent.id)
     });
 
     const { mutate: modifyAgentRates, isPending } = useMutation({
-        mutationFn: (values: any) => modifyAgentRates(values.agentId, values.rateIds),
+        mutationFn: (values: any) => updateAgentRateAssignment({agentId: values.agentId, rateId: values.rateId}),
         onSuccess: (data: any) => { 
             queryClient.invalidateQueries();
-            messageApi.success(data.message);
+            console.log("DATA::", data.data);
         }
     });
 
-    const selectRate = (rate) => {
-        
-        if (selectedRateIds.some(id => rate.id == id )) {
-            setSelectedRateIds(selectedRateIds.filter(id => id !== rate.id));
-            return
-        }
+    const selectAgent = (agt) => {
+       setSelectedAgent(agt);
+    }
 
+
+    useEffect(() => {
+        if (isFetchedAfterMount)
+            setHasFilter(agentRates.data.some(r => typeof r.pivot !== 'undefined'));
+
+    }, [isFetchedAfterMount, isRefetching])
+
+    console.log("IS AGENT RATES REFETCHING >>", isRefetching);
+    console.log("IS AGENT RATE FETCHED after mount:>?", isFetchedAfterMount);
+
+    const selectRate = (rate) => {
         modifyAgentRates({
             agentId: selectedAgent.id,
-            rateIds: selectedRateIds
+            rateId: rate.id
         });
-
-        setSelectedRateIds([...selectedRateIds, rate.id]);
-
     }
 
     return (<>
@@ -66,11 +72,7 @@ const AgentRateAssignment = () => {
                                 itemLayout="horizontal"
                                 dataSource={agents?.success ? agents.data : []}
                                 renderItem={(agt: Agent, index) => (
-                                    <List.Item style={{ cursor: 'pointer', backgroundColor: selectedAgent?.id === agt.id ? '#11aabb': '' }} onClick={() => {
-                                        setSelectedRateIds([]);
-                                        setSelectedAgent(agt);
-                                    }}
-                                    > 
+                                    <List.Item style={{ cursor: 'pointer', backgroundColor: selectedAgent?.id === agt.id ? '#11aabb': '' }} onClick={() => selectAgent(agt)}>
                                     <List.Item.Meta
                                         avatar={<Avatar src={agt.photo.includes('unknown') ? `https://api.dicebear.com/7.x/miniavs/svg?seed=${index}` : `${urls.IMAGE_BASE_URL}${agt.photo.substring(19)}` } />}
                                         title={agt.fname+ " "+agt.lname}
@@ -83,7 +85,7 @@ const AgentRateAssignment = () => {
                         </Col>
 
                         <Col span={8}> 
-                            <Card title={`Choose Rates for ${selectedAgent?.fname ?? 'unknown'}`}>
+                            <Card title={typeof selectedAgent === 'undefined' ? 'Select an Agent':`Choose Rates for ${selectedAgent.fname }`}>
                                 <List 
                                     size={'large'}
                                     loading={loadingRates}
@@ -91,7 +93,7 @@ const AgentRateAssignment = () => {
                                     dataSource={agentRates?.success ? agentRates.data : []}
                                     renderItem={(rate: Rate) => {
                                         
-                                            if (!selectedRateIds.includes(rate.id) && selectedRateIds.length > 0)
+                                            if (hasFilter && typeof rate?.pivot === 'undefined')
                                                 return (<List.Item style={{ cursor: 'pointer' }} onClick={() => selectRate(rate)}> 
                                                     <List.Item.Meta
                                                         avatar={<Avatar src={

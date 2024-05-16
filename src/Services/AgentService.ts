@@ -78,6 +78,15 @@ export const getRateByAgent = async (agentId: number) => {
         return new Promise<AppError>((_, reject) => {
             reject("User is not logged In");
         });
-
-
 } 
+
+export const updateAgentRateAssignment = async (values: any) => {
+    const userInfo = getUserInfo();
+    
+    if (userInfo) {
+        return (await api.post(`/agent/${values.agentId}/rates`, values, {'Authorization': 'Bearer '+userInfo.token})).data
+    } else
+        return new Promise<AppError>((_, reject) => {
+            reject("User is not logged In");
+        });
+}
