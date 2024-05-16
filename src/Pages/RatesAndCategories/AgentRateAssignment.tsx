@@ -15,7 +15,7 @@ import * as Urls from '../../Constants/Urls'
 const AgentRateAssignment = () => {
 
     const [selectedAgent, setSelectedAgent] = useState<Agent>();
-    const [selectedRateIds, setSelectedRateIds] = useState<number[]>([]);
+    const [selectedRate, setSelectedRate] = useState<Rate>();
     const [hasFilter, setHasFilter] = useState(false);
     const queryClient = useQueryClient();
 
@@ -49,10 +49,8 @@ const AgentRateAssignment = () => {
 
     }, [isFetchedAfterMount, isRefetching])
 
-    console.log("IS AGENT RATES REFETCHING >>", isRefetching);
-    console.log("IS AGENT RATE FETCHED after mount:>?", isFetchedAfterMount);
-
     const selectRate = (rate) => {
+        setSelectedRate(rate)
         modifyAgentRates({
             agentId: selectedAgent.id,
             rateId: rate.id
@@ -94,7 +92,7 @@ const AgentRateAssignment = () => {
                                     renderItem={(rate: Rate) => {
                                         
                                             if (hasFilter && typeof rate?.pivot === 'undefined')
-                                                return (<List.Item style={{ cursor: 'pointer' }} onClick={() => selectRate(rate)}> 
+                                                return (<List.Item style={{ cursor: 'pointer' }} onClick={() => selectRate(rate)} extra={isPending && rate.id == selectedRate.id && <LoadingOutlined />} > 
                                                     <List.Item.Meta
                                                         avatar={<Avatar src={
                                                             rate.icon.startsWith('http') ? rate.icon : `${Urls.RATE_BASE_URL}${rate.icon.substring(6) }` 
@@ -103,7 +101,7 @@ const AgentRateAssignment = () => {
                                                     />
                                                     </List.Item>)
                                             
-                                            return (<List.Item style={{ cursor: 'pointer' }} onClick={() => selectRate(rate)} extra={isPending ? <LoadingOutlined /> : <CheckCircleTwoTone twoToneColor="#52c41a" />}> 
+                                            return (<List.Item style={{ cursor: 'pointer' }} onClick={() => selectRate(rate)} extra={isPending && rate.id == selectedRate.id ? <LoadingOutlined /> : <CheckCircleTwoTone twoToneColor="#52c41a" />}> 
                                         <List.Item.Meta
                                             avatar={<Avatar src={
                                                 rate.icon.startsWith('http') ? rate.icon : `${Urls.RATE_BASE_URL}${rate.icon.substring(6) }` 
