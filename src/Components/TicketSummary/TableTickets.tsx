@@ -179,7 +179,9 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
                 columns={columns}  
                 dataSource={ticketData} 
                 loading={isLoading}
-                pagination={{pageSize: 100}}
+                pagination={{
+                    defaultPageSize: 100, 
+                    pageSizeOptions: ['100', '200', '300'] }}
             />
         </>
     )
