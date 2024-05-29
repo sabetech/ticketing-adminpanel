@@ -6,9 +6,6 @@ import { AppError, RemoteResponse } from '../Types/Remote';
 
 export const getTicketsIssued = async (date: string | string[] ): Promise<RemoteResponse<Ticket[]> | AppError> => {
     const userInfo = getUserInfo()
-    // console.log("Date:",date);
-    // console.log("Type Date:",typeof date);
-    // console.log("Type Date:",date.length);
 
     if (userInfo)
         if  (typeof date == 'string')
@@ -103,6 +100,28 @@ export const editTicket = async (id: number, values: any) => {
 
     if (userInfo)
         return (await api.post(`/ticket/${id}/edit`, values, {'Authorization': 'Bearer '+userInfo.token})).data
+    else
+        return new Promise<AppError>((_, reject) => {
+            reject("User is not logged In");
+        })
+}
+
+export const searchAutocomplete = async (field: string, searchTerm: string) => {
+    const userInfo = getUserInfo()
+
+    if (userInfo) 
+        return (await api.get(`/ticket/searchAutoComplete?field=${field}&searchTerm=${searchTerm}`, {'Authorization': 'Bearer '+userInfo.token})).data
+    else
+        return new Promise<AppError>((_, reject) => {
+            reject("User is not logged In");
+        })
+}
+
+export const searchTickets = async (field: string , searchTerm: string) => {
+    const userInfo = getUserInfo()
+
+    if (userInfo) 
+        return (await api.get(`/ticket/search?field=${field}&searchTerm=${searchTerm}`, {'Authorization': 'Bearer '+userInfo.token})).data
     else
         return new Promise<AppError>((_, reject) => {
             reject("User is not logged In");
