@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import {Card, Row, Col, Typography, Space, Statistic, AutoComplete, message } from "antd";
+import {Card, Row, Col, Typography, Space, Statistic, message } from "antd";
 import { DatePicker } from 'antd';
 import type { TimeRangePickerProps } from 'antd';
 import TableTickets from "../../Components/TicketSummary/TableTickets";
+import TicketSearchBar from "../../Components/TicketSummary/TicketSearchBar";
 import dayjs from "dayjs";
 import { getTicketsIssued } from "../../Services/TicketService";
 import { RemoteResponse, AppError } from "../../Types/Remote";
@@ -17,7 +18,7 @@ const TicketsSummary = () => {
 
     const [dateRange, setDateRange] = useState<string[]>(defaultDateRange)
     const [tickets, setTickets] = useState<Ticket[]>([]);
-    const [autocompletOptions, setAutocompleteOptions] = useState<{
+    const [_, setAutocompleteOptions] = useState<{
         key: string,
         label: JSX.Element, 
         value: string
@@ -57,35 +58,35 @@ const TicketsSummary = () => {
         setDateRange(dateRange)
     }
 
-    const onSearchChange = (text:string) => {
-        if (text === "") {
-            if (ticketData?.success) {
-                setTickets(ticketData.data)
-                if (typeof ticketData.data !== 'undefined')
-                    setAutocompleteOptions(constructAutoCompleteOptions(ticketData.data))
-            }
-        }
-    }
+    // const onSearchChange = (text:string) => {
+    //     if (text === "") {
+    //         if (ticketData?.success) {
+    //             setTickets(ticketData.data)
+    //             if (typeof ticketData.data !== 'undefined')
+    //                 setAutocompleteOptions(constructAutoCompleteOptions(ticketData.data))
+    //         }
+    //     }
+    // }
     
-    const onsearchselect = (text: string) => {
+    // const onsearchselect = (text: string) => {
         
-        const searchedTickets = tickets.filter(tkt => 
-                `${tkt.agent.fname} ${tkt.agent.lname}` === text
-                || tkt.car_number === text 
-                || tkt.title === text
-                || tkt.name === text
-            );
+    //     const searchedTickets = tickets.filter(tkt => 
+    //             `${tkt.agent.fname} ${tkt.agent.lname}` === text
+    //             || tkt.car_number === text 
+    //             || tkt.title === text
+    //             || tkt.name === text
+    //         );
         
-        setTickets(searchedTickets);
-    }
+    //     setTickets(searchedTickets);
+    // }
 
-    const onSearchClear = () => {
-        if (ticketData?.success) {
-            setTickets(ticketData.data)
-            if (typeof ticketData.data !== 'undefined')
-                setAutocompleteOptions(constructAutoCompleteOptions(ticketData.data))
-        }
-    }
+    // const onSearchClear = () => {
+    //     if (ticketData?.success) {
+    //         setTickets(ticketData.data)
+    //         if (typeof ticketData.data !== 'undefined')
+    //             setAutocompleteOptions(constructAutoCompleteOptions(ticketData.data))
+    //     }
+    // }
       
     const renderItem = (title: string): JSX.Element => 
     (
@@ -171,21 +172,8 @@ const TicketsSummary = () => {
                             </Space>
 
                             <Space direction="vertical" style={{textAlign: 'left'}}>
-                                <Typography>Search</Typography>
-                                <AutoComplete 
-                                    allowClear
-                                    onClear={onSearchClear}
-                                    onChange={onSearchChange}
-                                    options={autocompletOptions}
-                                    style={{ width: 500 }}
-                                    size="large"
-                                    filterOption={(inputValue, option) => 
-                                        option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-                                    }
-                                    placeholder="Search by Car Number, Ticket ID, Agent Name, Station" 
-                                    onSelect={(text: string, _: any) => onsearchselect(text)}
-                                />
-                                   
+                                <Typography>Search By</Typography>
+                                 <TicketSearchBar setTickets={setTickets}/>  
                             </Space>
                         </Space>
                     </Card>
