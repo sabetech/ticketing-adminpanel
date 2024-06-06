@@ -53,7 +53,7 @@ const TaskForce = () => {
                                     options={[
                                         { value: 'all', label: 'All' },
                                         { value: 'achimota', label: 'Achimota' },
-                                        { value: 'cirlce', label: 'Circle' },
+                                        { value: 'circle', label: 'Circle' },
                                     ]}
                                 />
                             </Space>
@@ -74,6 +74,11 @@ const TaskForce = () => {
                 <Col span={4}>
                     <Card bordered={true}>
                         <Statistic title="Taskforce Tickets" value={tickets.length ?? 0} valueStyle={{ color: '#3f8600' }} />
+                    </Card>
+                </Col>
+                <Col span={4}>
+                    <Card bordered={true}>
+                        <Statistic title="Taskforce Total Amount" value={tickets.reduce((acc: number, tkt:any) => parseFloat(tkt.amount) + acc, 0) } valueStyle={{ color: '#3f8600' }} />
                     </Card>
                 </Col>
             </Row>
