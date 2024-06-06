@@ -29,7 +29,8 @@ const TableTaskForce: React.FC<TableTaskForceProps> = ({ tickets }) => {
             {
                 title: 'Agent',
                 dataIndex: 'agent',
-                key: 'agent'
+                key: 'agent',
+                render: (_, record: any) => record.fname +" "+record.lname
             },
             {
                 title: 'Action',
