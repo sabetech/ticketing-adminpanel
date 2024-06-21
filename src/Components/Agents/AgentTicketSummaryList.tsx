@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import {Avatar, List, Typography, Statistic, Row, Col} from 'antd'
+import {Avatar, List, Typography, Statistic, Row, Col, Card, Space} from 'antd'
 
 type AgentTicketSummaryListProps = {
     agentTicketInfoData: any
@@ -7,25 +7,31 @@ type AgentTicketSummaryListProps = {
 
 const AgentTicketSummaryList:React.FC<AgentTicketSummaryListProps> = ({agentTicketInfoData}) => {
 
-    const [summarizedData, setSummarized] = useState([]);
+    const [grandTotal, setGrandTotal] = useState({tickets: 0, totalAmount: 0});
     const [summarizedTaskforce, setSummarizedTaskforce] = useState([]);
     const [summarizedPostpaid, setSummarizedPostpaid] = useState([]);
     const [summarizedFlexible, setSummarizedFlexible] = useState([]);
+    const [summarizedFixed, setSummarizedFixed] = useState([]);
     
 
     useEffect(() => {
         if (agentTicketInfoData) {
             console.log("AGENT TICKET INFO ::", agentTicketInfoData);
-            const summarizedInfo = groupByRate(agentTicketInfoData);
+            // const summarizedInfo = groupByRate(agentTicketInfoData);
             const taskforce = groupByTaskforce(agentTicketInfoData);
             const postpaid = groupByPostpaid(agentTicketInfoData);
             const flexible = groupByFlexible(agentTicketInfoData);
+            const fixed = groupByFixed(agentTicketInfoData);
+            const overall = overallTotal(agentTicketInfoData);
 
-            console.log("SUMMARISED::", summarizedInfo)
-            setSummarized(summarizedInfo);
+            // console.log("SUMMARISED::", summarizedInfo)
+            // setSummarized(summarizedInfo);
             setSummarizedTaskforce(taskforce);
             setSummarizedPostpaid(postpaid);
             setSummarizedFlexible(flexible);
+            setSummarizedFixed(fixed)
+            setGrandTotal(overall)
+
         }
         
 
@@ -44,6 +50,19 @@ const AgentTicketSummaryList:React.FC<AgentTicketSummaryListProps> = ({agentTick
           result[rateTitle].type = item.rate.rate_type
         }
         return Object.values(result);
+    }
+
+    const overallTotal = (data) => {
+        const result = {
+            tickets: 0,
+            totalAmount: 0.0
+        };
+
+        for (const item of data) {
+         result.totalAmount += parseFloat(item.amount)
+         result.tickets += 1
+        }
+        return result
     }
 
     const groupByTaskforce = (data) => {
@@ -85,6 +104,24 @@ const AgentTicketSummaryList:React.FC<AgentTicketSummaryListProps> = ({agentTick
         for (const item of data) {
             
             if (item.rate.rate_type != "flexible") continue;
+            const rateTitle = item.rate.title;
+          
+            const icon = item.rate.icon
+            if (!result[rateTitle]) {
+                result[rateTitle] = { key:rateTitle, rateIcon: icon, rate: rateTitle, total: 0, count: 0 };
+            }
+            result[rateTitle].total += parseFloat(item.amount);
+            result[rateTitle].count += 1;
+            result[rateTitle].type = item.rate.rate_type
+        }
+        return Object.values(result);
+    }
+
+    const groupByFixed = (data) => {
+        const result = {};
+        for (const item of data) {
+            
+            if (item.rate.rate_type != "fixed") continue;
             const rateTitle = item.rate.title;
           
             const icon = item.rate.icon
@@ -198,7 +235,7 @@ const AgentTicketSummaryList:React.FC<AgentTicketSummaryListProps> = ({agentTick
             <Col>
                 <List
                     size="large"
-                    header={<div>Agent Ticket Summary (Combined)</div>}
+                    header={<div>Agent Ticket Summary (Fixed)</div>}
                     renderItem={(item) => <List.Item key={item.key}>
                         <List.Item.Meta
                             avatar={<Avatar src={item.rateIcon} />}
@@ -210,7 +247,7 @@ const AgentTicketSummaryList:React.FC<AgentTicketSummaryListProps> = ({agentTick
                     }
                     bordered
                     style={{width: '25vw'}}
-                    dataSource={summarizedData}
+                    dataSource={summarizedFixed}
                     footer={<Row style={{marginTop: 5}}>
                                     
                     <Col style={{marginRight: '10%'}}>
@@ -224,6 +261,19 @@ const AgentTicketSummaryList:React.FC<AgentTicketSummaryListProps> = ({agentTick
                 </Row>
                 }
                 />
+            </Col>
+        </Row>
+
+        <Row>
+            <Col>
+                <Space direction="horizontal">
+                    <Card title="Overall Total Amount">
+                        <Typography.Title level={3}>{grandTotal.totalAmount} GHC</Typography.Title> 
+                    </Card>
+                    <Card title="Total Ticket Count">
+                    <Typography.Title level={3}>{grandTotal.tickets}</Typography.Title>
+                    </Card>
+                </Space>
             </Col>
         </Row>
 
