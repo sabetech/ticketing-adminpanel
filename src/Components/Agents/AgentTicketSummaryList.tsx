@@ -37,21 +37,6 @@ const AgentTicketSummaryList:React.FC<AgentTicketSummaryListProps> = ({agentTick
 
     }, [agentTicketInfoData])
 
-    const groupByRate = (data) => {
-        const result = {};
-        for (const item of data) {
-          const rateTitle = item.rate.title;
-          const icon = item.rate.icon
-          if (!result[rateTitle]) {
-            result[rateTitle] = { key:rateTitle, rateIcon: icon, rate: rateTitle, total: 0, count: 0 };
-          }
-          result[rateTitle].total += parseFloat(item.amount);
-          result[rateTitle].count += 1;
-          result[rateTitle].type = item.rate.rate_type
-        }
-        return Object.values(result);
-    }
-
     const overallTotal = (data) => {
         const result = {
             tickets: 0,
