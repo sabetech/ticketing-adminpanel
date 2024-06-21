@@ -88,7 +88,7 @@ const AgentTicketSummaryList:React.FC<AgentTicketSummaryListProps> = ({agentTick
         const result = {};
         for (const item of data) {
             
-            if (item.rate.rate_type != "flexible") continue;
+            if (item.rate.rate_type != "flexible" || item.rate.title == "Taskforce" ) continue;
             const rateTitle = item.rate.title;
           
             const icon = item.rate.icon
