@@ -16,7 +16,7 @@ const AgentTicketSummaryList:React.FC<AgentTicketSummaryListProps> = ({agentTick
 
     useEffect(() => {
         if (agentTicketInfoData) {
-            console.log("AGENT TICKET INFO ::", agentTicketInfoData);
+            // console.log("AGENT TICKET INFO ::", agentTicketInfoData);
             // const summarizedInfo = groupByRate(agentTicketInfoData);
             const taskforce = groupByTaskforce(agentTicketInfoData);
             const postpaid = groupByPostpaid(agentTicketInfoData);
@@ -36,6 +36,8 @@ const AgentTicketSummaryList:React.FC<AgentTicketSummaryListProps> = ({agentTick
         
 
     }, [agentTicketInfoData])
+
+    console.log("Fixed::", summarizedFixed)
 
     const overallTotal = (data) => {
         const result = {
@@ -106,7 +108,7 @@ const AgentTicketSummaryList:React.FC<AgentTicketSummaryListProps> = ({agentTick
         const result = {};
         for (const item of data) {
             
-            if (item.rate.rate_type != "fixed") continue;
+            if ((item.rate.rate_type != "fixed") || (item.rate.is_postpaid == "1") ) continue;
             const rateTitle = item.rate.title;
           
             const icon = item.rate.icon
@@ -141,7 +143,7 @@ const AgentTicketSummaryList:React.FC<AgentTicketSummaryListProps> = ({agentTick
                     footer={<Row style={{marginTop: 5}}>
                                     
                     <Col style={{marginRight: '10%'}}>
-                        <Statistic title="Tickets Issued" value={summarizedTaskforce.length} />
+                        <Statistic title="Tickets Issued" value={summarizedTaskforce.reduce((acc, item) => acc + item.count, 0)} />
                     </Col>
                     
                     <Col >
@@ -172,7 +174,7 @@ const AgentTicketSummaryList:React.FC<AgentTicketSummaryListProps> = ({agentTick
                     footer={<Row style={{marginTop: 5}}>
                                     
                     <Col style={{marginRight: '10%'}}>
-                        <Statistic title="Tickets Issued" value={summarizedPostpaid.length} />
+                        <Statistic title="Tickets Issued" value={summarizedPostpaid.reduce((acc, item) => acc + item.count, 0)} />
                     </Col>
                     
                     <Col >
@@ -205,7 +207,7 @@ const AgentTicketSummaryList:React.FC<AgentTicketSummaryListProps> = ({agentTick
                     footer={<Row style={{marginTop: 5}}>
                                     
                     <Col style={{marginRight: '10%'}}>
-                        <Statistic title="Tickets Issued" value={summarizedFlexible.length} />
+                        <Statistic title="Tickets Issued" value={summarizedFlexible.reduce((acc, item) => acc + item.count, 0)} />
                     </Col>
                     
                     <Col >
@@ -236,11 +238,11 @@ const AgentTicketSummaryList:React.FC<AgentTicketSummaryListProps> = ({agentTick
                     footer={<Row style={{marginTop: 5}}>
                                     
                     <Col style={{marginRight: '10%'}}>
-                        <Statistic title="Tickets Issued" value={agentTicketInfoData?.length ?? 0} />
+                        <Statistic title="Tickets Issued" value={summarizedFixed.reduce((acc, item) => acc + item.count, 0)} />
                     </Col>
                     
                     <Col >
-                        <Statistic title="Total Amount" value={agentTicketInfoData?.reduce((acc, tkt) => acc + parseFloat(tkt.amount), 0)} suffix="GHC" />
+                        <Statistic title="Total Amount" value={summarizedFixed?.reduce((acc, tkt) => acc + parseFloat(tkt.total), 0)} suffix="GHC" />
                     </Col>
                     
                 </Row>
