@@ -112,6 +112,7 @@ const AgentTickets = ({agentTickets}:AgentTicketsProp) => {
                {editTicketInfo && <FormEditTicket oldFormFields={editTicketInfo} rates={ rates?.success ? rates.data : []} agents={agents?.success ? agents.data : []} setModalOpen={setModalOpen}/>}
             </Modal>
             <Table 
+                virtual={true}
                 style={{width: '60vw'}}
                 columns={columns}
                 dataSource={agentTickets}
