@@ -43,6 +43,12 @@ const TableTaskForce: React.FC<TableTaskForceProps> = ({ tickets }) => {
         <Table 
             columns={columns}
             dataSource={tickets}
+            virtual={true}
+            pagination={{
+                defaultPageSize: 100, 
+                pageSizeOptions: ['100', '200', '300']
+            }}
+            style={{width: '60vw'}}
         />
     )
 }

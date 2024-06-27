@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Row, Col, Space, Typography, Card, Button, Statistic } from 'antd';
+import { Row, Col, Space, Typography, Card, Statistic } from 'antd';
 import { Select, DatePicker } from 'antd';
 import TableTaskForce from '../../Components/TaskForce/TableTaskForce';
 import { useQuery } from '@tanstack/react-query';
@@ -7,6 +7,8 @@ import { RemoteResponse, AppError } from '../../Types/Remote';
 import { Ticket } from '../../Types/Tickets';
 import { getTaskforceTickets } from '../../Services/TicketService';
 import dayjs from 'dayjs';
+import type { Dayjs } from 'dayjs';
+import type { TimeRangePickerProps } from 'antd';
 // import type { SearchProps } from 'antd/es/input/Search';
 
 const { RangePicker } = DatePicker;
@@ -17,9 +19,9 @@ const TaskForce = () => {
 
     const defaultDateRange = [dayjs().startOf('day').format("YYYY-MM-DD HH:mm:ss"), dayjs().endOf('day').format("YYYY-MM-DD HH:mm:ss")];
 
-    const [dateRange, _] = useState<string[]>(defaultDateRange)
-
-    //load tickets for taskforce for the default date range
+    const [dateRange, setDateRange] = useState<string[]>(defaultDateRange)
+    
+//load tickets for taskforce for the default date range
     const { data: taskforceData } = useQuery<RemoteResponse<Ticket[]> | AppError>({
         queryKey: ['taskforceTickets', dateRange],
         queryFn: async () => getTaskforceTickets(dateRange)
@@ -32,6 +34,20 @@ const TaskForce = () => {
         }
 
     },[taskforceData]);
+
+    const rangePresets: TimeRangePickerProps['presets'] = [
+        { label: 'Yesterday', value: [dayjs().add(-1, 'd'), dayjs()] },
+        { label: 'Last 7 Days', value: [dayjs().add(-7, 'd'), dayjs()] },
+        { label: 'Last 14 Days', value: [dayjs().add(-14, 'd'), dayjs()] },
+        { label: 'Last 30 Days', value: [dayjs().add(-30, 'd'), dayjs()] },
+        { label: 'Last 90 Days', value: [dayjs().add(-90, 'd'), dayjs()] },
+      ];
+    
+      const onRangeChange = (dates: null | (Dayjs | null)[], dateStrings: string[]) => {
+        if (dates) {
+            setDateRange(dateStrings);
+        }
+    };
 
     const handleChange = (value: string) => {
         console.log(`selected ${value}`);
@@ -60,10 +76,20 @@ const TaskForce = () => {
                             <Space direction="vertical" style={{textAlign: 'left', marginRight: '3rem'}}> 
                                 <Typography>Date Filter</Typography>
                                 <Space direction="horizontal" >
-                                    <RangePicker showTime size={'large'}/>
-                                    <Button type="primary" size={'large'} style={{justifySelf:'flex-end'}}>
-                                        Go!
-                                    </Button>
+                                    <RangePicker 
+                                        showTime 
+                                        size={'large'}
+                                        presets={[
+                                            {
+                                            label: <span aria-label="Start of Day to Now">Start of Day ~ Now</span>,
+                                            value: () => [dayjs().startOf('day'), dayjs()],
+                                            },
+                                            ...rangePresets,
+                                        ]}
+                                        onChange={onRangeChange}
+                                        format="YYYY-MM-DD HH:mm:ss"
+                                        defaultValue={[dayjs().startOf('day'), dayjs().endOf('day')]}
+                                        />
                                 </Space>
                             </Space>
                         </Space>
