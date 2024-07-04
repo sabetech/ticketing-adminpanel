@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Row, Col, Space, Typography, Card, Statistic } from 'antd';
+import { Row, Col, Space, Typography, Card, Statistic, Button } from 'antd';
 import { Select, DatePicker } from 'antd';
 import TableTaskForce from '../../Components/TaskForce/TableTaskForce';
 import { useQuery } from '@tanstack/react-query';
@@ -111,7 +111,10 @@ const TaskForce = () => {
 
             <Row>
                 <Col span={23}>
-                    <TableTaskForce tickets={tickets} />
+                    <Space direction={"vertical"} >
+                        <Button type='primary' size={'large'} href={`https://ticketing.koajay.com/download-taskforce-report?from=${dateRange[0]}&to=${dateRange[1]}`}>Export to PDF</Button>
+                        <TableTaskForce tickets={tickets} />
+                    </Space>
                 </Col>
             </Row>
         </>
