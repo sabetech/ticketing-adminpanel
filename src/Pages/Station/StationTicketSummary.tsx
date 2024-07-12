@@ -170,7 +170,7 @@ const StationTicketSummary = () => {
                                     {
                                         transformedStationSummary[station].map(rateData => 
                                             <List 
-                                                style={{margin: 20, width: '20vw'}}
+                                                style={{margin: 20, minWidth: '15vw', maxWidth: '20vw'}}
                                                 size="large"
                                                 header={<div><strong>Ticket Summary {rateData.rate_type.toUpperCase() }</strong></div>}
                                                 bordered
