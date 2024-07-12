@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Row, Col, Space,Card, DatePicker, Typography, List, Avatar, Divider, Statistic, Spin } from 'antd';
+import { Row, Col, Space,Card, DatePicker, Typography, List, Avatar, Statistic, Spin } from 'antd';
 import type { TimeRangePickerProps } from 'antd';
 import type { Dayjs } from 'dayjs';
 import { getStationSummary } from "../../Services/Station";
