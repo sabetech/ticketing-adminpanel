@@ -7,10 +7,40 @@ import { getStationSummary } from "../../Services/Station";
 import dayjs from "dayjs";
 
 const { RangePicker } = DatePicker;
-type StationTicketAggregate = {
+type MyRate = {
+    id: number,
     key: string,
     icon: string,
     title: string,
+    is_postpaid: string,
+    total: number,
+    count: number,
+    rate_type: string,
+}
+
+type IncomingPayload = {
+    [key: string]: Array<PayloadEntry>
+}
+
+type PayloadEntry = {
+    agent_name: string,
+    amount: string,
+    car_number: string,
+    device_id: string,
+    id: number,
+    issued_date_time: string,
+    paid: string,
+    rate: MyRate,
+    rate_title: string,
+    station_name: string,
+    title: string
+}
+
+type StationTicketAggregate = {
+    key: number,
+    icon: string,
+    title: string,
+    is_postpaid: boolean,
     total: number,
     count: number
 }
@@ -21,7 +51,6 @@ const StationTicketSummary = () => {
             from: dayjs().startOf('day').format("YYYY-MM-DD HH:mm:ss"), 
             to: dayjs().endOf('day').format("YYYY-MM-DD HH:mm:ss")
         });
-    const [stationTicketsData, setStationTicketData] = useState<{}>();
 
     const { data: stationTicketSummaryData, isLoading } = useQuery({
         queryKey: ['stationTicketSummary', dateRange],
@@ -33,6 +62,8 @@ const StationTicketSummary = () => {
             }
         }
     });
+
+    const [transformedStationSummary, setTransformedStationSummary] = useState<{}>({});
 
     const rangePresets: TimeRangePickerProps['presets'] = [
         { label: 'Yesterday', value: [dayjs().add(-1, 'd'), dayjs()] },
@@ -48,52 +79,58 @@ const StationTicketSummary = () => {
         }
     };
 
+    const transformPayload = (payload: IncomingPayload) => {
+        const transformed = {};
+    
+        for (const [terminal, entries] of Object.entries(payload)) {
+            const aggregations = {};
+            
+            entries.forEach(entry => {
+                const rateType = entry.rate.is_postpaid === "1" ? "postpaid" :
+                    entry.rate.title.includes("Taskforce") ? "Taskforce" : entry.rate.rate_type;
+                const key = entry.rate.id;
+                const amount = parseFloat(entry.amount);
+    
+                if (!aggregations[rateType]) {
+                    aggregations[rateType] = {};
+                }
+    
+                if (!aggregations[rateType][key]) {
+                    aggregations[rateType][key] = {
+                        key: key,
+                        icon: entry.rate.icon,
+                        title: entry.rate.title,
+                        is_postpaid: entry.rate.is_postpaid === "1",
+                        total: 0,
+                        count: 0
+                    };
+                }
+                aggregations[rateType][key].total += amount;
+                aggregations[rateType][key].count += 1;
+            });
+    
+            transformed[terminal] = Object.entries(aggregations).map(([rateType, aggregationEntries]) => ({
+                rate_type: rateType,
+                aggregations: Object.values(aggregationEntries)
+            }));
+        }
+    
+        return transformed;
+    };
+    
     useEffect(() => {
 
-        if (stationTicketSummaryData) {
-            const transformedOutput = {};
-            for (const key in stationTicketSummaryData.data) {
-                if (stationTicketSummaryData.data.hasOwnProperty(key)) {
-                    const transactions = stationTicketSummaryData.data[key];
-            
-                    const groupedTotals = transactions.reduce((acc, transaction) => {
-                        const rateTitle = transaction.rate.title;
-                        const amount = parseFloat(transaction.amount);
-            
-                        if (!acc[rateTitle]) {
-                            // Initialize a new entry for this rate title
-                            acc[rateTitle] = {
-                                key: rateTitle,
-                                icon: transaction.rate.icon,
-                                title: rateTitle,
-                                total: 0.00,
-                                count: 0
-                            } as StationTicketAggregate;
-                        }
-            
-                        // Add the amount to the total for this rate title
-                        acc[rateTitle].total += amount;
-                        acc[rateTitle].count += 1;
-            
-                        return acc;
-                    }, {});
-            
-                    // Convert groupedTotals object into an array of result objects
-                    const result = Object.values(groupedTotals);
-            
-                    // Assign the result array to the corresponding key in transformedOutput
-                    transformedOutput[key] = result;
-                }
-            }
+      if (stationTicketSummaryData) {
+        const result = transformPayload(stationTicketSummaryData.data);
+        console.log(result);
+        setTransformedStationSummary(result)
+      }
 
-            setStationTicketData(transformedOutput)
-
-        }
     }, [stationTicketSummaryData]);
 
     return (<>
         <Row>
-            <Col span={23}>
+              <Col span={23}>
                 <Card title={"Station Summary - From: "+dayjs(dateRange.from).format("DD MMM YYYY HH:mm")+" To: "+dayjs(dateRange.to).format("DD MMM YYYY HH:mm")} style={{textAlign: 'left'}}>
                     <Space direction={"vertical"} align={'start'} >
                     <Typography>Date Filter</Typography>
@@ -121,45 +158,52 @@ const StationTicketSummary = () => {
         }
 
         <Row style={{marginTop: 20}}>
-            <Col>
-                <Space direction="horizontal" style={{alignItems: 'flex-start'}}>
-                        {
-                           stationTicketsData && Object.keys(stationTicketsData).map(station => {
-                            return <>
-                            <Divider />
-                             <List 
-                                size="large"
-                                header={<div>{station} Ticket Summary</div>}
-                                bordered
-                                dataSource={stationTicketsData[station]}
-                                renderItem={(item: StationTicketAggregate) => <List.Item key={item.key}>
-                                    <List.Item.Meta
-                                        avatar={<Avatar src={item.icon} />}
-                                        title={<a href="#">{item.title}</a>}
-                                        description={"Ticket Issued: "+item.count}/>
-                                
-                                <div><Typography.Title level={4}>{item.total}</Typography.Title></div>
-                                
-                                </List.Item>}
-                                
-                                footer={<Row style={{marginTop: 5}}>
-                    
-                                <Col style={{marginRight: '10%'}}>
-                                    <Statistic title="Tickets Issued" value={stationTicketsData[station]?.reduce((acc, tkt) => acc + parseFloat(tkt.count), 0) ?? 0} />
-                                </Col>
-                                
-                                <Col >
-                                    <Statistic title="Total Amount" value={stationTicketsData[station]?.reduce((acc, tkt) => acc + parseFloat(tkt.total), 0)} suffix="GHC" />
-                                </Col>
-                                    
-                            </Row>}
-                        />
-                            </>
-                           })
-                        }
-                </Space>
+            <Col span={23}>
+                {
+                    Object.keys(transformedStationSummary).map(station => 
+                        <>  
+                            <Card title={`Station Summary - ${station}`}>
+                                    <Space style={{
+                                        display: 'flex',
+                                        alignItems: 'flex-start'
+                                    }}>
+                                    {
+                                        transformedStationSummary[station].map(rateData => 
+                                            <List 
+                                                style={{margin: 20, width: '20vw'}}
+                                                size="large"
+                                                header={<div><strong>Ticket Summary {rateData.rate_type.toUpperCase() }</strong></div>}
+                                                bordered
+                                                dataSource={rateData.aggregations}
+                                                renderItem={
+                                                    (item: StationTicketAggregate) => <List.Item key={item.key}>
+                                                        <List.Item.Meta
+                                                            avatar={<Avatar src={item.icon} />}
+                                                            title={<a href="#">{item.title}</a>}
+                                                            description={"Ticket Issued: "+item.count}/>
+                                                            <div><Typography.Title level={4}>{item.total}</Typography.Title></div>
+                                                    </List.Item>
+                                                }
+                                                footer={<Row style={{marginTop: 5}}>
+                                                    <Col style={{marginRight: '10%'}}>
+                                                        <Statistic title="Tickets Issued" value={rateData.aggregations?.reduce((acc, tkt) => acc + parseFloat(tkt.count), 0) ?? 0} />
+                                                    </Col>
+                                                    <Col >
+                                                        <Statistic title="Total Amount" value={rateData.aggregations?.reduce((acc, tkt) => acc + parseFloat(tkt.total), 0)} suffix="GHC" />
+                                                    </Col>
+                                                </Row>}
+                                        />
+                                        )
+                                    }
+                                    </Space>
+                            </Card>  
+                        </>
+                    )
+                }
+                
             </Col>
         </Row>
+
     </>)
 }
 
