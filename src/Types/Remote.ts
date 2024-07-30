@@ -7,7 +7,7 @@ export type RemoteResponse<T> = {
 export type RemoteError<T> = {
     response: T
 }
-
+    
 export type TErrorResponse = {
     data: {
         message: string

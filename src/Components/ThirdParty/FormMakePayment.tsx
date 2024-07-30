@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Form, Select, InputNumber, Alert, Typography, Button, Space , message} from "antd";
 import { getPostPaidRates } from "../../Services/Rate"
@@ -21,6 +21,9 @@ const FormMakePayment:React.FC<FormMakePaymentProps> = ( {dateRange, setModalOpe
     const [selectedClient, setSelectedClient] = useState<{value: number, label: React.ReactNode} | undefined>(undefined)
     const queryClient = useQueryClient();
     const [messageApi, contextHolder] = message.useMessage();
+    const [discount, setDiscount] = useState(0);
+    const [withholdingTax, setwithholdingTax] = useState(0);
+    const [totalAmount, setTotalAmount] = useState<number>(0);
 
     const {data: stations} = useQuery<RemoteResponse<Station[]> | AppError>({
         queryKey: ['stations'],
@@ -28,6 +31,19 @@ const FormMakePayment:React.FC<FormMakePaymentProps> = ( {dateRange, setModalOpe
     });
 
     const cachedData: RemoteResponse<Ticket[]> | undefined = queryClient.getQueryData(['thirdpartyticket', dateRange]);
+
+    useEffect(() => {
+        if (typeof selectedClient !== 'undefined') {
+            setTotalAmount((cachedData && cachedData?.success) ? cachedData.data.filter(tkt => parseInt(tkt.rate_title) === selectedClient.value).reduce((acc, tkt: Ticket) => {
+                if (Number(tkt.paid) === 0) {
+                    return acc + parseFloat(tkt.amount);
+                } else {
+                    return acc;
+                }
+               }, 0): 0)
+        }
+    },[selectedClient])
+    
     
     const { mutate } = useMutation({ 
         mutationFn: (values: PayOnCreditRequest) => makePayment(values),
@@ -38,9 +54,6 @@ const FormMakePayment:React.FC<FormMakePaymentProps> = ( {dateRange, setModalOpe
             });
         }
     });
-
-    // console.log("DATE RANGE", dateRange);
-    // console.log("Cached Data:::", cachedData)
 
     const {data: thirdPartyCustomers, isFetching} = useQuery<RemoteResponse<Rate[]> | AppError>({
         queryKey: ['thirdpartycustomers', selectedStation],
@@ -67,7 +80,6 @@ const FormMakePayment:React.FC<FormMakePaymentProps> = ( {dateRange, setModalOpe
 
         mutate(paymentRequest);
         setModalOpen(false);
-        
     }
 
     return (<>
@@ -125,22 +137,52 @@ const FormMakePayment:React.FC<FormMakePaymentProps> = ( {dateRange, setModalOpe
                 message={<Typography.Paragraph>Amount to be Paid by <strong>{selectedClient.label}</strong> from <strong>{dayjs(dateRange?.from).format("DD MMMM YYYY")} to {dayjs(dateRange?.to).format("DD MMMM YYYY")}</strong></Typography.Paragraph>}
                 description={<>
                 <Typography.Title level={5}>
-                    { (cachedData && cachedData?.success) ? cachedData.data.filter(tkt => (parseInt(tkt.rate_title) === selectedClient.value && tkt.paid == false)).length:0 } x Tickets
-                </Typography.Title>
-                <Typography.Title level={3}>
-                   { (cachedData && cachedData?.success) ? cachedData.data.filter(tkt => parseInt(tkt.rate_title) === selectedClient.value).reduce((acc, tkt: Ticket) => {
-                    if (Number(tkt.paid) === 0) {
-                        return acc + parseFloat(tkt.amount);
-                    } else {
-                        return acc;
+                    { (cachedData && cachedData?.success) ? cachedData.data.filter(tkt => (parseInt(tkt.rate_title) === selectedClient.value && tkt.paid == false)).length:0 } x {cachedData.data[0].amount } Tickets
+                    {
+                    discount > 0 && ` (${discount} % discount)`
                     }
-                   }, 0): 0 } GHc
+                    {
+                    withholdingTax > 0 && ` (${withholdingTax} % withholding tax)`
+                    }
+                </Typography.Title>
+                
+                <Typography.Title level={3}>
+                  {discount > 0 || withholdingTax > 0 ? totalAmount - (totalAmount * (discount / 100)) - (totalAmount * (withholdingTax / 100)): totalAmount} GHc
                 </Typography.Title>
                 </>
                 }
                 type="info"
             />
             }
+
+            <Form.Item
+                name={'discount'}
+                label={'Discount'}
+                rules={[{ required: false}]}
+            >
+                <InputNumber 
+                    placeholder="10"
+                    addonAfter="%"
+                    disabled={typeof selectedClient === 'undefined' || isFetching}
+                    value={discount}
+                    onChange={(value) => setDiscount(value)}
+                />
+            </Form.Item>
+
+            <Form.Item
+                name={'withholding'}
+                label={'Witholding Tax'}
+                rules={[{ required: false }]}
+            >
+                <InputNumber 
+                    placeholder="10"
+                    addonAfter="%"
+                    disabled={typeof selectedClient === 'undefined' || isFetching}
+                    value={withholdingTax}
+                    onChange={(value) => setwithholdingTax(value)}
+                />
+            </Form.Item>
+
             <Form.Item
                 name={'amount'}
                 label={'Amount'}
@@ -149,12 +191,13 @@ const FormMakePayment:React.FC<FormMakePaymentProps> = ( {dateRange, setModalOpe
                 <InputNumber 
                     placeholder="0.00"
                     addonBefore="GHc"
+                    disabled={typeof selectedClient === 'undefined' || isFetching}
                 />
             </Form.Item>
 
             <Form.Item>
                 <Space>
-                    <Button htmlType="submit" type={'primary'}>Submit</Button>
+                    <Button htmlType="submit" type={'primary'} disabled={typeof selectedClient === 'undefined' || isFetching}>Submit</Button>
                     <Button onClick={() => setModalOpen(false)}>Cancel</Button>
                 </Space>
             </Form.Item>
