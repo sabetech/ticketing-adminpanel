@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { getThirdPartyTickets } from '../../Services/TicketService';
 import ModalMakePayment from '../../Components/ThirdParty/ModalMakePayment'
 import dayjs from 'dayjs';
+import type { TimeRangePickerProps } from 'antd';
 import type { Dayjs } from 'dayjs';
 
 const { RangePicker } = DatePicker;
@@ -32,6 +33,13 @@ const ThirdPartyCustomers = () => {
         } 
 
     }, [thirdPartyTicketsData, dateRange]);
+
+    const rangePresets: TimeRangePickerProps['presets'] = [
+        { label: 'Last 7 Days', value: [dayjs().add(-7, 'd'), dayjs()] },
+        { label: 'Last 14 Days', value: [dayjs().add(-14, 'd'), dayjs()] },
+        { label: 'Last 30 Days', value: [dayjs().add(-30, 'd'), dayjs()] },
+        { label: 'Last 90 Days', value: [dayjs().add(-90, 'd'), dayjs()] },
+      ];
 
     const onRangeChange = (dates: null | (Dayjs | null)[], dateStrings: string[]) => {
         if (dates) {
@@ -62,6 +70,7 @@ const ThirdPartyCustomers = () => {
                                     showTime 
                                     size={'large'}
                                     defaultValue={[dayjs().startOf('day'), dayjs()]}
+                                    presets={rangePresets}
                                 />
                                 
                             </Space>
