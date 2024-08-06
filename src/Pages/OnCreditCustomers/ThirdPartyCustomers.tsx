@@ -103,7 +103,10 @@ const ThirdPartyCustomers = () => {
                             </Col>
                         <Col span={4}>
                             <Card bordered={false}>
-                                <Statistic title="Paid Tickets" value={thirdPartyTickets.length} />
+                                <Statistic title="Paid Tickets" value={thirdPartyTickets.reduce((acc, tkt) => {
+                                    if (tkt.paid == true) acc += 1 
+                                    return acc}, 0)
+                                } />
                             </Card>
                         </Col>
                         <Col span={4}>

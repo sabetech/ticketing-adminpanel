@@ -165,12 +165,14 @@ const StationTicketSummary = () => {
                             <Card title={`Station Summary - ${station}`}>
                                     <Space style={{
                                         display: 'flex',
-                                        alignItems: 'flex-start'
+                                        alignItems: 'flex-start',
+                                        flexWrap: 'wrap'
+
                                     }}>
                                     {
                                         transformedStationSummary[station].map(rateData => 
                                             <List 
-                                                style={{margin: 20, minWidth: '15vw', maxWidth: '20vw'}}
+                                                style={{margin: 20, minWidth: '23vw', maxWidth: '25vw'}}
                                                 size="large"
                                                 header={<div><strong>Ticket Summary {rateData.rate_type.toUpperCase() }</strong></div>}
                                                 bordered
