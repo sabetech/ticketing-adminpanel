@@ -1,9 +1,10 @@
-import  { Button, Form, Input, Select, Space, message } from 'antd'
+import  { Button, Form, Input, Select, Space, message, InputNumber} from 'antd'
 import { Ticket } from '../../Types/Tickets';
 import { Rate } from '../../Types/Rate';
 import { Agent } from '../../Types/Agent';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { editTicket } from "../../Services/TicketService"
+import { useEffect } from 'react';
 
 type Props = {
     oldFormFields: Ticket
@@ -19,23 +20,34 @@ const FormEditTicket:React.FC<Props> = ({oldFormFields, rates, agents, setModalO
     const { mutate: editTicketMutate, isPending } = useMutation({
         mutationFn: (_values) => editTicket(oldFormFields.id, _values),
         onSuccess: (data: any) => { 
+            console.log("RESULT::", data)
             setModalOpen(false);
-            queryClient.invalidateQueries();
+            // queryClient.setQueryData(['ticketsIssued'], 
+            //     (oldData) => 
+            //         oldData
+            //             ? {
+            //                 ...oldData,
+
+            //             }
+            // );
+            queryClient.invalidateQueries({queryKey: ['ticketsIssued']});
             messageApi.success(data.message);
         }
     });
 
     const [form] = Form.useForm();
-    form.setFieldValue('title', oldFormFields.title)
-    form.setFieldValue('car_number', oldFormFields.car_number)
-    form.setFieldValue('rate', oldFormFields.rate.title);
-
-    console.log("OLD FORM FIELDS::", oldFormFields)
+    useEffect(() => {
+        form.setFieldValue('title', oldFormFields.title)
+        form.setFieldValue('car_number', oldFormFields.car_number)
+        form.setFieldValue('rate', oldFormFields.rate.title);
+        form.setFieldValue('amount', oldFormFields.amount);
+        form.setFieldValue('agent', oldFormFields.agent.fname + " " + oldFormFields.agent.lname);
+    }, [])
 
     // form.setFieldValue('agent', oldFormFields.agent.fname + " " + oldFormFields.agent.lname)
 
     const onFinish = (_values: any) => {
-        console.log("FORM FIElDS::", _values);
+        _values = {..._values, rate_id: oldFormFields.rate.id}
         editTicketMutate(_values);
     }
 
@@ -85,6 +97,18 @@ const FormEditTicket:React.FC<Props> = ({oldFormFields, rates, agents, setModalO
                     }
                 />
             </Form.Item>
+
+            {
+                oldFormFields.rate.rate_type === "flexible" &&
+                <Form.Item
+                    label="Amount"
+                    name="amount"
+                    rules={[{ required: true, message: 'Please input amount' }]}
+                >
+                    <InputNumber addonAfter={"GHs"} />
+                </Form.Item>
+            }
+
             <Form.Item
                 label="Agent"
                 name="agent"
@@ -94,7 +118,7 @@ const FormEditTicket:React.FC<Props> = ({oldFormFields, rates, agents, setModalO
                     showSearch
                     placeholder="Select an Agent"
                     options={agents.map((agent: Agent) => ({
-                            value: agent.id+"",
+                            value: agent.id.toString(),
                             label: agent.fname + " " + agent.lname
                             })
                     )}
