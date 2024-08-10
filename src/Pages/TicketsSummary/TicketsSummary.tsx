@@ -24,8 +24,8 @@ const TicketsSummary = () => {
         value: string
     }[]>();
     const [messageApi, contextHolder] = message.useMessage();
-    const { data: ticketData, isLoading, isError, error } = useQuery<RemoteResponse<Ticket[]> | AppError>({
-      queryKey: ['ticketsIssued', dateRange],
+    const { data: ticketData, isLoading, isError, error, refetch } = useQuery<RemoteResponse<Ticket[]> | AppError>({
+      queryKey: ['ticketsIssued'],
       queryFn: async () => getTicketsIssued(dateRange)
     });
 
@@ -45,6 +45,10 @@ const TicketsSummary = () => {
         }
 
     },[ticketData]);
+
+    useEffect(() => {
+        refetch()
+    },[dateRange])
 
     const rangePresets: TimeRangePickerProps['presets'] = [
         { label: 'Yesterday', value: [dayjs().add(-1, 'd'), dayjs()] },

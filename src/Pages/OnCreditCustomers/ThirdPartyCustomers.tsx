@@ -89,7 +89,7 @@ const ThirdPartyCustomers = () => {
                         </Space>
                     </Space>
                     <Row gutter={16} style={{marginTop: '2%'}}>
-                        <Col span={4}>
+                        <Col span={6}>
                             <Card bordered={false}>
                                 <Statistic title="Paid" value={ thirdPartyTickets.reduce((acc, tkt) => {
                                     if (tkt.paid == true) acc +=  parseFloat(tkt.amount)
@@ -109,7 +109,7 @@ const ThirdPartyCustomers = () => {
                                 } />
                             </Card>
                         </Col>
-                        <Col span={4}>
+                        <Col span={6}>
                             <Card bordered={false}>
                                 <Statistic title="Pending Amount GHC" 
                                             value={thirdPartyTickets.reduce((acc, tkt) => {
