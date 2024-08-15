@@ -8,7 +8,7 @@ import FormEditTicket from "./FormEditTicket"
 import { Agent } from "../../Types/Agent";
 import * as utils from "../../Utils/Helpers"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteTicket } from "../../Services/TicketService";
+import { deleteTicket, deleteTickets } from "../../Services/TicketService";
 import { getRates } from "../../Services/Rate";
 import  { getAgentList } from "../../Services/AgentService"
 
@@ -19,14 +19,14 @@ type TableTicketProp = {
 
 const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
 
-    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+    const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
     const [isModalOpen, setModalOpen] = useState(false);
     const [editTicketInfo, setEditTicketInfo] = useState<Ticket>();
     const queryClient = useQueryClient();
     const [messageApi, contextHolder] = message.useMessage();
     const [idToDelete, setIDToDelete] = useState(0);
 
-    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    const onSelectChange = (newSelectedRowKeys: number[]) => {
         console.log('selectedRowKeys changed: ', newSelectedRowKeys);
         setSelectedRowKeys(newSelectedRowKeys);
     };
@@ -43,6 +43,14 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
             messageApi.success(data.message);
         }
     });
+
+    const { mutate: deleteBulkTicketMutation, isPending:isBulkPending } = useMutation({
+        mutationFn: (ids: number[]) => deleteTickets(ids),
+        onSuccess: (data: any) => { 
+            queryClient.invalidateQueries();
+            messageApi.success(data.message);
+        }
+    })
 
     const { data: rates } = useQuery({
         queryKey: ['rates'],
@@ -134,11 +142,8 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
 
     const handleOk = () => {
         console.log("DELETE THESE IDS::", selectedRowKeys);
+        deleteBulkTicketMutation(selectedRowKeys)
     };
-
-    // const handleEditTicket = (id: number) => {
-    //     console.log("EDIT TICKET")
-    // }
 
     const handleCancel = () => {
         setModalOpen(false);
@@ -171,7 +176,7 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
             </Modal>
             <span style={{ float: 'left' }}>
                 {hasSelected ? <>
-                    <Typography.Title level={5}>Selected {selectedRowKeys.length} items: <Button danger onClick={onDeleteMultiple}>Delete?</Button> </Typography.Title></> : ''}
+                    <Typography.Title level={5}>Selected {selectedRowKeys.length} items: <Button danger onClick={onDeleteMultiple} disabled={isBulkPending} loading={isBulkPending}>Delete?</Button> </Typography.Title></> : ''}
                 
             </span>
             <Table 

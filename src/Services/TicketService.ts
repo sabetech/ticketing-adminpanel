@@ -93,7 +93,18 @@ export const deleteTicket = async (ticketId: number) => {
         return new Promise<AppError>((_, reject) => {
             reject("User is not logged In");
         })
-}   
+}
+
+export const deleteTickets = async (ticketsIds: number[]) => {
+    const userInfo = getUserInfo()
+
+    if (userInfo)
+        return (await api.post(`/ticket/bulk-delete`, {tickets: ticketsIds}, {'Authorization': 'Bearer '+userInfo.token})).data
+    else
+        return new Promise<AppError>((_, reject) => {
+            reject("User is not logged In");
+        })
+}
 
 export const editTicket = async (id: number, values: any) => {
     const userInfo = getUserInfo()  
