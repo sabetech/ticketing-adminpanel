@@ -6,8 +6,8 @@ import { Link } from "react-router-dom";
 
 const TableAgentsTickets = ({date}) => {
 
-    const {data: agentTicketTotals, isFetched} = useQuery({
-        queryKey: ['agentTicketTotals'],
+    const {data: agentTicketTotals, isFetched, isLoading} = useQuery({
+        queryKey: ['agentTicketTotals', date],
         queryFn: async () => getAgentTicketTotals(date)
     });
 
@@ -45,6 +45,7 @@ const TableAgentsTickets = ({date}) => {
             columns={columns}
             dataSource={isFetched && agentTicketTotals.data}
             pagination={false} 
+            loading={isLoading}
         />
     )
 }
