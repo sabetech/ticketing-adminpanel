@@ -7,7 +7,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import FormEditTicket from "../../Components/TicketSummary/FormEditTicket"
 import { useQuery } from "@tanstack/react-query";
 import { getRates } from "../../Services/Rate";
-import  { getAgentList } from "../../Services/AgentService"
+import  { getAgentList } from "../../Services/AgentService";
+import dayjs from "dayjs";
 
 type AgentTicketsProp = {
     agentTickets: Ticket[] | undefined
@@ -70,6 +71,12 @@ const AgentTickets = ({agentTickets}:AgentTicketsProp) => {
             title: 'Ticket Cost',
             dataIndex: 'amount',
             key: 'ticket_cost',
+        },
+        {
+            title: 'Date Time',
+            dataIndex: 'time',
+            key: 'issued_date_time',
+            render: (_, record: Ticket) => dayjs(record.issued_date_time).format('DD MMM, hh:mm A')
         },
         {
             title: 'Action',
