@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Card, Row, Col, Space, Button, Divider } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getAgentDetail } from '../../Services/AgentService';
 import { useNavigate } from 'react-router-dom';
@@ -19,11 +19,18 @@ const { RangePicker } = DatePicker;
 const { Meta } = Card;
 const Profile = () => {
     const [agentTicketInfo, setAgentTicketInfo] = useState<TAgentTicketInfo>();
-    const [dateRange, setDateRange] = useState<{from:string, to:string} | undefined>(undefined);
-    const [imageLoaded, setImageLoaded] = useState(false);
+    const [searchParams, _] = useSearchParams();
+    let date = searchParams.get("date")
+    
+    if (date == null) {
+        date = dayjs().format('YYYY-MM-DD');
+    }
 
+    const [dateRange, setDateRange] = useState<{from:string, to:string} | undefined>({from: dayjs(date).startOf('day').format("YYYY-MM-DD HH:mm:ss"), to: dayjs(date).endOf('day').format("YYYY-MM-DD HH:mm:ss")});
+    const [imageLoaded, setImageLoaded] = useState(false);
+    
     const { id } = useParams();
-    const navigate = useNavigate();
+    const navigate = useNavigate();    
 
     const { data: agentTicketInfoData, isSuccess, isFetching } = useQuery({
         queryKey: ['agentsTicketInfoData', dateRange],
@@ -52,10 +59,10 @@ const Profile = () => {
         }
     };
     // <ReactImageAppear 
-                            //     src={agentTicketInfo?.agent.photo.includes('unknown') ? 'https://img.icons8.com/ios-filled/50/gender-neutral-user.png' : `${urls.IMAGE_BASE_URL}${agentTicketInfo?.agent.photo.substring(19)}`}
-                            //     animation="zoomIn"
-                            //     animationDuration="1s"
-                            // />
+    //     src={agentTicketInfo?.agent.photo.includes('unknown') ? 'https://img.icons8.com/ios-filled/50/gender-neutral-user.png' : `${urls.IMAGE_BASE_URL}${agentTicketInfo?.agent.photo.substring(19)}`}
+    //     animation="zoomIn"
+    //     animationDuration="1s"
+    // />
       
     return (
         <>
@@ -84,7 +91,7 @@ const Profile = () => {
                                 },
                                 ...rangePresets,
                             ]}
-                            defaultValue={[dayjs().startOf('day'), dayjs()]}
+                            defaultValue={[dayjs(date).startOf('day'), dayjs(date).endOf('day')]}
                             showTime
                             format="YYYY-MM-DD HH:mm:ss"
                             onChange={onRangeChange}
@@ -110,10 +117,8 @@ const Profile = () => {
                             </Col>
                         </Row>
                     </Space>
-                    
                 </Space>
             </div>
-            
         </>
     )
 }
