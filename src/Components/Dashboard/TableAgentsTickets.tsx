@@ -26,7 +26,7 @@ const TableAgentsTickets = ({date}) => {
             title: 'Agent',
             dataIndex: 'fname',
             key: 'agent',
-            render: (val, rec) => <Link to={`/agent-summary/${rec.agent_name}/detail`}>{val}</Link>
+            render: (val, rec) => <Link to={`/agent-summary/${rec.agent_name}/detail?date=${date}`}>{val}</Link>
         },
         {
             title: 'Tickets Issued',
