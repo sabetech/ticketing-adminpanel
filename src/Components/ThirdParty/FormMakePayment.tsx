@@ -68,14 +68,28 @@ const FormMakePayment:React.FC<FormMakePaymentProps> = ( {dateRange, setModalOpe
     });
 
     const onFinish = (values: any) => {
+        console.log("Values::", values);
+        const {station, client, amount, withholding_tax, discount} = values;
         
-        const {station, client, amount} = values;
-        
+        if (typeof station === 'undefined' || 
+            typeof client === 'undefined' || 
+            typeof amount === 'undefined') {
+
+            messageApi.open({
+                type: 'error',
+                content: 'Please fill all fields',
+            });
+
+            return;
+        }
+
         const paymentRequest = {
             station_id: station, 
             client_id: client.value,
             amount: amount,
-            dateRange: JSON.stringify(dateRange)
+            dateRange: JSON.stringify(dateRange),
+            withholding_tax: withholding_tax,
+            discount: discount
         } as PayOnCreditRequest
 
         mutate(paymentRequest);
@@ -137,7 +151,7 @@ const FormMakePayment:React.FC<FormMakePaymentProps> = ( {dateRange, setModalOpe
                 message={<Typography.Paragraph>Amount to be Paid by <strong>{selectedClient.label}</strong> from <strong>{dayjs(dateRange?.from).format("DD MMMM YYYY")} to {dayjs(dateRange?.to).format("DD MMMM YYYY")}</strong></Typography.Paragraph>}
                 description={<>
                 <Typography.Title level={5}>
-                    { (cachedData && cachedData?.success) ? cachedData.data.filter(tkt => (parseInt(tkt.rate_title) === selectedClient.value && tkt.paid == false)).length:0 } x {cachedData.data[0].amount } Tickets
+                    { (cachedData && cachedData?.success) ? cachedData.data.filter(tkt => (parseInt(tkt.rate_title) === selectedClient.value && tkt.paid == false)).length : 0 } x {cachedData.data.length > 0 ? cachedData.data[0]?.amount : 0 } Tickets
                     {
                     discount > 0 && ` (${discount} % discount)`
                     }
@@ -170,7 +184,7 @@ const FormMakePayment:React.FC<FormMakePaymentProps> = ( {dateRange, setModalOpe
             </Form.Item>
 
             <Form.Item
-                name={'withholding'}
+                name={'withholding_tax'}
                 label={'Witholding Tax'}
                 rules={[{ required: false }]}
             >

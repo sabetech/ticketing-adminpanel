@@ -11,6 +11,7 @@ import {
   PushpinOutlined,
   UserSwitchOutlined
 } from '@ant-design/icons';
+
 import type { MenuProps } from 'antd';
 import { Layout, Menu, Typography, theme, Dropdown, Space, Modal, Avatar } from 'antd';
 import './Sidebar.css';
@@ -31,6 +32,7 @@ import * as utils from "../../Utils/Auth";
 import { getUserInfo } from '../../Utils/Auth';
 import ManageUsers from '../UserManagement/ManageUsers';
 import AgentRateAssignment from '../RatesAndCategories/AgentRateAssignment';
+import PaymentHistory from '../OnCreditCustomers/PaymentHistory';
 
 type SidebarProps = {
   userInfo: TAuthUserResponse
@@ -118,6 +120,11 @@ const Sidebar: React.FC<SidebarProps> = ( { userInfo } ) => {
       title: "Postpaid (On Credit) ",
       key: "on-credit-customers",
       icon: ThunderboltOutlined
+    },
+    {
+      title: "Payment History ",
+      key: "on-credit-customers/payment-history",
+      icon: UserOutlined
     },
     {
       title: "User Management",
@@ -222,6 +229,7 @@ const Sidebar: React.FC<SidebarProps> = ( { userInfo } ) => {
                 <Route path="/rates-and-categories" element={<Rates />} />
                 <Route path="/agent-rate-assignment"element={<AgentRateAssignment />} />
                 <Route path="/on-credit-customers" element={<ThirdPartyCustomers />} />
+                <Route path="/on-credit-customers/payment-history" element={<PaymentHistory />} />
                 <Route path="/user-management" element={<ManageUsers />} />
                 <Route path="/users/manage" element={<ManageUsers />} />
               </Routes>

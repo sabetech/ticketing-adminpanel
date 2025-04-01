@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const BASE_URL = "https://ticketing.koajay.com/api/v2";
+const V3_BASE_URL = "https://ticketing.koajay.com/api/v3";
 
 const post = (url: string, data: any, headers: object) => {
     const formData = new FormData();
