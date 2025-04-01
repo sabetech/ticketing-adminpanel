@@ -1,10 +1,12 @@
 import React from 'react';
-import { Button, Form, Input, Typography } from 'antd';
+import { Button, Form, Input, Typography, Image, Space } from 'antd';
 import { TAuthUserResponse, TLoginValues } from '../../Types/Auth';
 import { useMutation } from '@tanstack/react-query';
 import { login } from '../../Services/Auth';
 import { signIn } from '../../Utils/Auth';
 import { RemoteError, TErrorResponse } from '../../Types/Remote';
+import koajayImage from '../../assets/koajay_logo_new.jpeg';
+import './Login.css';
 
 const onFinishFailed = (errorInfo: any) => {
   console.log('Failed:', errorInfo);
@@ -41,15 +43,23 @@ const Login: React.FC = () => {
 
   return (
   <>
-    <div style={{width: '100vw'}}>
-        <div style={{ marginLeft: '15%' }}>
-          <Typography.Title level={3} style={{ marginLeft: '12%', marginBottom: '1%' }}>Login</Typography.Title>
-          
+  
+    <div className='background'>
+        
+        <Space direction="vertical" style={{width: '100%', justifyContent: 'center', alignItems: 'center', border: '1px solid #d9d9d9', boxShadow: '0 0 5px rgb(0, 0, 0)', padding: '2%', backgroundColor: 'white'}}>
+          <Image
+            width={200}
+            src={koajayImage}
+            style={{
+              justifySelf: 'center'
+            }}
+          />
+
+           <Typography.Title level={3} style={{ marginLeft: '12%', marginBottom: '1%', width: 100 }}>Login</Typography.Title>
           <Form
             name="basic"
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
-            style={{ maxWidth: 600 }}
+            style={{ width: 400 }}
+            labelCol={{ span: 5 }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="on"
@@ -71,13 +81,13 @@ const Login: React.FC = () => {
 
             </Form.Item>
 
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Form.Item style={{float: 'right'}}>
               <Button type="primary" htmlType="submit" loading={isPending}>
                 Login!
               </Button>
             </Form.Item>
           </Form>
-      </div>
+        </Space>
     </div> 
   </>
 )
