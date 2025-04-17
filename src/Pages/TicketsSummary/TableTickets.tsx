@@ -25,14 +25,18 @@ const TableTickets:React.FC<TableTicketsProps> = ({ filter }) => {
     const [isModalOpen, setModalOpen] = useState(false);
     const [editTicket, setEditTicket] = useState<Ticket>(null);
 
-    const {data: tickets, isSuccess, isFetching, refetch} = useGetTickets({page: currentPage, ...filter});
+    const [trackInternalPage, setTrackInternalPage] = useState(1);
+
+    const {data: tickets, isSuccess, isLoading, isFetching, refetch} = useGetTickets({page: currentPage, ...filter});
 
     console.log("Current page", currentPage)
 
     if (isSuccess) {
         console.log("Request is successfull")
         console.log("Tickets here:::", tickets)
-        console.log("Current Page:::", currentPage)
+        console.log("remote Current Page:::", tickets.current_page)
+        console.log("local Current Page:::", currentPage)
+        console.log("Internal Page:::", trackInternalPage)
 
     }
 
@@ -40,53 +44,46 @@ const TableTickets:React.FC<TableTicketsProps> = ({ filter }) => {
 
         if (!tickets) return;
         if (currentPage > tickets.current_page) {
-            setTicketData((prev) => [...prev, ...tickets.data]);
+            refetch();   
         }
 
-    },[currentPage])
+    },[currentPage, filter])
+
+
 
     useEffect(() => {
 
-        if (tickets) {
-            if (ticketData.length >= tickets.data.length) {
-                refetch();
+        if (tickets && isSuccess) {
+            if (trackInternalPage < tickets.current_page) {
+                setTicketData((prev) => [...prev, ...tickets.data]);
+                setTrackInternalPage(tickets.current_page);
+            }else{
+                if (tickets.current_page === 1) {
+                    setTicketData(tickets.data);
+                }
             }
         }
-        
-
-    },[ticketData])
-
-
-    // useEffect(() => {
-
-    //     if (currentPage > 1) {
-    //         refetch();
-    //     }
-
-    //     if (tickets){
-    //         setTicketData((prev) => [...prev, ...tickets]);
-    //     }
-
-    // },[currentPage])
+    },[tickets, isSuccess])
 
     console.log("Filter Here:::", filter)
+    console.log("Tickets data::", ticketData)
 
     const columns: TableProps<RecordType>['columns'] = [
         {
           title: 'Ticket ID',
           dataIndex: 'title',
-          width: 70,
+          width: 60,
         },
         {
             title: 'Date',
             dataIndex: 'issued_date_time',
-            width: 80,
+            width: 100,
             render: (val:string) => dayjs(val).format("DD MMM YYYY h:mm A")
         },
         {
           title: 'Car Number',
           dataIndex: 'car_number',
-          width: 80,
+          width: 60,
         },
         {
           title: 'Station',
@@ -155,7 +152,7 @@ const TableTickets:React.FC<TableTicketsProps> = ({ filter }) => {
 
     const handleOnTableScroll = (e) => {
         
-        if (e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < 200) {
+        if (e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < 400) {
             
             if (isFetching) return;
             if (tickets.current_page === tickets.last_page) return;
@@ -169,12 +166,12 @@ const TableTickets:React.FC<TableTicketsProps> = ({ filter }) => {
         <Table 
             virtual={true}
             columns={columns} 
-            dataSource={tickets && [...ticketData, ...tickets?.data] || []}
+            dataSource={ticketData}
             rowKey="id"
             rowSelection={{type: 'checkbox', columnWidth: 30}}
             pagination={false}
             scroll={{y: 600 }}
-            loading={isFetching}
+            loading={isLoading}
             onScroll={handleOnTableScroll}
         />
         <EditTicketModal isModalOpen={isModalOpen} ticket={editTicket} setModalOpen={setModalOpen} />

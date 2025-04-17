@@ -10,9 +10,10 @@ type TicketFiltersProps = {
 }
 
 const TicketFilters:React.FC<TicketFiltersProps> = ({setFilter}) => {
-
+    
     const [selectedSearchFilter, setSelectedSearchFilter] = useState('Car Number');
     const [searchString, setSearchString] = useState('');
+    const [autocompleteInput, setAutocompleteInput] = useState('');
     
     const {data: searchResults, isLoading} = useGetSearchIndexes(selectedSearchFilter, searchString);
 
@@ -28,6 +29,7 @@ const TicketFilters:React.FC<TicketFiltersProps> = ({setFilter}) => {
     const onRadioChange = (_value) => {
         console.log("Value here::", _value.target.value)
         setSelectedSearchFilter(_value.target.value)
+        setAutocompleteInput('')
     }
 
     const onSearch = (text) => {
@@ -42,7 +44,17 @@ const TicketFilters:React.FC<TicketFiltersProps> = ({setFilter}) => {
       );
 
     const setFilterVal = (value) => {
-        setFilter((prev) => ({...prev, [selectedSearchFilter.toLowerCase().replace(' ', '_')]: value}))
+
+        setFilter((prev) => {
+            
+            if (prev.hasOwnProperty('dateRange')) {
+                return ({dateRange: prev.dateRange, [selectedSearchFilter.toLowerCase().replace(' ', '_')]: value})
+            }
+            
+            return ({[selectedSearchFilter.toLowerCase().replace(' ', '_')]: value})    
+            
+        }); 
+        
     }
 
     console.log("Search results here::", searchResults)
@@ -62,9 +74,34 @@ const TicketFilters:React.FC<TicketFiltersProps> = ({setFilter}) => {
                     />
                 </Space>
                 <Space>
-                    <AutoComplete 
+                    <AutoComplete
+                        value={autocompleteInput}
+                        onChange={(text) => {
+                            if (text.length == 0) {
+                                setFilter((prev) => {
+                                    if (prev.hasOwnProperty('dateRange')) {
+                                        return ({dateRange: prev.dateRange})
+                                    }
+                                    return {}
+                                });
+                            }
+
+                            setAutocompleteInput(text)
+                            
+                            }
+                        }
                         size='large'
                         style={{ width: 400 }}
+                        allowClear
+                        onClear={() => {
+                            setFilter((prev) => {
+                                if (prev.hasOwnProperty('dateRange')) {
+                                    return ({dateRange: prev.dateRange})
+                                }
+                                return {}
+                            });
+                            setAutocompleteInput('')
+                        }}
                         placeholder={ `Search by ${selectedSearchFilter}` }
                         onSearch={(text) => onSearch(text)}
                         onSelect={(value) => setFilterVal(value)}

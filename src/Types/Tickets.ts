@@ -40,3 +40,11 @@ export type TicketPaginatedResponse = {
 export type TFilterType = {
     [key: string]: string | number | string[] | number[]
 }
+
+export type TicketAggregates = {
+    ticket_count: number,
+    total_revenue: number,
+    total_unpaid: number,
+    total_unpaid_tickets: number,
+    total_agents: number
+}
