@@ -1,4 +1,4 @@
-import { Row, Col, Card, Space, Typography, DatePicker, Input, Statistic, Button } from 'antd';
+import { Row, Col, Card, Space, Typography, DatePicker, Input, Statistic, Button,Spin, Select } from 'antd';
 import type { SearchProps } from 'antd/es/input/Search';
 import PendingTickets from '../../Components/ThirdParty/PendingTickets';
 import { useQuery } from '@tanstack/react-query';
@@ -137,7 +137,27 @@ const ThirdPartyCustomers = () => {
                 </Card>
             </Col>
         </Row>
-
+        <Row style={{marginTop: '5vh'}}>
+            <Col span={23}>
+                <Card title={"Filter Clients"} style={{textAlign: 'left'}}>
+                <Select
+                    style={{ width: 500 }}
+                    size='large'
+                    labelInValue
+                    filterOption={false}
+                    notFoundContent={isFetching ? <Spin size="small" /> : null}
+                    options={thirdPartyTickets.map(({ id, title }) => ({ id, title })) // Strip to only id & title
+                            .filter((item, index, self) =>
+                                index === self.findIndex(other =>
+                                    other.id === item.id && other.title === item.title
+                                )
+                        )
+                        .map(({ id, title }) => ({ label: title, value: id }))
+                    }
+                />
+                </Card>
+            </Col>
+        </Row>
         <Row>
             <Col span={23}>
                 <PendingTickets isLoading={isLoading} tickets={thirdPartyTickets}/>

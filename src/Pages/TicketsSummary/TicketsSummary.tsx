@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
-import { Card, Row, Col, Space, Typography, DatePicker, Switch, Collapse } from "antd"
+import { Card, Space, Typography, DatePicker, Switch, Collapse } from "antd"
 import dayjs from "dayjs";
 import type { TimeRangePickerProps, CollapseProps } from 'antd';
 
 import TicketFilters from "./TicketFilters";
 import TableTickets from "./TableTickets";
 import { TFilterType } from "../../Types/Tickets";
+import TicketAggregates from "./TicketAggregates";
 
 const { RangePicker } = DatePicker;
 const TicketsSummary = () => {
-    const defaultDateRange = [dayjs().startOf('day').format("YYYY-MM-DD HH:mm:ss"), dayjs(new Date()).format("YYYY-MM-DD HH:mm:ss")];
+    const defaultDateRange = [dayjs().startOf('day').format("YYYY-MM-DD HH:mm:ss"), dayjs().endOf('day').format("YYYY-MM-DD HH:mm:ss")];
     const [dateRange, setDateRange] = useState<string[]>(defaultDateRange)
     const [rangePickerDisabled, setRangePickerDisabled] = useState<boolean>(false);
     const [filter, setFilter] = useState<TFilterType>({dateRange: dateRange});
+
 
     const rangePresets: TimeRangePickerProps['presets'] = [
         { label: 'Yesterday', value: [dayjs().add(-1, 'd'), dayjs()] },
@@ -37,7 +39,7 @@ const TicketsSummary = () => {
 
                 return rest;
             }else{
-                return {...prev, dateRange: dateRange}
+                return { dateRange: dateRange, ...prev}
             }
         })
 
@@ -63,17 +65,17 @@ const TicketsSummary = () => {
                             <RangePicker 
                                 showTime 
                                 size={'large'} 
-                                onChange={onchange} 
-                                defaultValue={[dayjs().startOf('day'), dayjs()]} 
+                                onChange={onchange}
+                                defaultValue={[dayjs().startOf('day'), dayjs().endOf('day')]} 
                                 presets={[
                                     {
-                                    label: <span aria-label="Start of Day to Now">Start of Day ~ End of Day</span>,
-                                    value: () => [dayjs().startOf('day'), dayjs().endOf('day')],
+                                        label: <span aria-label="Start of Day to Now">Start of Day ~ End of Day</span>,
+                                        value: () => [dayjs().startOf('day'), dayjs().endOf('day')],
                                     },
                                     ...rangePresets,
                                 ]}
                                 disabled={rangePickerDisabled}
-                                />
+                            />
 
                             <Switch defaultChecked onChange={() => {
                                 setRangePickerDisabled((prev) => !prev)
@@ -89,6 +91,11 @@ const TicketsSummary = () => {
                         <Collapse items={items} />                        
                     </Space>
                 </Space>
+                <div style={{width: '100%', justifyContent: 'space-between', marginBottom: '1rem'}}>
+                    <Card title={"Ticket Aggregates"} >
+                        <TicketAggregates filters={filter}/>
+                    </Card>
+                </div>
                 <TableTickets filter={filter}/>
                 
             </Card>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Form, Modal, Select, Input, DatePicker } from "antd"
+import { Form, Modal, Select, Input, DatePicker, message } from "antd"
 import { Ticket } from "../../Types/Tickets"
 import dayjs from "dayjs"
 import { Rate } from "../../Types/Rate"
@@ -17,16 +17,25 @@ type EditTicketModalProps = {
 const EditTicketModal: React.FC<EditTicketModalProps> = ({ticket, isModalOpen, setModalOpen }) => {
     if (!ticket) return <></>
     const [form] = Form.useForm();
+    const [messageApi, contextHolder] = message.useMessage();
     const [selectedRate, setSelectedRate] = useState<Rate | null>(ticket.rate);
     const [selectedAgent, setSelectedAgent] = useState<Agent | null>(ticket.agent);
-    const {mutate: submit} = useSubmitEditedTicket(ticket.id, form.getFieldsValue())
-    const handleOk = (_values) => {
-        console.log("Editing ticket::", _values)
-        
+    const {mutate: submit, isPending} = useSubmitEditedTicket(ticket.id, {
+        onSuccess: (data) => {
+            
+            messageApi.success(data.message)
+            setModalOpen(false)
+        },
+        onError: (error) => {
+            
+            messageApi.error("Error: " + error)
+        }
+    })
+    const handleOk = () => {
+        console.log("Editing ticket::", form.getFieldsValue())
         submit(form.getFieldsValue())
-        
-        setModalOpen(false)
     }
+
     const handleCancel = () => {
         setModalOpen(false)
     }
@@ -42,6 +51,7 @@ const EditTicketModal: React.FC<EditTicketModalProps> = ({ticket, isModalOpen, s
             form.setFieldValue('amount', ticket.amount);
             form.setFieldValue('issued_date_time', dayjs(ticket.issued_date_time));
         }
+
         if (rates) {
             const selectedRateDefault = rates.find((rate: Rate) => rate.id === ticket.rate.id);
             setSelectedRate(selectedRateDefault);
@@ -57,19 +67,23 @@ const EditTicketModal: React.FC<EditTicketModalProps> = ({ticket, isModalOpen, s
     useEffect(() => {
         if (selectedRate) {
             form.setFieldValue('rate', selectedRate?.title);
+            form.setFieldValue('rate_id', selectedRate?.id);
             form.setFieldValue('amount', selectedRate?.amount);
         }
 
         if (selectedAgent) {
+            form.setFieldValue('agent_id', selectedAgent?.id);
             form.setFieldValue('agent', selectedAgent?.fname + " " + selectedAgent?.lname);
         }
 
     }, [selectedRate, selectedAgent])
 
     return (<>
+        {contextHolder}
         {ticket &&
         <Modal title={`Edit Ticket ${ticket.title}`} open={isModalOpen} onOk={handleOk} onCancel={handleCancel}
             okText="Save"
+            confirmLoading={isPending}
         >
             <Form
                 layout="vertical"
@@ -89,6 +103,10 @@ const EditTicketModal: React.FC<EditTicketModalProps> = ({ticket, isModalOpen, s
                 <Form.Item label="Car Number" name="car_number" rules={[{ required: true, message: 'Please input your car number!' }]}>
                     <Input size="large" />
                 </Form.Item>
+                <Form.Item
+                    name="rate_id"
+                    noStyle
+                    hidden={true} />
                 <Form.Item
                     label="Rate Category"
                     name="rate"
@@ -126,6 +144,12 @@ const EditTicketModal: React.FC<EditTicketModalProps> = ({ticket, isModalOpen, s
             >
                 <Input size="large" disabled={ selectedRate.rate_type !== 'flexible' } />
             </Form.Item>
+
+            <Form.Item
+                name="agent_id"
+                noStyle
+                hidden={true} 
+            />
 
             <Form.Item
                 label="Agent"

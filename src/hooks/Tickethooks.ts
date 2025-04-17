@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 import { TFilterType, TicketPaginatedResponse, Ticket } from "../Types/Tickets"
 import * as queryKeys from "../Constants/Querykeys"
 import * as apiClient from "../Services/TicketService";
+import { TicketAggregates } from "../Types/Tickets"
 
 const _getTickets = async (filter? : TFilterType) => {
     
@@ -56,14 +57,36 @@ const _getTicketIndexes = async (field: string, value: string) => {
     }
 }
 
-export const useSubmitEditedTicket = (id: number, ticket: Ticket) => {
+export const useSubmitEditedTicket = (id: number, options?: {
+    onSuccess?: (data: any) => void;
+    onError?: (error: any) => void;
+}) => {
     return useMutation({
-        mutationFn: async () => {  
+        mutationFn: async (ticket: Ticket) => { 
             console.log("Bkalc:: ", ticket);
             console.log("Ticket ID:: ", id);
 
             return await apiClient.editTicket(id, ticket)
         },
+        onSuccess: (data) => {
+            options.onSuccess?.(data);
+        },
+        onError: (error) => {
+            options.onError?.(error);
+        }
+    });
+}
 
+export const useGetTicketAggregates = (filters?: TFilterType) => {
+    return useQuery<TicketAggregates>({
+        queryKey: [queryKeys.TICKETS_AGGREGATES_KEY, filters],
+        queryFn: async () => {
+            const response = await apiClient.getTicketAggregates(filters);
+            if ('data' in response) {
+                return response.data;
+            } else {
+                throw new Error('Failed to fetch ticket aggregates');
+            }
+        }
     })
 }

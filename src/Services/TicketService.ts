@@ -1,5 +1,6 @@
 import * as api from './requests/API';
 import { TicketPaginatedResponse, Ticket } from '../Types/Tickets';
+import { TicketAggregates } from '../Types/Tickets';
 import { getUserInfo } from '../Utils/Auth';
 import { AppError, RemoteResponse } from '../Types/Remote';
 import { TFilterType } from '../Types/Tickets';
@@ -20,6 +21,18 @@ export const getTickets = async (filter?: TFilterType): Promise<RemoteResponse<T
     if (userInfo){
         const filterParams = Object.entries(filter).map(([key, value]) => `${key}=${value}`).join('&');
         return ( await api.get(`/ticket?${filterParams}`, {'Authorization': 'Bearer '+userInfo.token})).data
+    }else
+        return new Promise<AppError>((_, reject) => {
+            reject("User is not logged In");
+        })
+}
+
+export const getTicketAggregates = async (filter: TFilterType): Promise<RemoteResponse<TicketAggregates> | AppError> => {
+    const userInfo = getUserInfo()
+
+    if (userInfo) {
+        const filterParams = Object.entries(filter).map(([key, value]) => `${key}=${value}`).join('&');
+        return ( await api.get(`/ticket/aggregates?${filterParams}`, {'Authorization': 'Bearer '+userInfo.token})).data
     }else
         return new Promise<AppError>((_, reject) => {
             reject("User is not logged In");
@@ -129,10 +142,16 @@ export const deleteTickets = async (ticketsIds: number[]) => {
 }
 
 export const editTicket = async (id: number, values: any) => {
-    const userInfo = getUserInfo()  
+    const userInfo = getUserInfo()
+
+    values = {
+        ...values,
+        issued_date_time: values.issued_date_time.format("YYYY-MM-DD HH:mm:ss"),
+    }
+
     console.log("Values to modify::", values)
     if (userInfo)
-        return (await api.post(`/ticket/${id}/editvb`, values, {'Authorization': 'Bearer '+userInfo.token})).data
+        return (await api.post(`/ticket/${id}/edit`, values, {'Authorization': 'Bearer '+userInfo.token})).data
     // return null
     else
         return new Promise<AppError>((_, reject) => {
