@@ -1,16 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Button, Table, type TableProps, Tag, Space, Modal } from 'antd';
-import { useGetTickets } from '../../hooks/Tickethooks';
+import { Button, Table, type TableProps, Tag, Space, Modal, message } from 'antd';
+import { useGetTickets, useBulkDeleteTickets, useDeleteTicket } from '../../hooks/Tickethooks';
 import type { TFilterType, Ticket } from '../../Types/Tickets';
 import { Rate } from '../../Types/Rate';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import EditTicketModal from './EditModal';
 import { Link } from "react-router-dom";
-
-interface RecordType {
-
-}
+import { TableRowSelection } from 'antd/es/table/interface';
 
 type TableTicketsProps = {
     filter: TFilterType
@@ -18,18 +15,40 @@ type TableTicketsProps = {
 
 
 const TableTickets:React.FC<TableTicketsProps> = ({ filter }) => {
-
+    const [messageApi, contextHolder] = message.useMessage();
     const [ticketData, setTicketData] = useState<Ticket[]>([]);
     const [currentPage, setPage] = useState(1);
 
     const [isModalOpen, setModalOpen] = useState(false);
     const [editTicket, setEditTicket] = useState<Ticket>(null);
 
+    const [selectedRows, setSelectedRows] = useState<Ticket[]>([]);
+
     const [trackInternalPage, setTrackInternalPage] = useState(1);
 
     const {data: tickets, isSuccess, isLoading, isFetching, refetch} = useGetTickets({page: currentPage, ...filter});
-
-    console.log("Current page", currentPage)
+    const { mutate: deleteTicketsMutation } = useBulkDeleteTickets({
+        onSuccess: (data) => {
+            console.log("Tickets Deleted::", data)
+            messageApi.success(data.message)
+        },
+        onError: (error) => {
+            console.log("Error deleting tickets::", error)
+            messageApi.error("Error deleting ticket: " + error)
+        }
+    });
+    const { mutate: deleteTicketMutation } = useDeleteTicket({
+        onSuccess: (data) => {
+            console.log("Ticket Deleted::", data)
+            messageApi.destroy()
+            messageApi.success(data.message)
+        },
+        onError: (error) => {
+            console.log("Error deleting ticket::", error)
+            messageApi.destroy()
+            messageApi.error("Error deleting ticket: " + error)
+        }
+    });
 
     if (isSuccess) {
         console.log("Request is successfull")
@@ -37,12 +56,12 @@ const TableTickets:React.FC<TableTicketsProps> = ({ filter }) => {
         console.log("remote Current Page:::", tickets.current_page)
         console.log("local Current Page:::", currentPage)
         console.log("Internal Page:::", trackInternalPage)
-
     }
 
     useEffect(() => {
 
         if (!tickets) return;
+        console.log("Do you want to refetch tickets::")
         if (currentPage > tickets.current_page) {
             refetch();   
         }
@@ -68,7 +87,7 @@ const TableTickets:React.FC<TableTicketsProps> = ({ filter }) => {
     console.log("Filter Here:::", filter)
     console.log("Tickets data::", ticketData)
 
-    const columns: TableProps<RecordType>['columns'] = [
+    const columns: TableProps<Ticket>['columns'] = [
         {
           title: 'Ticket ID',
           dataIndex: 'title',
@@ -144,10 +163,29 @@ const TableTickets:React.FC<TableTicketsProps> = ({ filter }) => {
         });
     }
 
-    const handleDeleteConfirm = (id: number) => {
+    const handleBulkDelete = () => {
+        Modal.warning({
+                title: 'Delete Ticket?',
+                content: `Are you sure you want to delete these Tickets: ${selectedRows.map((r) => r.title).join(', ')}?`,
+                okText: 'Yes',
+                cancelText: 'No',
+                onOk: () => handleBulkDeleteConfirm(selectedRows),
+                onCancel: () => console.log("Canceled"),
+                closable: true,
+        });
+    }
+
+    const handleDeleteConfirm = async (id: number) => {
         console.log("TICKET ID IS HERE::", id)
-        // setIDToDelete(id)
-        // deleteTicketMutation(id)
+        messageApi.loading("Deleting Ticket with id: " + id)
+
+        return await deleteTicketMutation(id)
+    }
+
+    const handleBulkDeleteConfirm = async (records: Ticket[]) => {
+        console.log("Records to delete::", records)
+        messageApi.loading("Deleting Tickets with ids: " + records.map((r) => r.id).join(', '))
+        return await deleteTicketsMutation(records.map((r) => r.id))
     }
 
     const handleOnTableScroll = (e) => {
@@ -162,13 +200,32 @@ const TableTickets:React.FC<TableTicketsProps> = ({ filter }) => {
         }
     }
 
+    const rowSelection: TableRowSelection<Ticket> = {
+        onChange: (selectedRowKeys, selectedRows) => {
+          console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            
+            setSelectedRows(selectedRows);
+
+        },
+        type: 'checkbox', columnWidth: 30
+    }
+
+
     return (<>
+        {contextHolder}
+        <Space direction='horizontal' style={{width: '100%', justifyContent: 'flex-start', marginBottom: '1rem'}}>
+            
+            <Space direction='horizontal'>
+                <Button type='primary' size={'large'} loading={isLoading} disabled={selectedRows.length === 0} onClick={() => handleBulkDelete()}>Delete Selected Rows</Button>
+            </Space>
+        </Space>
+        
         <Table 
             virtual={true}
             columns={columns} 
             dataSource={ticketData}
             rowKey="id"
-            rowSelection={{type: 'checkbox', columnWidth: 30}}
+            rowSelection={rowSelection}
             pagination={false}
             scroll={{y: 600 }}
             loading={isLoading}

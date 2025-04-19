@@ -22,12 +22,10 @@ const EditTicketModal: React.FC<EditTicketModalProps> = ({ticket, isModalOpen, s
     const [selectedAgent, setSelectedAgent] = useState<Agent | null>(ticket.agent);
     const {mutate: submit, isPending} = useSubmitEditedTicket(ticket.id, {
         onSuccess: (data) => {
-            
             messageApi.success(data.message)
             setModalOpen(false)
         },
         onError: (error) => {
-            
             messageApi.error("Error: " + error)
         }
     })

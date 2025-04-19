@@ -25,12 +25,11 @@ const TicketsSummary = () => {
     ];
 
     const onchange = (_: any, dateRange: [string, string]) => {
-        console.log("CHosen date range::", dateRange)
         setDateRange(dateRange)
     }
 
     useEffect(() => {
-
+        
         setFilter((prev) => {
             if (rangePickerDisabled) {
                 const {dateRange, ...rest} = prev;
@@ -39,11 +38,20 @@ const TicketsSummary = () => {
 
                 return rest;
             }else{
+                
+                delete prev.dateRange; //Im so gonna confuse myself with this. This was done because js had this wierd thing where the right spreaded value overrides the left value.
                 return { dateRange: dateRange, ...prev}
+
             }
         })
-
+       
     }, [rangePickerDisabled, dateRange])
+
+    useEffect(() => {
+
+        console.log("Value of Filter:::", filter)
+
+    }, [filter])
 
     const items: CollapseProps['items'] = [
         {
@@ -53,7 +61,7 @@ const TicketsSummary = () => {
         },
     ]
 
-    console.log("Filter here:: fron init", filter)
+    console.log("Updated Filter!!", filter)
 
     return (<>
         

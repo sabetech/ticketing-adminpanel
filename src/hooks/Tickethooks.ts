@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { TFilterType, TicketPaginatedResponse, Ticket } from "../Types/Tickets"
 import * as queryKeys from "../Constants/Querykeys"
 import * as apiClient from "../Services/TicketService";
@@ -26,6 +26,7 @@ const _getTickets = async (filter? : TFilterType) => {
 // }
 
 export const useGetTickets = (filter?: TFilterType) => {
+    console.log("Filter in useGetTickets:: ", filter)
     return  useQuery<TicketPaginatedResponse>(
         { 
             queryKey: [queryKeys.TICKETS_KEY, JSON.stringify(filter)],
@@ -58,9 +59,12 @@ const _getTicketIndexes = async (field: string, value: string) => {
 }
 
 export const useSubmitEditedTicket = (id: number, options?: {
+    
     onSuccess?: (data: any) => void;
     onError?: (error: any) => void;
+
 }) => {
+    const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async (ticket: Ticket) => { 
             console.log("Bkalc:: ", ticket);
@@ -70,6 +74,7 @@ export const useSubmitEditedTicket = (id: number, options?: {
         },
         onSuccess: (data) => {
             options.onSuccess?.(data);
+            queryClient.invalidateQueries({queryKey: [queryKeys.TICKETS_KEY]});
         },
         onError: (error) => {
             options.onError?.(error);
@@ -89,4 +94,44 @@ export const useGetTicketAggregates = (filters?: TFilterType) => {
             }
         }
     })
+}
+
+export const useDeleteTicket = ( options?: {
+    onSuccess?: (data: any) => void;
+    onError?: (error: any) => void;
+}) => {
+    
+    const queryClient = useQueryClient();
+    
+    return useMutation({
+        mutationFn: async (id: number) => { 
+            return await apiClient.deleteTicket(id)
+        },
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({queryKey: [queryKeys.TICKETS_KEY]});
+            options.onSuccess?.(data);
+        },
+        onError: (error) => {
+            options.onError?.(error);
+        }
+    });
+}
+
+export const useBulkDeleteTickets = ( options?: {
+    onSuccess?: (data: any) => void;
+    onError?: (error: any) => void;
+}) => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (ids: number[]) => { 
+            return await apiClient.deleteTickets(ids)
+        },
+        onSuccess: (data) => {
+            options.onSuccess?.(data);
+            queryClient.invalidateQueries({queryKey: [queryKeys.TICKETS_KEY]});
+        },
+        onError: (error) => {
+            options.onError?.(error);
+        }
+    });
 }
