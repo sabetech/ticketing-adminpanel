@@ -29,7 +29,8 @@ const ThirdPartyCustomers = () => {
     useEffect(() => {
 
         if (isSuccess && thirdPartyTicketsData.success) {
-            setThirdPartyTicket(thirdPartyTicketsData.data); 
+            
+            setThirdPartyTicket(thirdPartyTicketsData.data);
         } 
 
     }, [thirdPartyTicketsData, dateRange]);
@@ -53,7 +54,29 @@ const ThirdPartyCustomers = () => {
         setPaymentModalOpen(true);
     }
 
-    // console.log("DATE RANGE VAL::", dateRange)
+    const filterByClient = (value: any) => {
+        console.log("Selected value::", value)
+        if (thirdPartyTicketsData && 'data' in thirdPartyTicketsData) {
+            setThirdPartyTicket(thirdPartyTicketsData.data.filter((ticket) => {
+                console.log("Ticket ID::", ticket)
+
+                if (value.value === 'all') return ticket;
+                return ticket.rate_id === value.value
+            }));
+        }
+    }
+
+    const generateFilterOptions = () => {
+        if (thirdPartyTicketsData && 'data' in thirdPartyTicketsData) {
+            const uniqueRateIds = Array.from(new Set(thirdPartyTicketsData.data.map((ticket) => ticket.rate_id)))
+            return uniqueRateIds.map((rate_id) => {
+                const rate_title = thirdPartyTicketsData.data.find((ticket) => ticket.rate_id === rate_id)?.rate_title
+                return { label: rate_title, value: rate_id }
+            })
+        }
+    }
+
+    console.log("Third Party Tickets::", thirdPartyTickets)
 
     return (
     <>
@@ -77,20 +100,28 @@ const ThirdPartyCustomers = () => {
                         </Space>
 
                         <Space direction="vertical" style={{textAlign: 'left'}}>
-                            <Typography>Search</Typography>
-                            <Search
-                                placeholder="Search by Car Number, Ticket ID, Agent Name"
-                                allowClear
-                                enterButton="Search"
-                                size="large"
-                                onSearch={onSearch}
-                                style={{ width: 500 }}
-                            />
+                            <Col span={23}>
+                            <Typography>Filter Client</Typography>
+                                <Select
+                                    defaultValue={{ label: 'All', value: 'all' }}
+                                    style={{ width: 500 }}
+                                    size='large'
+                                    labelInValue
+                                    filterOption={false}
+                                    notFoundContent={isFetching ? <Spin size="small" /> : null}
+                                    options={generateFilterOptions()}
+                                    onSelect={(value) => filterByClient(value)}
+                                />
+                            
+                        </Col>
                         </Space>
                     </Space>
+                    <Row style={{marginTop: '5vh'}}>
+                        
+                    </Row>
                     <Row gutter={16} style={{marginTop: '2%'}}>
                         <Col span={6}>
-                            <Card bordered={false}>
+                            <Card variant='borderless'>
                                 <Statistic title="Paid" value={ thirdPartyTickets.reduce((acc, tkt) => {
                                     if (tkt.paid == true) acc +=  parseFloat(tkt.amount)
                                     return acc
@@ -102,7 +133,7 @@ const ThirdPartyCustomers = () => {
                             </Card>
                             </Col>
                         <Col span={4}>
-                            <Card bordered={false}>
+                            <Card variant='borderless'>
                                 <Statistic title="Paid Tickets" value={thirdPartyTickets.reduce((acc, tkt) => {
                                     if (tkt.paid == true) acc += 1 
                                     return acc}, 0)
@@ -110,7 +141,7 @@ const ThirdPartyCustomers = () => {
                             </Card>
                         </Col>
                         <Col span={6}>
-                            <Card bordered={false}>
+                            <Card variant='borderless'>
                                 <Statistic title="Pending Amount GHC" 
                                             value={thirdPartyTickets.reduce((acc, tkt) => {
                                                 if (tkt.paid == false) acc += parseFloat(tkt.amount)
@@ -123,7 +154,7 @@ const ThirdPartyCustomers = () => {
                             </Card>
                         </Col>
                         <Col span={4}>
-                            <Card bordered={false}>
+                            <Card variant='borderless'>
                                 <Statistic title="Pending Tickets" 
                                             value={thirdPartyTickets.reduce((acc, tkt) => {
                                                 if (tkt.paid == false) acc += 1
@@ -137,27 +168,7 @@ const ThirdPartyCustomers = () => {
                 </Card>
             </Col>
         </Row>
-        <Row style={{marginTop: '5vh'}}>
-            <Col span={23}>
-                <Card title={"Filter Clients"} style={{textAlign: 'left'}}>
-                <Select
-                    style={{ width: 500 }}
-                    size='large'
-                    labelInValue
-                    filterOption={false}
-                    notFoundContent={isFetching ? <Spin size="small" /> : null}
-                    options={thirdPartyTickets.map(({ id, title }) => ({ id, title })) // Strip to only id & title
-                            .filter((item, index, self) =>
-                                index === self.findIndex(other =>
-                                    other.id === item.id && other.title === item.title
-                                )
-                        )
-                        .map(({ id, title }) => ({ label: title, value: id }))
-                    }
-                />
-                </Card>
-            </Col>
-        </Row>
+        
         <Row>
             <Col span={23}>
                 <PendingTickets isLoading={isLoading} tickets={thirdPartyTickets}/>
