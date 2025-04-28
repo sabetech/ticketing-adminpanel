@@ -73,10 +73,10 @@ const ThirdPartyCustomers = () => {
                 const rate_title = thirdPartyTicketsData.data.find((ticket) => ticket.rate_id === rate_id)?.rate_title
                 return { label: rate_title, value: rate_id }
             })
+        }else{
+            return []
         }
     }
-
-    console.log("Third Party Tickets::", thirdPartyTickets)
 
     return (
     <>
@@ -109,7 +109,7 @@ const ThirdPartyCustomers = () => {
                                     labelInValue
                                     filterOption={false}
                                     notFoundContent={isFetching ? <Spin size="small" /> : null}
-                                    options={generateFilterOptions()}
+                                    options={[...generateFilterOptions(), { label: 'All', value: 'all' }]}
                                     onSelect={(value) => filterByClient(value)}
                                 />
                             
