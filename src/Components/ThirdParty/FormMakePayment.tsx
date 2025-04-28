@@ -51,7 +51,7 @@ const FormMakePayment:React.FC<FormMakePaymentProps> = ( {dateRange, setModalOpe
 
     useEffect(() => {
 
-        setTotalAmount(discount > 0 || withholdingTax > 0 ? totalAmount - (totalAmount * (discount / 100)) - (totalAmount * (withholdingTax / 100)): totalAmount)
+        setTotalAmount(discount > 0 || withholdingTax > 0 ? totalAmount - ((totalAmount * (discount / 100)) + (totalAmount * (withholdingTax / 100))): totalAmount)
 
     }, [discount, withholdingTax]);
     
@@ -59,9 +59,13 @@ const FormMakePayment:React.FC<FormMakePaymentProps> = ( {dateRange, setModalOpe
     const { mutate } = useMutation({ 
         mutationFn: (values: PayOnCreditRequest) => makePayment(values),
         onSuccess: (data: any) => { 
+            console.log("response from server:, ", data);
+            
+            queryClient.invalidateQueries({queryKey:['thirdpartyticket', dateRange]});
+
             messageApi.open({
                 type: 'success',
-                content: data.message,
+                content: "Payment made successfully",
             });
         }
     });
@@ -102,6 +106,11 @@ const FormMakePayment:React.FC<FormMakePaymentProps> = ( {dateRange, setModalOpe
             withholding_tax: withholding_tax,
             discount: discount
         } as PayOnCreditRequest
+
+        messageApi.open({
+            type: 'loading',
+            content: 'Making Payment',
+        });
 
         mutate(paymentRequest);
         setModalOpen(false);
