@@ -20,14 +20,10 @@ const FormEditTicket:React.FC<Props> = ({oldFormFields, rates, agents, setModalO
     const [messageApi, contextHolder] = message.useMessage();
 
     const { mutate: editTicketMutate, isPending } = useMutation({
-        mutationFn: (_values) => {
-            const optimisticTicketUpdate = { id: oldFormFields.id, _values }
-
-    // Add optimistic todo to todos list
-    queryClient.setQueryData(['todos'], (old) => [...old, optimisticTodo])
+        mutationFn: (_values) => {        
             return editTicket(oldFormFields.id, _values)
         },
-        onSuccess: (data: any,_, context) => { 
+        onSuccess: (data: any,_) => { 
             console.log("RESULT::", data)
             console.log("old form fields::", oldFormFields)
             setModalOpen(false);
