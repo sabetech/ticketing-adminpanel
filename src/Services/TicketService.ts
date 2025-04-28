@@ -1,8 +1,43 @@
 import * as api from './requests/API';
-import { Ticket } from '../Types/Tickets';
+import { TicketPaginatedResponse, Ticket } from '../Types/Tickets';
+import { TicketAggregates } from '../Types/Tickets';
 import { getUserInfo } from '../Utils/Auth';
 import { AppError, RemoteResponse } from '../Types/Remote';
+import { TFilterType } from '../Types/Tickets';
 
+export const getTicketIndexes = async (indexSearchField: string, value: string): Promise<RemoteResponse<string[]> | AppError> => {
+    const userInfo = getUserInfo()
+
+    if (userInfo)
+        return (await api.get(`/ticket/indexes?field=${indexSearchField}&value=${value}`,  {'Authorization': 'Bearer '+userInfo.token})).data
+    else
+        return new Promise<AppError>((_, reject) => {
+            reject("User is not logged In");
+        })
+}
+export const getTickets = async (filter?: TFilterType): Promise<RemoteResponse<TicketPaginatedResponse> | AppError> => {
+    const userInfo = getUserInfo()
+
+    if (userInfo){
+        const filterParams = Object.entries(filter).map(([key, value]) => `${key}=${value}`).join('&');
+        return ( await api.get(`/ticket?${filterParams}`, {'Authorization': 'Bearer '+userInfo.token})).data
+    }else
+        return new Promise<AppError>((_, reject) => {
+            reject("User is not logged In");
+        })
+}
+
+export const getTicketAggregates = async (filter: TFilterType): Promise<RemoteResponse<TicketAggregates> | AppError> => {
+    const userInfo = getUserInfo()
+
+    if (userInfo) {
+        const filterParams = Object.entries(filter).map(([key, value]) => `${key}=${value}`).join('&');
+        return ( await api.get(`/ticket/aggregates?${filterParams}`, {'Authorization': 'Bearer '+userInfo.token})).data
+    }else
+        return new Promise<AppError>((_, reject) => {
+            reject("User is not logged In");
+        })
+}
 
 export const getTicketsIssued = async (date: string | string[] ): Promise<RemoteResponse<Ticket[]> | AppError> => {
     const userInfo = getUserInfo()
@@ -107,10 +142,17 @@ export const deleteTickets = async (ticketsIds: number[]) => {
 }
 
 export const editTicket = async (id: number, values: any) => {
-    const userInfo = getUserInfo()  
+    const userInfo = getUserInfo()
 
+    values = {
+        ...values,
+        issued_date_time: values.issued_date_time.format("YYYY-MM-DD HH:mm:ss"),
+    }
+
+    console.log("Values to modify::", values)
     if (userInfo)
         return (await api.post(`/ticket/${id}/edit`, values, {'Authorization': 'Bearer '+userInfo.token})).data
+    // return null
     else
         return new Promise<AppError>((_, reject) => {
             reject("User is not logged In");

@@ -1,4 +1,5 @@
 import { Agent } from "./Agent"
+import { Station } from "./Station"
 
 export type Ticket = {
     id: number
@@ -10,11 +11,41 @@ export type Ticket = {
     issued_date_time: string,
     name: string,
     rate_title: string,
+    rate_id: number,
     rate: {
         id: number
         on_credit: boolean
         title: string
         rate_type: string
+        is_postpaid: boolean
+        amount: number
     },
-    agent: Agent
+    agent: Agent,
+    station: Station
+}
+
+export type TicketPaginatedResponse = {
+    data: Ticket[],
+    current_page: number,
+    first_page_url: string,
+    next_page_url: string,
+    last_page_url: string,
+    from: number,
+    to: number,
+    last_page: number
+    total: number,
+    prev_page_url: string,
+    path: string
+}
+
+export type TFilterType = {
+    [key: string]: string | number | string[] | number[]
+}
+
+export type TicketAggregates = {
+    ticket_count: number,
+    total_revenue: number,
+    total_unpaid: number,
+    total_unpaid_tickets: number,
+    total_agents: number
 }

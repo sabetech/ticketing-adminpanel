@@ -5,6 +5,8 @@ import { Agent } from '../../Types/Agent';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { editTicket } from "../../Services/TicketService"
 import { useEffect } from 'react';
+import { DatePicker } from "antd";
+import dayjs from 'dayjs';
 
 type Props = {
     oldFormFields: Ticket
@@ -18,19 +20,25 @@ const FormEditTicket:React.FC<Props> = ({oldFormFields, rates, agents, setModalO
     const [messageApi, contextHolder] = message.useMessage();
 
     const { mutate: editTicketMutate, isPending } = useMutation({
-        mutationFn: (_values) => editTicket(oldFormFields.id, _values),
-        onSuccess: (data: any) => { 
+        mutationFn: (_values) => {        
+            return editTicket(oldFormFields.id, _values)
+        },
+        onSuccess: (data: any,_) => { 
             console.log("RESULT::", data)
+            console.log("old form fields::", oldFormFields)
             setModalOpen(false);
-            // queryClient.setQueryData(['ticketsIssued'], 
-            //     (oldData) => 
-            //         oldData
-            //             ? {
-            //                 ...oldData,
-
-            //             }
-            // );
-            queryClient.invalidateQueries({queryKey: ['ticketsIssued']});
+           
+            queryClient.setQueryData(['ticketsIssued', oldFormFields.id], (oldData: any) => {
+                console.log("Old data::", oldData)
+                if (!oldData) return;
+                
+                console.log("Old data::", oldData)
+                console.log("data data::", data.data)
+                return {
+                    ...oldData,
+                    ...data.data, // Merge updated ticket data into cached data
+                };
+            });
             messageApi.success(data.message);
         }
     });
@@ -42,12 +50,13 @@ const FormEditTicket:React.FC<Props> = ({oldFormFields, rates, agents, setModalO
         form.setFieldValue('rate', oldFormFields.rate.title);
         form.setFieldValue('amount', oldFormFields.amount);
         form.setFieldValue('agent', oldFormFields.agent.fname + " " + oldFormFields.agent.lname);
+        form.setFieldValue('issued_date_time', dayjs(oldFormFields.issued_date_time));
     }, [])
 
     // form.setFieldValue('agent', oldFormFields.agent.fname + " " + oldFormFields.agent.lname)
 
     const onFinish = (_values: any) => {
-        _values = {..._values, rate_id: oldFormFields.rate.id}
+        _values = {..._values, rate_id: oldFormFields.rate.id, issued_date_time: dayjs(_values.issue_date_time).format('YYYY-MM-DD HH:mm:ss')}
         editTicketMutate(_values);
     }
 
@@ -67,6 +76,21 @@ const FormEditTicket:React.FC<Props> = ({oldFormFields, rates, agents, setModalO
             >
                 <Input disabled/>
             </Form.Item>
+
+            <Form.Item
+                label="Date"
+                name="issued_date_time"
+            >
+                <DatePicker 
+                    renderExtraFooter={() => 'Select Date and Time'} showTime 
+                    // defaultPickerValue={ dayjs(oldFormFields.issued_date_time) } 
+                    defaultValue={ dayjs(oldFormFields.issued_date_time) }
+                    value={ dayjs(oldFormFields.issued_date_time) }
+                    format="YYYY-MM-DD HH:mm:ss"
+                    
+                />
+            </Form.Item>
+
             <Form.Item
                 label="Car Number or phone"
                 name="car_number"

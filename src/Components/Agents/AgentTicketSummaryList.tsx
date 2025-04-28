@@ -16,16 +16,13 @@ const AgentTicketSummaryList:React.FC<AgentTicketSummaryListProps> = ({agentTick
 
     useEffect(() => {
         if (agentTicketInfoData) {
-            // console.log("AGENT TICKET INFO ::", agentTicketInfoData);
-            // const summarizedInfo = groupByRate(agentTicketInfoData);
+            
             const taskforce = groupByTaskforce(agentTicketInfoData);
             const postpaid = groupByPostpaid(agentTicketInfoData);
             const flexible = groupByFlexible(agentTicketInfoData);
             const fixed = groupByFixed(agentTicketInfoData);
             const overall = overallTotal(agentTicketInfoData);
 
-            // console.log("SUMMARISED::", summarizedInfo)
-            // setSummarized(summarizedInfo);
             setSummarizedTaskforce(taskforce);
             setSummarizedPostpaid(postpaid);
             setSummarizedFlexible(flexible);
