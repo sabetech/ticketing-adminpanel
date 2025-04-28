@@ -7,7 +7,7 @@ import type { Dayjs } from 'dayjs';
 const { RangePicker } = DatePicker;
 const PaymentHistory = () => {
 
-    const [dateRange, setDateRange] = useState<{from:string, to:string} | undefined>({ from: dayjs().startOf('day').format("YYYY-MM-DD HH:mm:ss"), to: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+    const [_, setDateRange] = useState<{from:string, to:string} | undefined>({ from: dayjs().startOf('day').format("YYYY-MM-DD HH:mm:ss"), to: dayjs().format("YYYY-MM-DD HH:mm:ss") });
     const onRangeChange = (dates: null | (Dayjs | null)[], dateStrings: string[]) => {
         if (dates) {
             setDateRange({from: dateStrings[0], to: dateStrings[1]});

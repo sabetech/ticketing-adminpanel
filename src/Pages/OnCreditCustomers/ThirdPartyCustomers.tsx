@@ -12,8 +12,6 @@ import type { TimeRangePickerProps } from 'antd';
 import type { Dayjs } from 'dayjs';
 
 const { RangePicker } = DatePicker;
-const { Search } = Input;
-const onSearch: SearchProps['onSearch'] = (value, _e, info) => console.log(info?.source, value);
 
 const ThirdPartyCustomers = () => {
 
