@@ -20,8 +20,8 @@ const PendingTickets:React.FC<PendingTicketsProps> = ({isLoading, tickets}) => {
         },
         {
             title: 'Client',
-            dataIndex: 'title',
-            key: 'client',
+            dataIndex: 'rate_title',
+            key: 'rate_title',
             width: '15%',
         },
         {

@@ -46,6 +46,7 @@ const TableAgentsTickets = ({date}) => {
             dataSource={isFetched && agentTicketTotals.data}
             pagination={false} 
             loading={isLoading}
+            rowKey="agent"
         />
     )
 }

@@ -84,6 +84,24 @@ const TableTickets: React.FC<TableTicketProp> = ( {ticketData, isLoading} ) => {
             title: 'Category',
             dataIndex: 'rate',
             key: 'category',
+            filters: [
+                {
+                  text: 'Fixed',
+                  value: 'fixed',
+                },
+                {
+                    text: 'Flexible',
+                    value: 'flexible',
+                },
+                {
+                    text: 'Postpaid',
+                    value: 'postpaid',
+                },
+            ],
+            onFilter: (value, record) => {
+                console.log("FILTER BUGY",value, record.rate.rate_type)
+                return record.rate.rate_type === value
+            },
             render: (rate: Rate) => <>{rate.title} <Tag>{rate.rate_type.toUpperCase()}</Tag> {(rate.is_postpaid == true) && (<Tag color="gold" >Postpaid</Tag>)} </>
         },
         {
