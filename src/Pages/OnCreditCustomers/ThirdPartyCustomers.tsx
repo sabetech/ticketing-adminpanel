@@ -1,5 +1,4 @@
-import { Row, Col, Card, Space, Typography, DatePicker, Input, Statistic, Button,Spin, Select } from 'antd';
-import type { SearchProps } from 'antd/es/input/Search';
+import { Row, Col, Card, Space, Typography, DatePicker, Statistic, Button,Spin, Select } from 'antd';
 import PendingTickets from '../../Components/ThirdParty/PendingTickets';
 import { useQuery } from '@tanstack/react-query';
 import { Ticket } from '../../Types/Tickets';
