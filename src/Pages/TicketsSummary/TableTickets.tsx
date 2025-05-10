@@ -91,18 +91,18 @@ const TableTickets:React.FC<TableTicketsProps> = ({ filter }) => {
         {
           title: 'Ticket ID',
           dataIndex: 'title',
-          width: 60,
+          width: 80,
         },
         {
             title: 'Date',
             dataIndex: 'issued_date_time',
-            width: 100,
+            width: 110,
             render: (val:string) => dayjs(val).format("DD MMM YYYY h:mm A")
         },
         {
           title: 'Car Number',
           dataIndex: 'car_number',
-          width: 60,
+          width: 80,
         },
         {
           title: 'Station',

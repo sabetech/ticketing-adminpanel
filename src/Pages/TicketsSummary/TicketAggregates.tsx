@@ -18,7 +18,7 @@ const TicketAggregates: React.FC<TicketAggregatesProps> = ({filters}) => {
     return (<>
     
         <Row gutter={10} style={{width: '100%'}}>
-            <Col span={4}>
+            <Col span={3}>
                 <Card variant="borderless" >
                     <Statistic
                         title="Tickets"
@@ -28,7 +28,7 @@ const TicketAggregates: React.FC<TicketAggregatesProps> = ({filters}) => {
                     />
                 </Card>
             </Col>
-            <Col span={4}>
+            <Col span={5}>
                 <Card variant="borderless">
                     <Statistic
                         title="Tickets Revenue"
@@ -40,7 +40,7 @@ const TicketAggregates: React.FC<TicketAggregatesProps> = ({filters}) => {
                     />
                 </Card>
             </Col>
-            <Col span={4}>
+            <Col span={5}>
                 <Card variant="borderless">
                     <Statistic
                         title="Tickets Unpaid Amount"
