@@ -3,11 +3,12 @@ import type { TimeRangePickerProps } from 'antd';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import type { Dayjs } from 'dayjs';
+import PaymentHistoryTable from '../../Components/ThirdParty/PaymentHistoryTable';
 
 const { RangePicker } = DatePicker;
 const PaymentHistory = () => {
 
-    const [_, setDateRange] = useState<{from:string, to:string} | undefined>({ from: dayjs().startOf('day').format("YYYY-MM-DD HH:mm:ss"), to: dayjs().format("YYYY-MM-DD HH:mm:ss") });
+    const [dateRange, setDateRange] = useState<{from:string, to:string} | undefined>({ from: dayjs().startOf('day').format("YYYY-MM-DD HH:mm:ss"), to: dayjs().format("YYYY-MM-DD HH:mm:ss") });
     const onRangeChange = (dates: null | (Dayjs | null)[], dateStrings: string[]) => {
         if (dates) {
             setDateRange({from: dateStrings[0], to: dateStrings[1]});
@@ -33,17 +34,28 @@ const PaymentHistory = () => {
                         <Typography>Date Filter</Typography>
                         <Space direction="horizontal" >
                         <RangePicker 
-                                    onChange={onRangeChange}
-                                    showTime 
-                                    size={'large'}
-                                    defaultValue={[dayjs().startOf('day'), dayjs()]}
-                                    presets={rangePresets}
-                                />
+                            onChange={onRangeChange}
+                            showTime 
+                            size={'large'}
+                            defaultValue={[dayjs().startOf('day'), dayjs()]}
+                            presets={rangePresets}
+                        />
                         </Space>
                     </Space>
                 </Space>
                 </Card>
             </Col>
+        </Row>
+        <Row>
+        <Col span={23}>
+            <Card title={"Payment History"} style={{textAlign: 'left'}}>
+                <Space direction="horizontal" size={'large'} style={{display: 'flex', justifyContent: 'flex-start', alignContent: 'flex-start'}}>
+                    <Space direction="vertical" style={{textAlign: 'left', marginRight: '3rem'}}>
+                        <PaymentHistoryTable dateRange={dateRange}/>
+                    </Space>
+                </Space>
+            </Card>
+        </Col>
         </Row>
     </>
 )};
