@@ -1,7 +1,7 @@
 import * as api from './requests/API';
 import { getUserInfo } from '../Utils/Auth';
 import { AppError, RemoteResponse } from '../Types/Remote';
-import { Rate, PayOnCreditRequest } from '../Types/Rate';
+import { Rate, PayOnCreditRequest, PostpaidPayment } from '../Types/Rate';
 
 
 export const getRates = async (station: number | null = null): Promise<RemoteResponse<Rate[]> | AppError> => {
@@ -61,6 +61,15 @@ export const makePayment = async (values: PayOnCreditRequest) => {
     const userInfo = getUserInfo()
     if (userInfo)
         return (await api.post(`/rates/makepayment`, values, {'Authorization': 'Bearer '+userInfo.token}))
+    return new Promise<AppError>((_, reject) => {
+        reject("User is not logged In");
+    })
+}
+
+export const getPaymentHistory = async (dateRange: {from:string, to:string} | undefined): Promise<RemoteResponse<PostpaidPayment[]> | AppError> => {
+    const userInfo = getUserInfo()
+    if (userInfo)
+        return ( await api.get(`/rates/paymentHistory?from=${dateRange?.from}&to=${dateRange?.to}`, {'Authorization': 'Bearer '+userInfo.token})).data
     return new Promise<AppError>((_, reject) => {
         reject("User is not logged In");
     })
