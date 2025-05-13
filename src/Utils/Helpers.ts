@@ -14,4 +14,8 @@ const formatDateTime = (dateTime: string) => {
     return dayjs(dateTime).format("DD-MMM-YYYY hh:mm:ss A")
 }
 
-export {safeParseJson, formatDateTime}
+const formatDate = (dateTime: string) => {
+    return dayjs(dateTime).format("DD-MMM-YYYY")
+}
+
+export {safeParseJson, formatDateTime, formatDate}

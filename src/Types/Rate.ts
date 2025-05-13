@@ -19,3 +19,14 @@ export type PayOnCreditRequest = {
     discount?: number,
     tax?: number
 }
+
+export type PostpaidPayment = {
+    id: number,
+    customer: Rate,
+    amount_paid: number,
+    date: string,
+    discount: number,
+    witholding_tax: number,
+    start_date: string,
+    end_date: string,
+}
