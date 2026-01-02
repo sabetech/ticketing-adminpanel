@@ -13,13 +13,15 @@ const AgentListCard: React.FC<TableAgentProp> = ({ agents }) => {
     <Space size={[5, 16]} wrap>
         {
             agents.map(agt => 
+                <>
                 <UserCard
                     float
                     href={`agent-summary/${agt.id}/detail`}
                     header={agt.photo.includes('unknown') ? 'https://i.pinimg.com/222x/57/70/f0/5770f01a32c3c53e90ecda61483ccb08.jpg' : `${urls.IMAGE_BASE_URL}${agt.photo.substring(19)}`}
                     avatar={``}
-                    name={agt.fname+ " "+agt.lname}
+                    name={`${agt.fname} ${agt.lname}`}
                     positionName={agt?.stationInfo?.name ?? "No Station"}
+                    
                     stats={[
                         {
                             name: 'Tickets',
@@ -31,6 +33,7 @@ const AgentListCard: React.FC<TableAgentProp> = ({ agents }) => {
                         }
                     ]}
                 />
+                </>
                 )
         }        
         </Space>
