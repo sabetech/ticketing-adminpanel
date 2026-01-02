@@ -71,8 +71,23 @@ const TableAgentsOnline:React.FC<Props> = ({agentsOnline, isLoading}) => {
     return (
         <Table 
             loading={isLoading}
-            columns={columns}
-            dataSource={agentsOnline}
+            columns={columns} //filter out agents with loggedIn date <= loggedOut date
+            dataSource={agentsOnline.filter(agt => {
+                const loginDate = dayjs(agt.loggedin_at);
+                const logoutDate = dayjs(agt.loggedout_at);
+
+                if (loginDate.isValid()) {
+                    if (logoutDate.isValid()) {
+                        return loginDate.isAfter(logoutDate);
+                    }
+                    return true;
+                    
+                }else{
+                    return false;
+                }
+            
+            })
+            }
             pagination={false} 
         />
     )
