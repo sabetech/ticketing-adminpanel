@@ -1,49 +1,15 @@
-import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Row, Col, Space,Card, DatePicker, Typography, List, Avatar, Statistic, Spin } from 'antd';
-import type { TimeRangePickerProps } from 'antd';
+import { useState } from "react";
+
+import { Tabs, Row, Col, Space,Card, DatePicker, Typography, List, Avatar, Statistic, Spin } from 'antd';
+import type { TabsProps, TimeRangePickerProps } from 'antd';
 import type { Dayjs } from 'dayjs';
-import { getStationSummary } from "../../Services/Station";
+
 import dayjs from "dayjs";
+import { useGetStationSummaryAggregates } from "../../hooks/StationSummaryHooks";
+import { transformStationSummaryAggregates, TransfromedStationSummaryAggregates } from "./StationUtils";
 
 const { RangePicker } = DatePicker;
-type MyRate = {
-    id: number,
-    key: string,
-    icon: string,
-    title: string,
-    is_postpaid: string,
-    total: number,
-    count: number,
-    rate_type: string,
-}
 
-type IncomingPayload = {
-    [key: string]: Array<PayloadEntry>
-}
-
-type PayloadEntry = {
-    agent_name: string,
-    amount: string,
-    car_number: string,
-    device_id: string,
-    id: number,
-    issued_date_time: string,
-    paid: string,
-    rate: MyRate,
-    rate_title: string,
-    station_name: string,
-    title: string
-}
-
-type StationTicketAggregate = {
-    key: number,
-    icon: string,
-    title: string,
-    is_postpaid: boolean,
-    total: number,
-    count: number
-}
 
 const StationTicketSummary = () => {
     const [dateRange, setDateRange] = useState<{from:string, to:string}>(
@@ -51,19 +17,6 @@ const StationTicketSummary = () => {
             from: dayjs().startOf('day').format("YYYY-MM-DD HH:mm:ss"), 
             to: dayjs().endOf('day').format("YYYY-MM-DD HH:mm:ss")
         });
-
-    const { data: stationTicketSummaryData, isLoading } = useQuery({
-        queryKey: ['stationTicketSummary', dateRange],
-        queryFn: async () => {
-            if (typeof dateRange === 'undefined') {
-                return getStationSummary({from: dayjs().startOf('day').format("YYYY-MM-DD HH:mm:ss"), to: dayjs().endOf('day').format("YYYY-MM-DD HH:mm:ss")})
-            }else {
-                return getStationSummary(dateRange)
-            }
-        }
-    });
-
-    const [transformedStationSummary, setTransformedStationSummary] = useState<{}>({});
 
     const rangePresets: TimeRangePickerProps['presets'] = [
         { label: 'Yesterday', value: [dayjs().add(-1, 'd'), dayjs()] },
@@ -79,59 +32,99 @@ const StationTicketSummary = () => {
         }
     };
 
-    const transformPayload = (payload: IncomingPayload) => {
-        const transformed = {};
+    const { isLoading, data, isSuccess } = useGetStationSummaryAggregates({from: dateRange.from, to: dateRange.to});
+    let items: TabsProps['items'] = [];
+
+    if (isSuccess) {
+        console.log("Station Summary Data::", data);
+        const transformed = transformStationSummaryAggregates(data);
+        console.log("Transformed Station Summary Data::", transformed);
     
-        for (const [terminal, entries] of Object.entries(payload)) {
-            const aggregations = {};
-            
-            entries.forEach(entry => {
-                const rateType = entry.rate.is_postpaid === "1" ? "postpaid" :
-                    entry.rate.title.includes("Taskforce") ? "Taskforce" : entry.rate.rate_type;
-                const key = entry.rate.id;
-                const amount = parseFloat(entry.amount);
-    
-                if (!aggregations[rateType]) {
-                    aggregations[rateType] = {};
+
+        items = transformed.map((stationSummary: TransfromedStationSummaryAggregates, index) => {
+                return {
+                    key: index.toString(),
+                    label: `${stationSummary.name}`,
+                    children: (
+                    <>
+                    <div style={{display: 'flex', flexDirection: 'row'}}>
+                        <div>
+                            {
+                                stationSummary.ratetype.map((rateType) => (
+                                    <div key={rateType.type} style={{width: "25vw", marginRight: 50}}>
+                                        <List
+                                            header={<Space direction="horizontal" style={{width: '100%', justifyContent: 'space-between', backgroundColor: '#F9FAFB', padding: 10, borderRadius: 5, boxShadow: '0 3px 4px rgba(0, 0, 0, 0.09)'}}><Typography.Title level={4}>{rateType.type.toUpperCase()}</Typography.Title></Space>}
+                                            dataSource={rateType.aggregations}
+                                            renderItem={(item: {title: string, icon: string, total: string, ticket_count: string}) => (
+                                                <List.Item 
+                                                    extra={<strong>{item.total} GHS</strong>}
+                                                    style={{justifyContent: 'space-between', alignItems: 'center', padding: 20}}
+                                                >
+                                                    <List.Item.Meta
+                                                        avatar={<Avatar src={item.icon} size={42} />}
+                                                        title={item.title}
+                                                        description={`${item.ticket_count} Tickets Issued`}
+                                                        style={{textAlign: 'left'}}
+                                                    />   
+                                                        
+                                                    
+                                                </List.Item>
+                                            )}
+                                            
+                                            footer={
+                                                <Space direction="horizontal" style={{width: '100%', justifyContent: 'space-between', backgroundColor: '#F9FAFB', padding: 10, borderRadius: 5, boxShadow: '0 3px 4px rgba(0, 0, 0, 0.09)'}}>
+                                                <Statistic
+                                                    title="Total Tickets Issued"
+                                                    value={rateType.aggregations?.reduce((acc, tkt) => acc + parseInt(tkt.ticket_count), 0) ?? 0}
+                                                />
+                                                 <Statistic
+                                                    title="Ticket Revenue"
+                                                    value={rateType.aggregations?.reduce((acc, tkt) => acc + parseFloat(tkt.total), 0) ?? 0}
+                                                    suffix="GHC"
+                                                    valueStyle={{ color: '#3f8600' }}
+                                                />
+                                                </Space>
+                                            }
+                                        />
+                                    </div>
+                                ))
+                            }
+                            
+                        </div>
+                        <div>
+                            <Card variant="borderless" style={{width: '35vw', marginLeft: 50}}>
+                                <Space direction="horizontal" style={{width: '100%', justifyContent: 'space-evenly'}}>
+                                    <Statistic
+                                    title="Grand Total Revenue"
+                                    value={stationSummary.ratetype?.reduce((acc, rateType) => acc + rateType.aggregations.reduce((subAcc, tkt) => subAcc + parseFloat(tkt.total), 0), 0) ?? 0}
+                                    precision={2}
+                                    valueStyle={{ color: '#3f8600' }}
+                                    suffix="GHC"
+                                    />
+                                    <Statistic
+                                    title="Total Number of Tickets"
+                                    value={stationSummary.ratetype?.reduce((acc, rateType) => acc + rateType.aggregations.reduce((subAcc, tkt) => subAcc + parseInt(tkt.ticket_count), 0), 0) ?? 0}
+                                    
+                                    valueStyle={{ color: '#cf1322' }}
+                                    
+                                    suffix="Tickets"
+                                    />
+                                </Space>
+                            </Card>
+                                
+                        </div>
+                    </div>
+                    </>
+                    )
                 }
-    
-                if (!aggregations[rateType][key]) {
-                    aggregations[rateType][key] = {
-                        key: key,
-                        icon: entry.rate.icon,
-                        title: entry.rate.title,
-                        is_postpaid: entry.rate.is_postpaid === "1",
-                        total: 0,
-                        count: 0
-                    };
-                }
-                aggregations[rateType][key].total += amount;
-                aggregations[rateType][key].count += 1;
             });
-    
-            transformed[terminal] = Object.entries(aggregations).map(([rateType, aggregationEntries]) => ({
-                rate_type: rateType,
-                aggregations: Object.values(aggregationEntries)
-            }));
         }
-    
-        return transformed;
-    };
-    
-    useEffect(() => {
 
-      if (stationTicketSummaryData) {
-        const result = transformPayload(stationTicketSummaryData.data);
-        console.log(result);
-        setTransformedStationSummary(result)
-      }
-
-    }, [stationTicketSummaryData]);
 
     return (<>
         <Row>
-              <Col span={23}>
-                <Card title={"Station Summary - From: "+dayjs(dateRange.from).format("DD MMM YYYY HH:mm")+" To: "+dayjs(dateRange.to).format("DD MMM YYYY HH:mm")} style={{textAlign: 'left'}}>
+            <Col span={20}>
+                <Card title={<div>{"Station Summary - From: "+dayjs(dateRange.from).format("DD MMM YYYY HH:mm")+" To: "+dayjs(dateRange.to).format("DD MMM YYYY HH:mm")}</div>} extra={isLoading && <Spin/>} style={{textAlign: 'left'}}>
                     <Space direction={"vertical"} align={'start'} >
                     <Typography>Date Filter</Typography>
                         <RangePicker
@@ -152,57 +145,9 @@ const StationTicketSummary = () => {
                 </Card>
             </Col>
         </Row>
-
-        {
-            isLoading && <Spin size="large" style={{marginTop: 20}} />
-        }
-
         <Row style={{marginTop: 20}}>
-            <Col span={23}>
-                {
-                    Object.keys(transformedStationSummary).map(station => 
-                        <>  
-                            <Card title={`Station Summary - ${station}`}>
-                                    <Space style={{
-                                        display: 'flex',
-                                        alignItems: 'flex-start',
-                                        flexWrap: 'wrap'
-
-                                    }}>
-                                    {
-                                        transformedStationSummary[station].map(rateData => 
-                                            <List 
-                                                style={{margin: 20, minWidth: '23vw', maxWidth: '25vw'}}
-                                                size="large"
-                                                header={<div><strong>Ticket Summary {rateData.rate_type.toUpperCase() }</strong></div>}
-                                                bordered
-                                                dataSource={rateData.aggregations}
-                                                renderItem={
-                                                    (item: StationTicketAggregate) => <List.Item key={item.key}>
-                                                        <List.Item.Meta
-                                                            avatar={<Avatar src={item.icon} />}
-                                                            title={<a href="#">{item.title}</a>}
-                                                            description={"Ticket Issued: "+item.count}/>
-                                                            <div><Typography.Title level={4}>{item.total}</Typography.Title></div>
-                                                    </List.Item>
-                                                }
-                                                footer={<Row style={{marginTop: 5}}>
-                                                    <Col style={{marginRight: '10%'}}>
-                                                        <Statistic title="Tickets Issued" value={rateData.aggregations?.reduce((acc, tkt) => acc + parseFloat(tkt.count), 0) ?? 0} />
-                                                    </Col>
-                                                    <Col >
-                                                        <Statistic title="Total Amount" value={rateData.aggregations?.reduce((acc, tkt) => acc + parseFloat(tkt.total), 0)} suffix="GHC" />
-                                                    </Col>
-                                                </Row>}
-                                        />
-                                        )
-                                    }
-                                    </Space>
-                            </Card>  
-                        </>
-                    )
-                }
-                
+            <Col span={20}>
+                <Tabs defaultActiveKey="1" items={items} />;
             </Col>
         </Row>
 

@@ -1,7 +1,8 @@
-import { Table, Tag } from "antd";
+import { Table, Tag, Typography } from "antd";
 import type { TableProps } from 'antd';
 import { TAgentOnlineStatus } from '../../Types/Agent'
 import dayjs from "dayjs";
+import { humanReadableDate } from "../../Utils/Helpers";
 
 type Props = {
     isLoading: boolean
@@ -15,7 +16,10 @@ const TableAgentsOnline:React.FC<Props> = ({agentsOnline, isLoading}) => {
             title: 'Agent',
             dataIndex: 'agent',
             key: 'agent',
-            render: (value) => value.fname +" "+value.lname
+            render: (value, record: TAgentOnlineStatus) => <>
+                <Typography>{value.fname +" "+value.lname}</Typography>
+                <Tag color="default">Logged In at: { humanReadableDate(record.loggedin_at) }</Tag>
+                </>
         },
         {
             title: 'Status',
@@ -89,6 +93,7 @@ const TableAgentsOnline:React.FC<Props> = ({agentsOnline, isLoading}) => {
             })
             }
             pagination={false} 
+            rowKey={'agent'}
         />
     )
 }
