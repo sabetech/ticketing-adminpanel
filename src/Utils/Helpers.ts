@@ -18,4 +18,12 @@ const formatDate = (dateTime: string) => {
     return dayjs(dateTime).format("DD-MMM-YYYY")
 }
 
-export {safeParseJson, formatDateTime, formatDate}
+const formatDateISO = (dateTime: string) => {
+    return dayjs(dateTime).toISOString()
+}
+
+const humanReadableDate = (dateTime: string) => {
+    return dayjs(dateTime).format("DD MMM YYYY, hh:mm A")
+}
+
+export {safeParseJson, formatDateTime, formatDate, formatDateISO, humanReadableDate}

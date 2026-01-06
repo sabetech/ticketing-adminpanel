@@ -11,8 +11,6 @@ const TableAgentsTickets = ({date}) => {
         queryFn: async () => getAgentTicketTotals(date)
     });
 
-    console.log("agent Ticket totals", agentTicketTotals)
-
     type ColumnProps = {
         key: string;
         agent: string;
@@ -22,6 +20,7 @@ const TableAgentsTickets = ({date}) => {
       }
 
     const columns: TableProps<ColumnProps>['columns'] = [
+    
         {
             title: 'Agent',
             dataIndex: 'fname',
