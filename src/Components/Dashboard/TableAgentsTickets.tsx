@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { Table } from "antd";
+import { Table, Tag } from "antd";
 import type { TableProps } from 'antd';
 import { getAgentTicketTotals } from '../../Services/AgentService'
 import { Link } from "react-router-dom";
+import { humanReadableDate } from "../../Utils/Helpers";
 
 const TableAgentsTickets = ({date}) => {
 
@@ -17,6 +18,8 @@ const TableAgentsTickets = ({date}) => {
         ticketsIssued: number;
         amount: number;
         agent_name: string
+        loggedin_at: string
+        loggedout_at: string
       }
 
     const columns: TableProps<ColumnProps>['columns'] = [
@@ -25,7 +28,11 @@ const TableAgentsTickets = ({date}) => {
             title: 'Agent',
             dataIndex: 'fname',
             key: 'agent',
-            render: (val, rec) => <Link to={`/agent-summary/${rec.agent_name}/detail?date=${date}`}>{val}</Link>
+            render: (val, rec) => <div style={{display: 'flex', flexDirection: 'column', gap: '5px'}}>
+                <Link to={`/agent-summary/${rec.agent_name}/detail?date=${date}`}>{val}</Link>
+                <Tag color="success">Login: {humanReadableDate(rec.loggedin_at)}</Tag>
+                <Tag color="error">Logout: {humanReadableDate(rec.loggedout_at)}</Tag>
+                </div>
         },
         {
             title: 'Tickets Issued',

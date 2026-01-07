@@ -23,6 +23,7 @@ const formatDateISO = (dateTime: string) => {
 }
 
 const humanReadableDate = (dateTime: string) => {
+    if (!dateTime) return "N/A"
     return dayjs(dateTime).format("DD MMM YYYY, hh:mm A")
 }
 
